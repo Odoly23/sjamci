@@ -1,0 +1,71 @@
+<nav class="navbar">
+  <div class="container-fluid">
+    <div class="navbar-holder d-flex align-items-center justify-content-between">
+
+      <!-- LEFT -->
+      <div class="navbar-header">
+        <a id="toggle-btn" href="#" class="menu-btn">
+          <i class="icon-bars"></i>
+        </a>
+
+        <a href="#" class="navbar-brand">
+          <div class="brand-text d-none d-md-inline-block"></div>
+        </a>
+      </div>
+
+      <!-- RIGHT MENU -->
+      <ul class="nav-menu list-unstyled d-flex flex-row align-items-center">
+
+        <!-- 🔔 NOTIFICATION -->
+        <li class="nav-item dropdown">
+          <a class="nav-link position-relative"
+             id="notifDropdown"
+             href="#"
+             role="button"
+             data-toggle="dropdown"
+             aria-haspopup="true"
+             aria-expanded="false">
+
+            <!-- ICON BELL -->
+            <i class="fa fa-bell fa-lg"></i>
+
+            <!-- BADGE -->
+            <span id="notifbadge"
+                  class="badge badge-danger position-absolute"
+                  style="top:0; right:0; font-size:10px;">
+              0
+            </span>
+          </a>
+
+          <!-- DROPDOWN -->
+          <div class="dropdown-menu dropdown-menu-right"
+               aria-labelledby="notifDropdown"
+               style="font-size: 13px;">
+
+            <a class="dropdown-item" href="">
+              Pedidu Foun (<strong><span id="notifpedidufoun">0</span></strong>)
+            </a>
+
+            <a class="dropdown-item" href="#">
+              RIR (<strong><span id="notirir">0</span></strong>)
+            </a>
+
+            <a class="dropdown-item" href="#">
+              Stok Assets (<strong><span id="notiasset">0</span></strong>)
+            </a>
+
+          </div>
+        </li>
+
+        <!-- 🚪 LOGOUT -->
+        <li class="nav-item">
+          <a href="{% url 'logout' %}" class="nav-link logout">
+            <span class="d-none d-sm-inline-block">Logout</span>
+            <i class="fa fa-sign-out"></i>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>

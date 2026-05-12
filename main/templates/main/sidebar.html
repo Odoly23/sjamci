@@ -1,0 +1,28 @@
+{% load static %}
+<div class="side-navbar-wrapper">
+    <!-- Sidebar Header    -->
+    <div class="sidenav-header d-flex align-items-center justify-content-center">
+      <!-- User Info-->
+      <div class="sidenav-header-inner text-center">
+        <h2 class="h5">MCI-GDGI</h2><span>{{ group|upper }}</span>
+      </div>
+      <!-- Small Brand information, appears on minimized sidebar-->
+      <div class="sidenav-header-logo"><a href="{% url 'home' %}" class="brand-small text-center"> <strong>GD</strong><strong class="text-primary">GI</strong></a></div>
+    </div>
+    <!-- Sidebar Navigation Menus-->
+    {% if user.is_authenticated %}
+      {% if user.groups.all.0.name == 'admin' %}
+        {% include 'main/sidenavs/admin.html' %}
+      {% elif user.groups.all.0.name == 'staff' %}
+        {% include 'main/sidenavs/s_staff.html' %}
+      {% elif user.groups.all.0.name == 'KS' %}
+        {% include 'main/sidenavs/ks.html' %}
+      {% elif user.groups.all.0.name == 'KNI' %}
+        {% include 'main/sidenavs/kni.html' %}
+      {% elif user.groups.all.0.name == 'dnim' %}
+        {% include 'main/sidenavs/dnim.html' %}
+      {% else %}
+        {% include 'main/sidebar_admin.html' %}
+      {% endif %}
+    {% endif %}
+  </div>

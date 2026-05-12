@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sai — Sistema RDTL</title>
+
+  <link rel="shortcut icon" href="{% static 'main/images/rdtl.jpg' %}">
+
+  <!-- ── Vendor CSS (offline, sama seperti layout.html) ──── -->
+  <link rel="stylesheet" href="{% static 'main/vendor/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <style>
+    body {
+      background: #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .logout-card {
+      width: 100%;
+      max-width: 380px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+      padding: 40px 32px 28px;
+      text-align: center;
+    }
+
+    .logout-card hr {
+      border-color: #eee;
+      margin: 16px 0;
+    }
+
+    .logout-footer {
+      margin-top: 20px;
+      font-size: 11px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+<div class="logout-card">
+
+  <!-- ── Logo ────────────────────────────────────────────── -->
+  <img src="{% static 'Image/images1.png' %}" alt="RDTL" width="60" class="mb-2">
+  <h6 class="font-weight-bold mb-0" style="color:#1a1a2e;">Sistema Managementu Dadus</h6>
+
+  <hr>
+
+  <!-- ── Pesan ────────────────────────────────────────────── -->
+  <p class="text-muted my-3">
+    <i class="fa fa-check-circle text-success mr-1"></i>
+    Ita Boot Log Out Ona
+  </p>
+
+  <a href="{% url 'login' %}" class="btn btn-primary btn-sm">
+    <i class="fa fa-sign-in mr-1"></i> Log In Fila-Fali
+  </a>
+
+  <!-- ── Footer ──────────────────────────────────────────── -->
+  <div class="logout-footer">
+    &copy; {% now "Y" %} RDTL &mdash; Hotu-hotu direitu rezervadu
+  </div>
+
+</div>
+
+<!-- ── Vendor JS (offline, sama seperti layout.html) ───── -->
+<script src="{% static 'main/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'main/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+
+<script>
+  localStorage.removeItem('loginTime');
+  localStorage.removeItem('mci_username');
+</script>
+
+</body>
+</html>

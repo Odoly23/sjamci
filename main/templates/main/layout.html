@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+
+  <title>
+    {% if title %}SJK-MCI - {{ title|upper }}{% else %}SJK-MCI{% endif %}
+  </title>
+
+  <link rel="shortcut icon" href="{% static 'main/images/MDHRC.png' %}">
+
+  <!-- ── Vendor CSS ──────────────────────────────────────────── -->
+  <link rel="stylesheet" href="{% static 'main/vendor/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="{% static 'main/css/fontastic.css' %}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+  <link rel="stylesheet" href="{% static 'main/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css' %}">
+
+  <!-- ── Plugin CSS ──────────────────────────────────────────── -->
+  <link rel="stylesheet" href="{% static 'main/css/grasp_mobile_progress_circle-1.0.0.min.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+  <link rel="stylesheet" href="{% static 'main/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'main/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'main/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+
+  <!-- ── Theme CSS ───────────────────────────────────────────── -->
+  <link rel="stylesheet" href="{% static 'main/css/style.default.css' %}" id="theme-stylesheet">
+  <link rel="stylesheet" href="{% static 'main/css/custom.css' %}">
+
+  <!-- IE Compatibility -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  {% block head %}{% endblock head %}
+</head>
+
+<body>
+
+  <!-- ── Side Navbar ─────────────────────────────────────────── -->
+  <nav class="side-navbar">
+    {% include 'main/sidebar.html' %}
+  </nav>
+
+  <div class="page">
+
+    <!-- ── Top Header ──────────────────────────────────────────── -->
+    <header class="header">
+      {% include 'main/navbar.html' %}
+    </header>
+
+    <section>
+
+      <!-- ── Breadcrumb ────────────────────────────────────────── -->
+      <div class="breadcrumb-holder mb-2">
+        <div class="container-fluid">
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="{% url 'home' %}">Home</a>
+            </li>
+
+            {% if link_antes %}
+              {% for i in link_antes %}
+                <li class="breadcrumb-item">
+                  <a href="
+                    {% if i.link_param3 %}
+                      {% url i.link_name i.link_param i.link_param2 i.link_param3 %}
+                    {% elif i.link_param2 %}
+                      {% url i.link_name i.link_param i.link_param2 %}
+                    {% elif i.link_param %}
+                      {% url i.link_name i.link_param %}
+                    {% else %}
+                      {% url i.link_name %}
+                    {% endif %}
+                  ">{{ i.link_text }}</a>
+                </li>
+              {% endfor %}
+            {% endif %}
+
+            <li class="breadcrumb-item active">{{ title }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ── Flash Messages ────────────────────────────────────── -->
+      {% if messages %}
+        <div class="container-fluid">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} m-2 p-2">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- ── Page Content ──────────────────────────────────────── -->
+      {% block content %}{% endblock content %}
+
+    </section>
+
+    <!-- ── Footer ───────────────────────────────────────────────── -->
+    <footer class="main-footer">
+      {% include 'main/footer.html' %}
+    </footer>
+
+  </div><!-- /.page -->
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  JavaScript — loaded in dependency order                   -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+
+  <!-- ── Core ───────────────────────────────────────────────── -->
+  <script src="{% static 'main/vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'main/vendor/popper.js/umd/popper.min.js' %}"></script>
+  <script src="{% static 'main/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+
+  <!-- ── Plugins ────────────────────────────────────────────── -->
+  <script src="{% static 'main/vendor/jquery.cookie/jquery.cookie.js' %}"></script>
+  <script src="{% static 'main/vendor/jquery-validation/jquery.validate.min.js' %}"></script>
+  <script src="{% static 'main/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+  <script src="{% static 'main/js/grasp_mobile_progress_circle-1.0.0.min.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- ── DataTables ─────────────────────────────────────────── -->
+  <script src="{% static 'main/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'main/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'main/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'main/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'main/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'main/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'main/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'main/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'main/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+
+  <!-- ── PDF / Excel Export ─────────────────────────────────── -->
+  <script src="{% static 'main/plugins/jszip/jszip.min.js' %}"></script>
+  <script src="{% static 'main/plugins/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% static 'main/plugins/pdfmake/vfs_fonts.js' %}"></script>
+
+  <!-- ── App ────────────────────────────────────────────────── -->
+  <script src="{% static 'main/js/front.js' %}"></script>
+
+  <!-- ── DataTables Init ────────────────────────────────────── -->
+  <script>
+    $(function () {
+      // Table 1 — with export buttons
+      $("#example1").DataTable({
+        responsive: true,
+        lengthChange: false,
+        autoWidth: false,
+        buttons: ["info", "csv", "pdf", "print", "colvis"]
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+      // Table 2 — simple paginated table
+      $("#example2").DataTable({
+        paging: true,
+        lengthChange: false,
+        searching: false,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        responsive: true,
+      });
+    });
+  </script>
+
+  {% block scripts %}{% endblock scripts %}
+
+</body>
+</html>

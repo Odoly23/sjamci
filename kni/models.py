@@ -46,7 +46,7 @@ class LocBussiness(BaseModel):
 
         if is_new and not self.hashed:
             self.hashed = hashlib.blake2b(str(self.id).encode()).hexdigest()
-            LocBusiness.objects.filter(pk=self.pk).update(hashed=self.hashed)
+            LocBussiness.objects.filter(pk=self.pk).update(hashed=self.hashed)
 
 class Program(BaseModel):
     benefisiariu = models.ForeignKey( Benefisiariu,on_delete=models.CASCADE, verbose_name="Benefisiariu / Sira ne'ebé simu", related_name="Pnegosiu")
@@ -59,7 +59,7 @@ class Program(BaseModel):
     hashed = models.CharField(max_length=128, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.business.name} - {self.program_type}"
+        return f"{self.benefisiariu} - {self.program_type}"
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None

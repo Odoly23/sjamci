@@ -1,0 +1,65 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+<section class="content mb-5">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-12">
+        <div class="card shadow-lg border-0 rounded-4 text-center p-4">
+
+          <!-- ── Header Institusi ──────────────────────────────── -->
+          <h5 class="text-uppercase fw-bold mb-2">
+            Ministério do Commércio e Industria, MCI
+          </h5>
+
+          <h6 class="text-uppercase fw-semibold text-muted mb-2">
+            {% if group == 'KS' %}
+              Dirasaun Nasionál Apoiu Dezenvolvimentu das Mikro, Pequenas e Médias Empresas <br>
+              Departamento Kreditu Suave
+            {% elif group == 'KNI' %}
+              Dirasaun Nasionál Apoiu Dezenvolvimentu das Mikro, Pequenas e Médias Empresas <br>
+              Departamento Kompetisaun Negósiu Inovativu
+            {% elif group == 'dnim' %}
+              Diresaun Nasionál da Indústria Manufatureira
+            {% else %}
+              {# admin, staff, dan default #}
+              Gabinete do Director Geral da Indústria
+            {% endif %}
+          </h6>
+
+          <hr>
+
+          <!-- ── Nama Sistem ───────────────────────────────────── -->
+          <h4 class="fw-bold text-dark">
+            Sistema Manajementu Dadus Kreditu Suave no Kompetisaun Negósiu Inovativu
+          </h4>
+
+          <hr>
+
+          <!-- ── Logo ─────────────────────────────────────────── -->
+          <div class="my-3">
+            <img src="{% static 'Image/images1.png' %}"
+                 alt="Logo MCI"
+                 class="img-fluid"
+                 style="max-height: 180px;">
+          </div>
+
+          <hr>
+
+          <!-- ── Selamat Datang ────────────────────────────────── -->
+          <h3 class="fw-bold">
+            <a href="https://mdrhc.gov.tl/en/"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="text-decoration-none text-dark">
+              BEMVINDO
+            </a>
+          </h3>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

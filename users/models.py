@@ -1,3 +1,10 @@
+import uuid ,hashlib, datetime, io, csv
+from django.db import models
+from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
+from django.utils import timezone
+from custom.models import BaseModel, Status, Municipality, AdministrativePost, Village, Position, Diresaun, Departamento, Gabinete
+
 class Emp(BaseModel):
 	name = models.CharField(max_length=100, null=True, blank=False, verbose_name='Naran')
 	sexo = models.CharField(max_length=4, choices=[('Mane','Mane'),('Feto','Feto')], null=True, blank=False)
@@ -14,7 +21,7 @@ class EmpDivision(models.Model):
 	department = models.ForeignKey(Departamento, on_delete=models.CASCADE, null=True, blank=True, related_name="employeedivision", verbose_name="Departamento")
 
 	def __str__(self):
-		template = '{0.Departamento}'
+		template = '{0.employee} - {0.department}'
 		return template.format(self)
 
 class EmpPosition(models.Model):
