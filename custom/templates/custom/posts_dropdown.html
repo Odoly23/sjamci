@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for post in posts %}
+<option value="{{ post.pk }}">{{ post.name }}</option>
+{% endfor %}

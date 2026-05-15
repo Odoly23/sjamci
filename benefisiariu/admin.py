@@ -1,11 +1,5 @@
 from django.contrib import admin
-from .models import (
-    Benefisiariu,
-    AddressTL,
-    AddressOrigin,
-    Photo,
-)
-
+from .models import   Benefisiariu,  AddressTL,   AddressOrigin,  Photo,  BeneficiariuEvaluation
 
 # =========================
 # Base Admin

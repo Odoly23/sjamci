@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'main',
     'custom',
     'benefisiariu',
-    'kni',
+    'kni.apps.KniConfig',
     'suave',
     'manufatureira',
     'notif',

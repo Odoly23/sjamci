@@ -1,12 +1,5 @@
 from django.contrib import admin
-from .models import (
-    Business,
-    LocBussiness,
-    Program,
-    Employee,
-    Finance,
-)
-
+from kni.models import    Business, LocBussiness, Program, Employee, Finance
 
 # =========================
 # Base Admin

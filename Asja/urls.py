@@ -27,6 +27,12 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('', include('main.urls')),
     path('summernote/', include('django_summernote.urls')),
+    path('KNI-Home/', include('kni.urls')),
+    path('Suave-Home/', include('suave.urls')),
+    path('Munafatureira-Home/', include('manufatureira.urls')),
+    path('custom/', include('custom.urls')),
+    path('Relatoriu/', include('report.urls')),
+    path('Api/sumario/', include('report.Api.urls')),
 
 ]
 if settings.DEBUG:

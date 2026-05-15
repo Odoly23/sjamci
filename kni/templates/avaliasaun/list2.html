@@ -1,0 +1,103 @@
+{% extends "main/layout.html" %}
+
+{% block content %}
+
+<div class="container-fluid mt-3">
+
+  <!-- CARD INFO -->
+<!-- CARD INFO -->
+<div class="card shadow-sm border-0 mb-3">
+  <div class="card-body">
+    <a href="?status=Ativu" class="btn btn-sm btn-success mb-2"> <i class="fa fa-check"></i> Ativu<span class="badge badge-light">{{ total_ativu }}</span></a>
+    <a href="?status=La_ativu" class="btn btn-sm btn-danger mb-2"><i class="fa fa-times"></i> La Ativu <span class="badge badge-light"> {{ total_laativu }}</span></a>
+    <a href="?status=Suspendu" class="btn btn-sm btn-warning mb-2"> <i class="fa fa-refresh"></i> Suspendu <span class="badge badge-light">{{ total_suspendu }}</span>  </a>
+    <a href="?status=Pending" class="btn btn-sm btn-info mb-2"><i class="fa fa-clock"></i> Pending <span class="badge badge-light"> {{ total_pending }}</span></a>
+    <!-- SHOW ALL -->
+    <a href="{% url 'benef-evaluation-list' %}"
+       class="btn btn-sm btn-secondary mb-2">
+      <i class="fa fa-list"></i>
+      Hotu-Hotu
+    </a>
+  </div>
+</div>
+  <!-- TABLE -->
+  <div class="card shadow-sm border-0">
+    <div class="card-header">
+      <strong>{{ legend|upper }}</strong>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped table-sm">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Naran</th>
+              <th>Telefone</th>
+              <th>Status</th>
+              <th>Razaun</th>
+              <th>Asaun</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in benefs %}
+            {% with last=b.evaluations.last %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ b.name }}</td>
+              <td>{{ b.phone }}</td>
+              <td>
+                {% if last.status == 'Ativu' %}
+                  <span class="badge badge-success rounded-pill px-3">
+                    <i class="fa fa-check"></i> Ativu
+                  </span>
+                {% elif last.status == 'La_ativu' %}
+                  <span class="badge badge-danger rounded-pill px-3">
+                    <i class="fa fa-times"></i> La Ativu
+                  </span>
+                {% elif last.status == 'Suspendu' %}
+                  <span class="badge badge-warning rounded-pill px-3">
+                    <i class="fa fa-refresh"></i> Suspendu
+                  </span>
+                {% else %}
+                  <span class="badge badge-info rounded-pill px-3">
+                    <i class="fa fa-clock"></i> Pending
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                {{ last.description|default:"-" }}
+              </td>
+              <td>
+               {% if last.status == 'Ativu' %}
+                <a href="{% url 'benef-evaluation' b.hashed %}"
+                   class="btn btn-sm btn-warning">
+                  <i class="fa fa-pencil"></i>
+                  Avaliasaun
+                </a>
+              {% else %}
+              <a href="{% url 'benef-detail-kni' b.hashed %}"
+                         class="btn btn-warning ml-1"
+                         title="View">
+
+                        <i class="fa fa-eye"></i>
+                      </a>
+              {% endif %}
+              </td>
+            </tr>
+            {% endwith %}
+
+            {% endfor %}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

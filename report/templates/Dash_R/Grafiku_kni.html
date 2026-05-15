@@ -1,0 +1,43 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+<section class="content mb-5">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-sm-12">
+        <div class="card  border-0  p-4">
+           <div class="row">
+              <div class="col-sm-4">
+               <div class="card">
+                 <div class="card-header bg-warning">
+                   <h5 class="text-center text-white">Total KNI Tuir Sexu</h5>
+                 </div>
+                 <div class="card-body">
+                   <canvas id="sexuChart"></canvas>
+                 </div>
+               </div>
+             </div>
+              <div class="col-sm-4">
+               <div class="card">
+                 <div class="card-header bg-warning">
+                   <h5 class="text-center text-white">Total KNI Tuir Sexu</h5>
+                 </div>
+                 <div class="card-body">
+                   <canvas id="sexuChart"></canvas>
+                 </div>
+               </div>
+             </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  {% include 'chart/sexs_kni.js' %}
+</script>
+{% endblock scripts %}

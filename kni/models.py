@@ -28,6 +28,7 @@ class Business(BaseModel):
 
 class LocBussiness(BaseModel):
     benefisiariu = models.ForeignKey( Benefisiariu,on_delete=models.CASCADE, verbose_name="Benefisiariu / Sira ne'ebé simu", related_name="locnegosiu")
+    address = models.CharField(max_length=100, null=True, blank=True)
     municipality = models.ForeignKey(Municipality, on_delete=models.CASCADE, null=True)
     administrativepost = models.ForeignKey(AdministrativePost, on_delete=models.CASCADE, null=True, blank=True)
     village = models.ForeignKey(Village, on_delete=models.CASCADE, null=True, blank=True)
@@ -62,9 +63,14 @@ class Program(BaseModel):
         return f"{self.benefisiariu} - {self.program_type}"
 
     def save(self, *args, **kwargs):
+        if self.benefisiariu and self.benefisiariu.status:
+            if self.benefisiariu.status.name == 'Parado':
+                self.status = Status.objects.get(name='Parado')
+            elif self.benefisiariu.status.name == 'Ativu':
+                self.status = Status.objects.get(name='Ativu')
+                
         is_new = self.pk is None
         super().save(*args, **kwargs)
-
         if is_new and not self.hashed:
             self.hashed = hashlib.blake2b(str(self.id).encode()).hexdigest()
             Program.objects.filter(pk=self.pk).update(hashed=self.hashed)

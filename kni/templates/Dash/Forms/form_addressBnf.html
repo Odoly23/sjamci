@@ -1,0 +1,73 @@
+{% extends "main/layout.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid"><br/>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="card shadow-lg pt-3 rounded">
+				<div class="card-header">{{ legend|upper }}</div>
+				<div class="card-body">
+					<form method="POST" id="addressForm" data-posts-url="{% url 'ajax_load_posts' %}" data-villages-url="{% url 'ajax_load_villages' %}" novalidate>
+						{% csrf_token %}
+                <input type="hidden"
+           name="_form_token"
+           value="{{ form_token }}">
+            <div class="form-row">
+              <div class="form-group col-md-4 mb-0">
+                {{ form.municipality|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-4 mb-0">
+                {{ form.administrativepost|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-4 mb-0">
+                {{ form.village|as_crispy_field }}
+              </div>
+            </div> <!--end form-row-->
+            <div class="button-row d-flex">
+              <a class="btn btn-secondary" href="{% url 'benef-detail-kni' hashid=hashid %}" title="Cancela"><i class="fa fa-close"></i> Cancela</a>
+              <button class="btn btn-primary ml-1" type="submit" title="Rai">Rai <i class="fa fa-save"></i></button>
+            </div> <!-- end button -->
+          </form>
+				</div> <!--end card-body-->
+			</div> <!--end card-->
+		</div> <!--end col-->
+	</div> <!--end row-->
+</div><!--end container-->
+{% endblock %}
+{% block scripts %}
+	
+  <script>
+    $("#id_municipality").change(function () {
+      var url = $("#addressForm").attr("data-posts-url");  // get the url of the `load_cities` view
+      var municipalityId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-posts/)
+        data: {
+          'municipality': municipalityId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_administrativepost").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+    // this one is for fetching village data
+    $("#id_administrativepost").change(function () { //django-model-form created this id
+      var url = $("#addressForm").attr("data-posts-url");  // get the url of the `load_cities` view
+      var postId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: '{% url 'ajax_load_villages' %}',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/) person_form.html template has this url var
+        data: {
+          'post': postId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_village").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+  </script>
+{% endblock %}

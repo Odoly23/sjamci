@@ -1,0 +1,65 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+<section class="content mb-5">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-sm-12">
+        <div class="card  border-0  p-4">
+           <div class="row d-flex justify-content-between">
+              <div class="col-sm-4">
+               <div class="card">
+                 <div class="card-header bg-warning">
+                   <h5 class="text-center text-white">Total KNI</h5>
+                 </div>
+                 <div class="text-center">
+                   <div class="card-body d-flex justify-content-between">
+                     <a href="{% url 'kni-tab' %}"><i class="fa fa-table fa-2x"></i> Sumario</a>
+                     <a href="{% url 'g-kni' %}"><i class="fa fa-table fa-2x"></i> Grafiku</a>
+                   </div>
+                   <center>
+                        <h2 style="margin-bottom: 20px;">{{kni}}</h2>
+                    </center>
+                 </div>
+               </div>
+             </div>
+              <div class="col-sm-4">
+               <div class="card">
+                 <div class="card-header bg-info">
+                   <h5 class="text-center text-white">Total Kreditu Suave</h5>
+                 </div>
+                 <div class="text-center">
+                   <div class="card-body d-flex justify-content-between">
+                     <a href=""><i class="fa fa-table fa-2x"></i> Sumario</a>
+                     <a href=""><i class="fa fa-table fa-2x"></i> Grafiku</a>
+                   </div>
+                   <center>
+                        <h2 style="margin-bottom: 20px;">{{ks}}</h2>
+                    </center>
+                 </div>
+               </div>
+             </div>
+            <div class="col-sm-4">
+               <div class="card">
+                 <div class="card-header bg-primary">
+                   <h5 class="text-center text-white">Total Manufatureira</h5>
+                 </div>
+                 <div class="text-center">
+                   <div class="card-body d-flex justify-content-between">
+                     <a href=""><i class="fa fa-table fa-2x"></i> Sumario</a>
+                     <a href=""><i class="fa fa-table fa-2x"></i> Grafiku</a>
+                   </div>
+                   <center>
+                        <h2 style="margin-bottom: 20px;">{{mf}}</h2>
+                    </center>
+                 </div>
+               </div>
+             </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

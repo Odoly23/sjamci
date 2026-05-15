@@ -1,0 +1,276 @@
+{# ── Include: kni/_map_script.html ───────────────────────────
+   Variabel yang dibutuhkan dari context:
+     benef, local
+   ──────────────────────────────────────────────────────────── #}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+<style>
+  #map-wrapper {
+    position: relative;
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background: #fff;
+  }
+
+  #mapid {
+    width: 100%;
+    height: 300px;
+    min-height: 300px;
+    z-index: 1;
+  }
+
+  /* FULLSCREEN MODE */
+  #map-wrapper:fullscreen,
+  #map-wrapper:-webkit-full-screen,
+  #map-wrapper:-moz-full-screen,
+  #map-wrapper:-ms-fullscreen {
+
+    width: 100vw !important;
+    height: 100vh !important;
+
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+
+    z-index: 999999 !important;
+    background: #fff !important;
+    border-radius: 0 !important;
+    border: none !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #map-wrapper:fullscreen #mapid,
+  #map-wrapper:-webkit-full-screen #mapid,
+  #map-wrapper:-moz-full-screen #mapid,
+  #map-wrapper:-ms-fullscreen #mapid {
+
+    width: 100vw !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+
+    border-radius: 0 !important;
+  }
+
+  /* tombol fullscreen tetap terlihat */
+  #btn-fullscreen {
+    position: relative;
+    z-index: 9999999;
+  }
+</style>
+
+<script>
+  // ── Tile Layers ───────────────────────────────────────────
+  var peta1 = L.tileLayer(
+    'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=REMOVED_TOKEN
+    { attribution: '© Mapbox © OpenStreetMap', id: 'mapbox/streets-v11' }
+  );
+  var peta2 = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3']
+  });
+  var peta3 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+    attribution: '© Google Maps', maxZoom: 20
+  });
+  var peta9 = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+    maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'], attribution: '© Google Maps'
+  });
+
+  // ── Init Map ──────────────────────────────────────────────
+  var map = L.map('mapid', {
+    center: [-8.723574, 125.564654],
+    zoom: 9,
+    layers: [peta9]
+  });
+
+  L.control.layers({
+    'Default':    peta1,
+    'Street':     peta3,
+    'Satelite':   peta2,
+    'Map detail': peta9,
+  }).addTo(map);
+
+  var statusEl       = document.getElementById('map-status');
+  var routingControl = null;
+
+  {% if local and local.latitude and local.longitude %}
+
+  var destLat = {{ local.latitude }};
+  var destLng = {{ local.longitude }};
+
+  var markerTujuan = L.marker([destLat, destLng]).addTo(map)
+    .bindPopup(
+      "<b>{{ benef.name }}</b><br>" +
+      "Municipiu: {{ local.municipality }}<br>" +
+      "Postu: {{ local.administrativepost }}<br>" +
+      "Suku: {{ local.village }}<br>" +
+      "Enderesu: {{ local.address|default:'-' }}"
+    ).openPopup();
+
+  map.setView([destLat, destLng], 13);
+
+  function buatRute(userLat, userLng) {
+    if (routingControl) map.removeControl(routingControl);
+    routingControl = L.Routing.control({
+      waypoints: [L.latLng(userLat, userLng), L.latLng(destLat, destLng)],
+      routeWhileDragging: false,
+      addWaypoints: false,
+      language: 'en',
+      createMarker: function(i, wp) {
+        if (i === 0) {
+          return L.marker(wp.latLng, {
+            icon: L.divIcon({ html: '<div style="font-size:24px">📍</div>', className: '', iconSize: [30,30] })
+          }).bindPopup('Ita-nia fatin agora');
+        }
+        return markerTujuan;
+      }
+    }).addTo(map);
+
+    routingControl.on('routesfound', function(e) {
+      var dist = (e.routes[0].summary.totalDistance / 1000).toFixed(1);
+      var time = Math.round(e.routes[0].summary.totalTime / 60);
+      statusEl.className = 'alert alert-success mt-1 py-1 px-2';
+      statusEl.style.fontSize = '12px';
+      statusEl.innerHTML = '<i class="fa fa-check"></i> Distansia: <b>' + dist + ' km</b> | Tempu: <b>' + time + ' min</b>';
+    });
+    routingControl.on('routingerror', function() {
+      statusEl.className = 'alert alert-danger mt-1 py-1 px-2';
+      statusEl.style.fontSize = '12px';
+      statusEl.innerHTML = '<i class="fa fa-times"></i> Rute la hetan. Tenta fali.';
+    });
+  }
+
+  function mintaLokasi() {
+    statusEl.className = 'alert alert-info mt-1 py-1 px-2';
+    statusEl.style.fontSize = '12px';
+    statusEl.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Loke ita nia lokasi...';
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          statusEl.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Hetan lokasi, kria rute...';
+          buatRute(pos.coords.latitude, pos.coords.longitude);
+        },
+        function() {
+          statusEl.innerHTML = '<i class="fa fa-spinner fa-spin"></i> GPS la iha, tenta via IP...';
+          fetch('https://ipapi.co/json/')
+            .then(r => r.json())
+            .then(function(d) {
+              if (d.latitude && d.longitude) {
+                buatRute(d.latitude, d.longitude);
+              } else {
+                statusEl.className = 'alert alert-warning mt-1 py-1 px-2';
+                statusEl.innerHTML = '<i class="fa fa-warning"></i> La konsege hetan lokasi. Klik "Loke Google Maps".';
+              }
+            })
+            .catch(function() {
+              statusEl.className = 'alert alert-warning mt-1 py-1 px-2';
+              statusEl.innerHTML = '<i class="fa fa-warning"></i> La konsege hetan lokasi. Klik "Loke Google Maps".';
+            });
+        },
+        { timeout: 10000, enableHighAccuracy: true }
+      );
+    } else {
+      statusEl.className = 'alert alert-warning mt-1 py-1 px-2';
+      statusEl.innerHTML = '<i class="fa fa-warning"></i> Browser la suporta GPS. Klik "Loke Google Maps".';
+    }
+  }
+
+  mintaLokasi();
+
+  {% else %}
+  map.setView([-8.723574, 125.564654], 9);
+  L.marker([-8.723574, 125.564654])
+    .addTo(map)
+    .bindPopup("{{ benef.name }} - La iha koordenada")
+    .openPopup();
+  statusEl.className = 'alert alert-warning mt-1 py-1 px-2';
+  statusEl.innerHTML = '<i class="fa fa-warning"></i> La iha koordenada ba benefisiariu ida ne\'e.';
+  {% endif %}
+
+  // ── Fullscreen ────────────────────────────────────────────
+// ── Fullscreen ────────────────────────────────────────────
+
+function toggleFullscreen() {
+
+    var mapWrapper = document.getElementById('map-wrapper');
+    var btn = document.getElementById('btn-fullscreen');
+
+    if (
+        !document.fullscreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.mozFullScreenElement &&
+        !document.msFullscreenElement
+    ) {
+
+        if (mapWrapper.requestFullscreen) {
+            mapWrapper.requestFullscreen();
+
+        } else if (mapWrapper.webkitRequestFullscreen) {
+            mapWrapper.webkitRequestFullscreen();
+
+        } else if (mapWrapper.mozRequestFullScreen) {
+            mapWrapper.mozRequestFullScreen();
+
+        } else if (mapWrapper.msRequestFullscreen) {
+            mapWrapper.msRequestFullscreen();
+        }
+
+        btn.innerHTML =
+            '<i class="fa fa-compress"></i> Exit Full Screen';
+
+        btn.classList.remove('btn-secondary');
+        btn.classList.add('btn-dark');
+
+    } else {
+
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+}
+
+
+function onFsChange() {
+
+    var btn = document.getElementById('btn-fullscreen');
+
+    if (
+        !document.fullscreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.mozFullScreenElement &&
+        !document.msFullscreenElement
+    ) {
+
+        btn.innerHTML =
+            '<i class="fa fa-expand"></i> View Full Screen';
+
+        btn.classList.remove('btn-dark');
+        btn.classList.add('btn-secondary');
+    }
+
+    // penting untuk leaflet
+    setTimeout(function () {
+        map.invalidateSize();
+    }, 500);
+}
+
+
+document.addEventListener('fullscreenchange', onFsChange);
+document.addEventListener('webkitfullscreenchange', onFsChange);
+document.addEventListener('mozfullscreenchange', onFsChange);
+document.addEventListener('MSFullscreenChange', onFsChange);
+</script>

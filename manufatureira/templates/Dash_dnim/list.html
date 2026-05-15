@@ -1,0 +1,109 @@
+{% extends "main/layout.html" %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card shadow-sm border-0">
+        <!-- HEADER -->
+        <div class="card-header  d-flex justify-content-between align-items-center">
+          <div>
+            <i class="fa fa-list"></i>
+            <strong>{{ legend|upper }}</strong>
+          </div>
+          <div>
+            <span class="badge badge-light">
+              TOTAL : {{ data|length }}
+            </span>
+          </div>
+        </div>
+        <!-- BODY -->
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped table-sm"
+                   width="100%"
+                   id="example1">
+              <thead>
+                <tr>
+                  <th width="5%">#</th>
+                  <th>Naran</th>
+                  <th width="10%">Sexu</th>
+                  <th width="15%">Telefone</th>
+                  <th width="15%">Munisipiu</th>
+                  <th width="15%">Postu</th>
+                  <th width="12%">Asaun</th>
+                </tr>
+
+              </thead>
+              <tbody>
+
+                {% for b in data %}
+                <tr>
+                  <!-- NUMBER -->
+                  <td class="text-center align-middle">
+                    {{ forloop.counter }}
+                  </td>
+                  <!-- NAME -->
+                  <td class="align-middle">
+                    <strong>{{ b.name }}</strong>
+                  </td>
+                  <!-- SEX -->
+                  <td class="text-center align-middle">
+                    {{ b.sex|default:"-" }}
+                  </td>
+                  <!-- PHONE -->
+                  <td class="align-middle">
+                    {{ b.phone|default:"-" }}
+                  </td>
+                  <!-- MUNICIPALITY -->
+                  <td class="align-middle">
+                    {{ b.addresstl.municipality|default:"-" }}
+                  </td>
+                  <!-- POST -->
+                  <td class="align-middle">
+                    {{ b.addresstl.administrativepost|default:"-" }}
+                  </td>                  <!-- ACTION -->
+                  <td class="text-center align-middle">
+                    <div class="btn-group btn-group-sm" role="group">
+                      <!-- DETAIL -->
+                      <a href=""
+                         class="btn btn-info"
+                         title="Detail">
+                        <i class="fa fa-edit"></i>
+                      </a>
+                      <!-- DELETE -->
+                      {% if group == 'admin' %}
+                      <a href=""
+                         class="btn btn-danger"
+                         title="Delete">
+
+                        <i class="fa fa-trash"></i>
+                      </a>
+                      {% endif %}
+                      <!-- VIEW -->
+                      <a href=""
+                         class="btn btn-warning"
+                         title="View">
+
+                        <i class="fa fa-eye"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="7" class="text-center text-muted">
+                    Dadus Sei Mamuk
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

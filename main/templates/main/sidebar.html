@@ -21,6 +21,8 @@
         {% include 'main/sidenavs/kni.html' %}
       {% elif user.groups.all.0.name == 'dnim' %}
         {% include 'main/sidenavs/dnim.html' %}
+      {% elif user.groups.all.0.name == 'XFD' %}
+        {% include 'main/sidenavs/XFD.html' %}
       {% else %}
         {% include 'main/sidebar_admin.html' %}
       {% endif %}

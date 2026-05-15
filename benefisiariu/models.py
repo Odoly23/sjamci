@@ -62,3 +62,25 @@ class Photo(BaseModel):
 
     def __str__(self):
         return str(self.benefisiariu)
+
+
+class BeneficiariuEvaluation(BaseModel):
+    STATUS_CHOICES = [
+        ('Ativu', 'Ativu'),
+        ('La_ativu', 'La_ativu'),
+        ('Suspendu', 'Suspendu'),
+        ('Pending', 'Pending'),
+    ]
+    benefisiariu = models.ForeignKey(Benefisiariu, on_delete=models.CASCADE, related_name='evaluations')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Status")
+    description = models.TextField(null=True, blank=True, verbose_name="Razaun")
+    hashed = models.CharField(max_length=128, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.benefisiariu} - {self.status}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if not self.hashed:
+            self.hashed = hashlib.blake2b(str(self.id).encode()).hexdigest()
+            super().save(update_fields=['hashed'])

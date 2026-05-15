@@ -1,0 +1,42 @@
+{% extends "main/layout.html" %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card shadow-lg pt-1 border-primary rounded">
+
+        <!-- ── Header ──────────────────────────────────────── -->
+        <div class="card-header bg-steel">
+          {{ legend|upper }}
+          <i class="fa fa-long-arrow-right"></i>
+          <a href="{% url 'benef-update' benef.hashed %}" class="btn btn-sm btn-warning">
+            <i class="fa fa-edit"></i>
+          </a>
+        </div>
+
+        <div class="card-body">
+          <div class="row">
+
+            <!-- ── Kolom Kiri (sama dengan KNI) ──────────── -->
+            <div class="col-sm-6">
+              {% include 'kni/sides/col_left.html' %}
+            </div>
+
+            <!-- ── Kolom Kanan (khusus KS + monitoring) ──── -->
+            <div class="col-sm-6">
+              {% include 'suave/sides/col_right_ks.html' %}
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+  {% include 'kni/_map_script.html' %}
+{% endblock scripts %}

@@ -1,0 +1,200 @@
+{% extends "main/layout.html" %}
+{% load static %}
+{% load custom_tags %}
+
+{% block content %}
+<section class="content mb-5">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12">
+        <!-- TOP MENU -->
+        <div class="card mb-3">
+          <div class="card-body">
+            <div class="text-center d-flex justify-content-center align-items-center flex-wrap gap-2 mb-2">
+              {% if group == "KNI" %}
+              <a class="btn btn-sm btn-info mb-2"
+                 href="">
+                REJISTU DADUS
+                <i class="fa fa-plus-square"></i>
+              </a>
+              <a class="btn btn-sm btn-success mb-2 ml-2"
+                 href="">
+                IMPORTA EXCEL
+                <i class="fa fa-download"></i>
+              </a>
+              {% endif %}
+              <a class="btn btn-sm btn-primary mb-2 ml-2"
+                 href="{% url 'geral-ks' %}">
+                LISTA BENEFISIARIU
+                <i class="fa fa-users"></i>
+              </a>
+              <a class="btn btn-sm btn-warning mb-2 ml-2"
+                 href="{% url 'sum-gr' %}"
+                 target="_blank">
+                SUMARIO
+                <i class="fa fa-table"></i>
+              </a>
+            </div>
+            <hr/>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="card shadow-sm border-0">
+
+          <div class="card-header">
+            <strong><i class="fa fa-table"></i> {{ legend|upper }}</strong>
+          </div>
+
+          <div class="card-body">
+
+            <div class="table-responsive">
+
+              <table class="table table-bordered table-sm text-center">
+
+                <thead style="background-color:chocolate; color:white;">
+
+                  <tr>
+                    <th rowspan="2" class="align-middle">
+                      Tinan
+                    </th>
+
+                    <th rowspan="2" class="align-middle">
+                      Faze
+                    </th>
+
+                    <th colspan="{{ mun_list|length }}" class="align-middle">
+                      Munisipiu
+                    </th>
+
+                    <th rowspan="2" class="align-middle">
+                      Total
+                    </th>
+                  </tr>
+
+                  <tr>
+                    {% for m in mun_list %}
+                    <th
+                      data-container="body"
+                      data-toggle="popover"
+                      data-placement="top"
+                      data-content="{{ m.name }}"
+                    >
+                      {{ m.code }}
+                    </th>
+                    {% endfor %}
+                  </tr>
+
+                </thead>
+
+                <tbody>
+
+                  {% for row in dg %}
+                  <tr>
+
+                    {% if row.year_rowspan %}
+                    <td rowspan="{{ row.year_rowspan }}" class="align-middle">
+                      <strong>{{ row.year }}</strong>
+                    </td>
+                    {% endif %}
+
+                    <td class="align-middle">
+                      {{ row.faze }}
+                    </td>
+
+                    {% for m in mun_list %}
+                    <td>
+                      <a href="{% url 'list_ks' row.year row.faze m.name %}">
+                        {{ row.mun|get_item:m.name|default:0 }}
+                      </a>
+                    </td>
+                    {% endfor %}
+
+                    <td>
+                      <strong>
+                        <a href="% url 'total_ks' row.year row.faze %}">
+                          {{ row.total }}
+                        </a>
+                      </strong>
+                    </td>
+
+                  </tr>
+                  {% endfor %}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+            <!-- PAGINATOR -->
+            <div class="mt-3">
+
+              <nav>
+                <ul class="pagination justify-content-center">
+
+                  {% if years_page.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page=1">
+                      Primeiro
+                    </a>
+                  </li>
+
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ years_page.previous_page_number }}">
+                      &laquo;
+                    </a>
+                  </li>
+                  {% endif %}
+
+                  <li class="page-item active">
+                    <span class="page-link">
+                      {{ years_page.number }}
+                    </span>
+                  </li>
+
+                  {% if years_page.has_next %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ years_page.next_page_number }}">
+                      &raquo;
+                    </a>
+                  </li>
+
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ years_page.paginator.num_pages }}">
+                      Ultimu
+                    </a>
+                  </li>
+                  {% endif %}
+
+                </ul>
+              </nav>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock content %}
+
+
+{% block scripts %}
+<script>
+  $(function () {
+    $('[data-toggle="popover"]').popover({
+      container: 'body',
+      trigger: 'hover'
+    });
+  });
+</script>
+{% endblock %}
