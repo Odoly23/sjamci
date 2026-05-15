@@ -8,67 +8,62 @@
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
 <style>
-  #map-wrapper {
+
+#map-wrapper{
     position: relative;
     width: 100%;
+    height: 300px;
     border-radius: 6px;
     overflow: hidden;
     border: 1px solid #ccc;
     background: #fff;
-  }
+}
 
-  #mapid {
+#mapid{
     width: 100%;
-    height: 300px;
-    min-height: 300px;
-    z-index: 1;
-  }
+    height: 100%;
+}
 
-  /* FULLSCREEN MODE */
-  #map-wrapper:fullscreen,
-  #map-wrapper:-webkit-full-screen,
-  #map-wrapper:-moz-full-screen,
-  #map-wrapper:-ms-fullscreen {
+#btn-fullscreen{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 999999;
+}
 
-    width: 100vw !important;
-    height: 100vh !important;
+/* FULLSCREEN */
+#map-wrapper:fullscreen,
+#map-wrapper:-webkit-full-screen,
+#map-wrapper:-moz-full-screen,
+#map-wrapper:-ms-fullscreen{
 
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
 
-    z-index: 999999 !important;
-    background: #fff !important;
-    border-radius: 0 !important;
-    border: none !important;
-
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  #map-wrapper:fullscreen #mapid,
-  #map-wrapper:-webkit-full-screen #mapid,
-  #map-wrapper:-moz-full-screen #mapid,
-  #map-wrapper:-ms-fullscreen #mapid {
-
     width: 100vw !important;
     height: 100vh !important;
-    min-height: 100vh !important;
 
+    z-index: 99999999 !important;
     border-radius: 0 !important;
-  }
+    background: #fff;
+}
 
-  /* tombol fullscreen tetap terlihat */
-  #btn-fullscreen {
-    position: relative;
-    z-index: 9999999;
-  }
+#map-wrapper:fullscreen #mapid,
+#map-wrapper:-webkit-full-screen #mapid,
+#map-wrapper:-moz-full-screen #mapid,
+#map-wrapper:-ms-fullscreen #mapid{
+
+    width: 100% !important;
+    height: 100% !important;
+}
+
 </style>
 
 <script>
   // ── Tile Layers ───────────────────────────────────────────
   var peta1 = L.tileLayer(
-    'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=REMOVED_TOKEN
+    'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={{ MAPBOX_TOKEN }}',
     { attribution: '© Mapbox © OpenStreetMap', id: 'mapbox/streets-v11' }
   );
   var peta2 = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {

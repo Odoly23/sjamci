@@ -10,7 +10,7 @@ from kni.models import Business, LocBussiness, Program, Employee, Finance
 from kni.forms import BusinessKNIForm, LocBusinessKNIForm, ProgramKNIForm, EmployeeKNIForm, FinanceKNIForm
 from custom.models import TIpu_Programa, Status
 from config.decorators import allowed_users
-
+from django.conf import settings
 def _generate_token(request, key):
     token = str(uuid.uuid4())
     request.session[key] = token
@@ -189,6 +189,7 @@ def Localidade_Add(request, hashid):
         'form':       form,
         'emp':        emp,
         'form_token': _generate_token(request, 'kni_token_loc'),
+        'MAPBOX_TOKEN': settings.MAPBOX_TOKEN,
         'title':      'Lokasaun Negosiu',
         'legend':     'Lokasaun Negosiu',
     }

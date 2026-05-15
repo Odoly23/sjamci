@@ -114,7 +114,7 @@
 
   // ===== MAP SETUP =====
   var peta1 = L.tileLayer(
-    'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=REMOVED_TOKEN
+    'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={{ MAPBOX_TOKEN }}',
     { attribution: '© Mapbox © OpenStreetMap', id: 'mapbox/streets-v11' }
   );
   var peta2 = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {

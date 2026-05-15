@@ -147,6 +147,7 @@ def benef_detail_kni(request, hashid):
         'local':local,
         'title':      'Detalha Benefisiariu KNI',
         'legend':     'Detalha Benefisiariu — Kompetisaun Negósiu Inovativu',
+        'MAPBOX_TOKEN': settings.MAPBOX_TOKEN,
         'link_antes': [
             {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
         ],
