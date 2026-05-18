@@ -1,271 +1,469 @@
-{# ── Include: suave/_col_right_ks.html ───────────────────────
-   Variabel yang dibutuhkan dari context:
-     benef, addtl, businesses, programs, employees,
-     finances, kredits, monitoring
-   ──────────────────────────────────────────────────────────── #}
+<!-- ═══════════════════════════════════════════════════════════
+     col_right_ks.html  — Kolom Kanan Detalha Benefisiariu KS
+     Simpan di: templates/suave/sides/col_right_ks.html
+     ═══════════════════════════════════════════════════════════ -->
 
 <!-- PETA -->
 <div id="map-wrapper" style="width:100%; border-radius:6px; border:1px solid #ccc; overflow:hidden;">
-  <div id="mapid" style="width:100%; height:300px;"></div>
+  <div id="mapid" style="width:100%; height:280px;"></div>
 </div>
-
-<button onclick="toggleFullscreen()" class="btn btn-sm btn-secondary mt-1" id="btn-fullscreen">
+<button onclick="toggleFullscreen()" class="btn btn-sm btn-secondary mt-1 mb-1" id="btn-fullscreen">
   <i class="fa fa-expand"></i> View Full Screen
 </button>
-
 <div id="map-status" class="alert alert-info mt-1 py-1 px-2" style="font-size:12px;">
-  <i class="fa fa-spinner fa-spin"></i> Buka lokasi Empresario...
+  <i class="fa fa-spinner fa-spin"></i> Buka lokasi...
 </div>
-
-{% if addtl and addtl.latitude and addtl.longitude %}
+{% if local and local.latitude and local.longitude %}
 <div class="mb-2">
   <button onclick="mintaLokasi()" class="btn btn-sm btn-primary">
     <i class="fa fa-location-arrow"></i> Loke Rutes
   </button>
-  <a href="https://www.google.com/maps/dir/?api=1&destination={{ addtl.latitude }},{{ addtl.longitude }}"
+  <a href="https://www.google.com/maps/dir/?api=1&destination={{ local.latitude }},{{ local.longitude }}"
      target="_blank" class="btn btn-sm btn-success">
-    <i class="fa fa-map"></i> Loke Google Maps
+    <i class="fa fa-map"></i> Google Maps
   </a>
 </div>
 {% endif %}
 
 <hr>
 
-<!-- AKTIVIDADE NEGOSIU -->
-<table class="table table-sm">
-  <tr class="bg-light">
-    <th colspan="2">
-      AKTIVIDADE NEGOSIU
-      <a href="{% url 'business-update' benef.hashed %}"><i class="fa fa-edit"></i></a>
+<!-- ══════════════════════════════════════════
+     I. INFORMASAUN JERAL EMPREZA
+     ══════════════════════════════════════════ -->
+<div class="alert alert-secondary py-1 px-2 mb-1">
+  <i class="fa fa-building"></i> <strong>I. INFORMASAUN JERAL EMPREZA</strong>
+</div>
+
+<!-- EKIPA MEMBRU -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-dark text-white">
+    <th colspan="4">
+      <i class="fa fa-users"></i> Ekipa Membru
+      <a href="{% url 'ks-ekipa-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
     </th>
   </tr>
-  <tr class="bg-light"><th>NEGOSIU</th><th>SEITOR</th></tr>
+  <tr class="bg-light">
+    <th style="width:30%">Naran</th>
+    <th style="width:25%">Funsaun</th>
+    <th style="width:25%">Kontakto</th>
+    <th style="width:20%" class="text-center">Aksaun</th>
+  </tr>
+  {% if monitoring %}
+    {% for m in monitoring.membro %}
+    <tr>
+      <td>{{ m.name }}</td>
+      <td>
+        {% if m.role == "Xefi" %}
+          <span class="badge badge-primary">{{ m.get_role_display }}</span>
+        {% else %}
+          <span class="badge badge-secondary">{{ m.get_role_display }}</span>
+        {% endif %}
+      </td>
+      <td>{{ m.phone|default:"-" }}</td>
+      <td class="text-center">
+        <a href="{% url 'ks-ekipa-edit' benef.hashed m.pk %}" class="btn btn-xs btn-info" title="Edit">
+          <i class="fa fa-pencil"></i>
+        </a>
+        <a href="{% url 'ks-ekipa-delete' benef.hashed m.pk %}" class="btn btn-xs btn-danger" title="Hamoos">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4" class="text-muted text-center">La iha dadus</td></tr>
+    {% endfor %}
+  {% else %}
+    <tr><td colspan="4" class="text-muted text-center">La iha dadus</td></tr>
+  {% endif %}
+</table>
+
+<!-- AKTIVIDADE NEGOSIU -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-dark text-white">
+    <th colspan="3">
+      <i class="fa fa-briefcase"></i> Aktividade Negosiu
+      <a href="{% url 'ks-business-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+    </th>
+  </tr>
+  <tr class="bg-light">
+    <th style="width:40%">Naran Negosiu</th>
+    <th style="width:35%">Seitor</th>
+    <th style="width:25%">Kategoria</th>
+  </tr>
   {% for b in businesses %}
-    <tr><td>{{ b.name }}</td><td>{{ b.sector }}</td></tr>
+  <tr>
+    <td>{{ b.name }}</td>
+    <td>{{ b.sector|default:"-" }}</td>
+    <td>{{ b.category|default:"-" }}</td>
+  </tr>
   {% empty %}
-    <tr><td colspan="2" class="text-muted">La iha dadus</td></tr>
+  <tr><td colspan="3" class="text-muted text-center">La iha dadus</td></tr>
   {% endfor %}
 </table>
 
 <!-- PROGRAMA KREDITU SUAVE -->
-<table class="table table-sm">
-  <tr class="bg-light">
-    <th colspan="4">
-      PROGRAMA KREDITU SUAVE
-      {% for b in businesses %}
-        <a href="{% url 'program-update' b.hashed %}"><i class="fa fa-edit"></i></a>
-      {% endfor %}
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-dark text-white">
+    <th colspan="5">
+      <i class="fa fa-money"></i> Programa Kreditu Suave
+      <a href="{% url 'ks-program-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
     </th>
   </tr>
-  <tr class="bg-light"><th>PROGRAMA</th><th>TINAN</th><th>FAZE</th><th>VALOR</th></tr>
+  <tr class="bg-light">
+    <th>Programa</th><th>Faze</th><th>Tinan</th>
+    <th class="text-right">Aprovadu ($)</th>
+    <th class="text-right">Montante ($)</th>
+  </tr>
   {% for p in programs %}
-    <tr>
-      <td>{{ p.program_type }}</td>
-      <td>{{ p.year }}</td>
-      <td>{{ p.faze }}</td>
-      <td>{{ p.amount }}</td>
-    </tr>
-  {% empty %}
-    <tr><td colspan="4" class="text-muted">La iha dadus</td></tr>
-  {% endfor %}
-</table>
-
-<!-- KREDITU -->
-<table class="table table-sm">
-  <tr class="bg-light">
-    <th colspan="3">
-      KREDITU
-      <a href="{% url 'kredit-update' benef.hashed %}"><i class="fa fa-edit"></i></a>
-    </th>
+  <tr>
+    <td>{{ p.program_type }}</td>
+    <td>{{ p.faze }}</td>
+    <td>{{ p.year }}</td>
+    <td class="text-right">{{ p.approved_amount|default:"-" }}</td>
+    <td class="text-right"><strong>{{ p.amount|default:"-" }}</strong></td>
   </tr>
-  <tr class="bg-light"><th>EMPREZA</th><th>MUNICIPIU</th><th>VALOR</th></tr>
-  {% for k in kredits %}
-    <tr>
-      <td>{{ k.enterprise_name }}</td>
-      <td>{{ k.municipality }}</td>
-      <td>{{ k.amount }}</td>
-    </tr>
   {% empty %}
-    <tr><td colspan="3" class="text-muted">La iha dadus</td></tr>
+  <tr><td colspan="5" class="text-muted text-center">La iha dadus</td></tr>
   {% endfor %}
 </table>
 
 <!-- TRABALHADORES -->
-<table class="table table-sm">
-  <tr class="bg-light">
-    <th colspan="4">
-      TRABALHADORES
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-dark text-white">
+    <th colspan="5">
+      <i class="fa fa-user"></i> Trabalhadores
       {% for b in businesses %}
-        <a href="{% url 'employee-update' b.hashed %}"><i class="fa fa-edit"></i></a>
+      <a href="{% url 'ks-employee-add' b.benefisiariu.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
       {% endfor %}
     </th>
   </tr>
-  <tr class="bg-light"><th>EMPREZA</th><th>MANE</th><th>FETO</th><th>TOTAL</th></tr>
+  <tr class="bg-light">
+    <th>Empreza</th><th class="text-center">Mane</th>
+    <th class="text-center">Feto</th><th class="text-center">Total</th>
+    <th class="text-center">Aksaun</th>
+  </tr>
   {% for k in employees %}
-    <tr>
-      <td>{{ k.business }}</td>
-      <td>{{ k.male }}</td>
-      <td>{{ k.female }}</td>
-      <td>{{ k.total }}</td>
-    </tr>
+  <tr>
+    <td>{{ k.business.name }}</td>
+    <td class="text-center">{{ k.male }}</td>
+    <td class="text-center">{{ k.female }}</td>
+    <td class="text-center"><strong>{{ k.total }}</strong></td>
+    <td class="text-center">
+      <a href="{% url 'ks-employee-edit' benef.hashed k.pk %}" class="btn btn-xs btn-info">
+        <i class="fa fa-pencil"></i>
+      </a>
+    </td>
+  </tr>
   {% empty %}
-    <tr><td colspan="4" class="text-muted">La iha dadus</td></tr>
+  <tr><td colspan="5" class="text-muted text-center">La iha dadus</td></tr>
   {% endfor %}
 </table>
 
 <!-- FINANSIAMENTO -->
-<table class="table table-sm">
-  <tr class="bg-light">
-    <th colspan="2">
-      FINANSIAMENTO
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-dark text-white">
+    <th colspan="3">
+      <i class="fa fa-dollar"></i> Finansiamento
       {% for b in businesses %}
-        <a href="{% url 'finance-update' b.hashed %}"><i class="fa fa-edit"></i></a>
+      <a href="{% url 'ks-finance-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
       {% endfor %}
     </th>
   </tr>
-  <tr class="bg-light"><th>EMPREZA</th><th>TOTAL FINANSAS</th></tr>
+  <tr class="bg-light">
+    <th>Empreza</th><th class="text-right">Total Finansas ($)</th><th class="text-center">Aksaun</th>
+  </tr>
   {% for k in finances %}
-    <tr><td>{{ k.business }}</td><td>{{ k.budget }}</td></tr>
+  <tr>
+    <td>{{ k.business.name }}</td>
+    <td class="text-right"><strong>{{ k.budget|default:"-" }}</strong></td>
+    <td class="text-center">
+      <a href="{% url 'ks-finance-edit' benef.hashed k.pk %}" class="btn btn-xs btn-info">
+        <i class="fa fa-pencil"></i>
+      </a>
+    </td>
+  </tr>
   {% empty %}
-    <tr><td colspan="2" class="text-muted">La iha dadus</td></tr>
+  <tr><td colspan="3" class="text-muted text-center">La iha dadus</td></tr>
   {% endfor %}
 </table>
 
-<!-- ═══════════════════════════════════════════════════════════
-     SEKSAUN MONITORING — hanya tampil jika ada data kredit
-     ═══════════════════════════════════════════════════════════ -->
 {% if monitoring %}
 
-  <!-- EKIPA MEMBRU -->
-  <table class="table table-sm">
-    <tr class="bg-light">
-      <th colspan="3">EKIPA MEMBRU</th>
-    </tr>
-    <tr class="bg-light"><th>NARAN</th><th>FUNSAUN</th><th>KONTAKTO</th></tr>
-    {% for m in monitoring.membro %}
-      <tr>
-        <td>{{ m.name }}</td>
-        <td>{{ m.get_role_display }}</td>
-        <td>{{ m.phone|default:"-" }}</td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="3" class="text-muted">La iha dadus</td></tr>
-    {% endfor %}
-  </table>
+<hr>
+<!-- ══════════════════════════════════════════
+     II. AVALIASAUN PRODUTO/SERVISU, KLIENTE, MERKADORIA
+     ══════════════════════════════════════════ -->
+<div class="alert alert-secondary py-1 px-2 mb-1">
+  <i class="fa fa-line-chart"></i> <strong>II. AVALIASAUN PRODUTO, KLIENTE & MERKADU</strong>
+</div>
 
-  <!-- PRODUTO / SERVISU -->
-  <table class="table table-sm">
-    <tr class="bg-light">
-      <th colspan="4">PRODUTO / SERVISU</th>
-    </tr>
-    <tr class="bg-light">
-      <th>TIPU</th><th>VOL. PRODUSAUN</th><th>VOL. VENDAS</th><th>MONTANTE ($)</th>
-    </tr>
-    {% for p in monitoring.products %}
-      <tr>
-        <td>{{ p.name }}</td>
-        <td>{{ p.production_volume|default:"-" }}</td>
-        <td>{{ p.sales_volume|default:"-" }}</td>
-        <td>{{ p.sales_amount|default:"-" }}</td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="4" class="text-muted">La iha dadus</td></tr>
-    {% endfor %}
-  </table>
+<!-- PRODUTO / SERVISU -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-primary text-white">
+    <th colspan="6">
+      <i class="fa fa-cubes"></i> Produto / Servisu Prinsipal
+      <a href="{% url 'ks-product-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+    </th>
+  </tr>
+  <tr class="bg-light">
+    <th>Produtu</th>
+    <th class="text-center">Vol. Produsaun</th>
+    <th class="text-center">Frek. Prod.</th>
+    <th class="text-center">Vol. Vendas</th>
+    <th class="text-right">Montante ($)</th>
+    <th class="text-center">Aksaun</th>
+  </tr>
+  {% for p in monitoring.products %}
+  <tr>
+    <td>{{ p.name }}</td>
+    <td class="text-center">{{ p.production_volume|default:"-" }}</td>
+    <td class="text-center">{{ p.production_frequency|default:"-" }}</td>
+    <td class="text-center">{{ p.sales_volume|default:"-" }}</td>
+    <td class="text-right">{{ p.sales_amount|default:"-" }}</td>
+    <td class="text-center">
+      <a href="{% url 'ks-product-edit' benef.hashed p.pk %}" class="btn btn-xs btn-info" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      <a href="{% url 'ks-product-delete' benef.hashed p.pk %}" class="btn btn-xs btn-danger" title="Hamoos">
+        <i class="fa fa-trash"></i>
+      </a>
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="6" class="text-muted text-center">La iha dadus</td></tr>
+  {% endfor %}
+</table>
 
-  <!-- KLIENTE PRINSIPAL -->
-  <table class="table table-sm">
-    <tr class="bg-light">
-      <th colspan="3">KLIENTE PRINSIPAL</th>
-    </tr>
-    <tr class="bg-light"><th>NARAN</th><th>VOL. DEMANDA</th><th>FREKUENSIA</th></tr>
-    {% for c in monitoring.customers %}
-      <tr>
-        <td>{{ c.name }}</td>
-        <td>{{ c.demand_volume|default:"-" }}</td>
-        <td>{{ c.frequency|default:"-" }}</td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="3" class="text-muted">La iha dadus</td></tr>
-    {% endfor %}
-  </table>
+<!-- KLIENTE PRINSIPAL -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-primary text-white">
+    <th colspan="4">
+      <i class="fa fa-handshake-o"></i> Kliente Prinsipal Sira
+      <a href="{% url 'ks-customer-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+    </th>
+  </tr>
+  <tr class="bg-light">
+    <th>Kliente</th><th class="text-center">Vol. Demanda</th>
+    <th class="text-center">Frekuensia</th><th class="text-center">Aksaun</th>
+  </tr>
+  {% for c in monitoring.customers %}
+  <tr>
+    <td>{{ c.name }}</td>
+    <td class="text-center">{{ c.demand_volume|default:"-" }}</td>
+    <td class="text-center">{{ c.frequency|default:"-" }}</td>
+    <td class="text-center">
+      <a href="{% url 'ks-customer-edit' benef.hashed c.pk %}" class="btn btn-xs btn-info" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      <a href="{% url 'ks-customer-delete' benef.hashed c.pk %}" class="btn btn-xs btn-danger" title="Hamoos">
+        <i class="fa fa-trash"></i>
+      </a>
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="4" class="text-muted text-center">La iha dadus</td></tr>
+  {% endfor %}
+</table>
 
-  <!-- KOMPETITOR -->
-  <table class="table table-sm">
-    <tr class="bg-light">
-      <th colspan="3">KOMPETITOR</th>
-    </tr>
-    <tr class="bg-light"><th>NARAN</th><th>VOL. DEMANDA</th><th>FREKUENSIA</th></tr>
-    {% for c in monitoring.competitors %}
-      <tr>
-        <td>{{ c.name }}</td>
-        <td>{{ c.demand_volume|default:"-" }}</td>
-        <td>{{ c.frequency|default:"-" }}</td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="3" class="text-muted">La iha dadus</td></tr>
-    {% endfor %}
-  </table>
+<!-- KOMPETITOR -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-primary text-white">
+    <th colspan="4">
+      <i class="fa fa-flag"></i> Kompetitor Sira
+      <a href="{% url 'ks-competitor-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+    </th>
+  </tr>
+  <tr class="bg-light">
+    <th>Kompetitor</th><th class="text-center">Vol. Demanda</th>
+    <th class="text-center">Frekuensia</th><th class="text-center">Aksaun</th>
+  </tr>
+  {% for k in monitoring.competitors %}
+  <tr>
+    <td>{{ k.name }}</td>
+    <td class="text-center">{{ k.demand_volume|default:"-" }}</td>
+    <td class="text-center">{{ k.frequency|default:"-" }}</td>
+    <td class="text-center">
+      <a href="{% url 'ks-competitor-edit' benef.hashed k.pk %}" class="btn btn-xs btn-info" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      <a href="{% url 'ks-competitor-delete' benef.hashed k.pk %}" class="btn btn-xs btn-danger" title="Hamoos">
+        <i class="fa fa-trash"></i>
+      </a>
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="4" class="text-muted text-center">La iha dadus</td></tr>
+  {% endfor %}
+</table>
 
-  <!-- AVALIASAUN MERKADU -->
+<!-- AVALIASAUN MERKADU (OneToOne) -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-primary text-white">
+    <th colspan="2">
+      <i class="fa fa-search"></i> Avaliasaun Merkadu (Q23–Q27)
+      {% if monitoring.market %}
+      <a href="{% url 'ks-market-edit' benef.hashed monitoring.market.pk %}" class="btn btn-xs btn-warning float-right ml-1" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      {% else %}
+      <a href="{% url 'ks-market-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+      {% endif %}
+    </th>
+  </tr>
   {% if monitoring.market %}
-  <table class="table table-sm">
-    <tr class="bg-light"><th colspan="2">AVALIASAUN MERKADU</th></tr>
-    <tr><td>Estratejia Promosaun</td>  <td>{{ monitoring.market.promotion_strategy|default:"-" }}</td></tr>
-    <tr><td>Difikuldade Prinsipal</td> <td>{{ monitoring.market.current_challenges|default:"-" }}</td></tr>
-    <tr><td>Dezafio Longu Prazu</td>   <td>{{ monitoring.market.long_term_challenges|default:"-" }}</td></tr>
-    <tr><td>Prioridade</td>            <td>{{ monitoring.market.get_priority_display|default:"-" }}</td></tr>
-    <tr><td>Estratejia Resposta</td>   <td>{{ monitoring.market.response_strategy|default:"-" }}</td></tr>
-  </table>
+  <tr><td style="width:40%">Q23. Estratejia Promosaun</td><td>{{ monitoring.market.promotion_strategy|default:"-" }}</td></tr>
+  <tr><td>Q24. Difikuldade Atual</td>    <td>{{ monitoring.market.current_challenges|default:"-" }}</td></tr>
+  <tr><td>Q25. Dezafio Longu Prazu</td>  <td>{{ monitoring.market.long_term_challenges|default:"-" }}</td></tr>
+  <tr><td>Q26. Prioridade</td>           <td>{{ monitoring.market.get_priority_display|default:"-" }}</td></tr>
+  <tr><td>Q27. Estratejia Resposta</td>  <td>{{ monitoring.market.response_strategy|default:"-" }}</td></tr>
+  {% else %}
+  <tr><td colspan="2" class="text-muted text-center">La iha dadus</td></tr>
   {% endif %}
+</table>
 
-  <!-- AVALIASAUN FINANSEIRU -->
+<hr>
+<!-- ══════════════════════════════════════════
+     III. AVALIASAUN FINANSEIRU
+     ══════════════════════════════════════════ -->
+<div class="alert alert-secondary py-1 px-2 mb-1">
+  <i class="fa fa-calculator"></i> <strong>III. AVALIASAUN FINANSEIRU</strong>
+</div>
+
+<!-- AVALIASAUN FINANSEIRU (OneToOne) -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-success text-white">
+    <th colspan="2">
+      <i class="fa fa-bar-chart"></i> Avaliasaun Finanseiru (Q28–Q34)
+      {% if monitoring.financial %}
+      <a href="{% url 'ks-financial-edit' benef.hashed monitoring.financial.pk %}" class="btn btn-xs btn-warning float-right ml-1" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      {% else %}
+      <a href="{% url 'ks-financial-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+      {% endif %}
+    </th>
+  </tr>
   {% if monitoring.financial %}
-  <table class="table table-sm">
-    <tr class="bg-light"><th colspan="2">AVALIASAUN FINANSEIRU</th></tr>
-    <tr><td>Livru Kontabilidade</td>   <td>{{ monitoring.financial.get_accounting_book_display|default:"-" }}</td></tr>
-    <tr><td>Metodu Inventariu</td>     <td>{{ monitoring.financial.get_inventory_method_display|default:"-" }}</td></tr>
-    <tr><td>Rendimento/Fulan ($)</td>  <td>{{ monitoring.financial.monthly_revenue|default:"-" }}</td></tr>
-    <tr><td>Rendimento/Tinan ($)</td>  <td>{{ monitoring.financial.annual_revenue|default:"-" }}</td></tr>
-    <tr><td>Projeta Tinan Oin ($)</td> <td>{{ monitoring.financial.projected_revenue|default:"-" }}</td></tr>
-    <tr><td>Selu Impostu?</td>         <td>{{ monitoring.financial.pays_tax|yesno:"Sin,Lae,-" }}</td></tr>
-    <tr><td>Taxa/Fulan ($)</td>        <td>{{ monitoring.financial.monthly_tax|default:"-" }}</td></tr>
-    <tr><td>Total Assets ($)</td>      <td>{{ monitoring.financial.total_assets|default:"-" }}</td></tr>
-  </table>
-
-    <!-- ASSET FIXU -->
-    {% if monitoring.assets %}
-    <table class="table table-sm">
-      <tr class="bg-light"><th colspan="2">ASSET FIXU</th></tr>
-      <tr class="bg-light"><th>NARAN</th><th>VALOR ($)</th></tr>
-      {% for a in monitoring.assets %}
-        <tr><td>{{ a.name }}</td><td>{{ a.value|default:"-" }}</td></tr>
-      {% endfor %}
-    </table>
-    {% endif %}
+  <tr><td style="width:50%">Q28. Livru Kontabilidade</td>  <td>{{ monitoring.financial.get_accounting_book_display|default:"-" }}</td></tr>
+  <tr><td>Q29. Metodu Inventariu</td>   <td>{{ monitoring.financial.get_inventory_method_display|default:"-" }}</td></tr>
+  <tr><td>Q30. Rendimento/Fulan ($)</td><td><strong>{{ monitoring.financial.monthly_revenue|default:"-" }}</strong></td></tr>
+  <tr><td>Q31. Rendimento/Tinan ($)</td><td><strong>{{ monitoring.financial.annual_revenue|default:"-" }}</strong></td></tr>
+  <tr><td>Q32. Projeta Tinan Oin ($)</td><td>{{ monitoring.financial.projected_revenue|default:"-" }}</td></tr>
+  <tr><td>Q33. Selu Impostu?</td>       <td>{{ monitoring.financial.pays_tax|yesno:"Sin,Lae,-" }}</td></tr>
+  <tr><td>Q33b. Taxa/Fulan ($)</td>     <td>{{ monitoring.financial.monthly_tax|default:"-" }}</td></tr>
+  <tr><td>Q34. Total Assets ($)</td>    <td><strong>{{ monitoring.financial.total_assets|default:"-" }}</strong></td></tr>
+  {% else %}
+  <tr><td colspan="2" class="text-muted text-center">La iha dadus</td></tr>
   {% endif %}
+</table>
 
-  <!-- INFORMASAUN KREDITU -->
+<!-- ASSET FIXU -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-success text-white">
+    <th colspan="3">
+      <i class="fa fa-archive"></i> Asset Fixu
+      {% if monitoring.financial %}
+      <a href="{% url 'ks-asset-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+      {% endif %}
+    </th>
+  </tr>
+  <tr class="bg-light">
+    <th>Naran Asset</th><th class="text-right">Valor ($)</th><th class="text-center">Aksaun</th>
+  </tr>
+  {% if monitoring.assets %}
+    {% for a in monitoring.assets %}
+    <tr>
+      <td>{{ a.name }}</td>
+      <td class="text-right">{{ a.value|default:"-" }}</td>
+      <td class="text-center">
+        <a href="{% url 'ks-asset-edit' benef.hashed a.pk %}" class="btn btn-xs btn-info" title="Edit">
+          <i class="fa fa-pencil"></i>
+        </a>
+        <a href="{% url 'ks-asset-delete' benef.hashed a.pk %}" class="btn btn-xs btn-danger" title="Hamoos">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  {% else %}
+  <tr><td colspan="3" class="text-muted text-center">La iha dadus</td></tr>
+  {% endif %}
+</table>
+
+<hr>
+<!-- ══════════════════════════════════════════
+     IV. INFORMASAUN KREDITU
+     ══════════════════════════════════════════ -->
+<div class="alert alert-secondary py-1 px-2 mb-1">
+  <i class="fa fa-credit-card"></i> <strong>IV. INFORMASAUN KREDITU (Q35–Q39)</strong>
+</div>
+
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-warning">
+    <th colspan="2">
+      <i class="fa fa-bank"></i> Informasaun Kreditu
+      {% if monitoring.credit_info %}
+      <a href="{% url 'ks-creditinfo-edit' benef.hashed monitoring.credit_info.pk %}" class="btn btn-xs btn-dark float-right ml-1" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      {% else %}
+      <a href="{% url 'ks-creditinfo-add' benef.hashed %}" class="btn btn-xs btn-dark float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+      {% endif %}
+    </th>
+  </tr>
   {% if monitoring.credit_info %}
   {% with ci=monitoring.credit_info %}
-  <table class="table table-sm">
-    <tr class="bg-light"><th colspan="2">INFORMASAUN KREDITU</th></tr>
-    <tr><td>Foti Tan Kreditu?</td>       <td>{{ ci.took_credit|yesno:"Sin,Lae,-" }}</td></tr>
-    <tr><td>Provedor Kreditu</td>        <td>{{ ci.provider|default:"-" }}</td></tr>
-    <tr><td>Montante Hetan ($)</td>      <td>{{ ci.amount|default:"-" }}</td></tr>
-    <tr><td>Tuir Espetativa?</td>        <td>{{ ci.satisfied|yesno:"Sin,Lae,-" }}</td></tr>
-    <tr><td>Hakarak Kreditu Futuru?</td> <td>{{ ci.wants_more|yesno:"Sin,Lae,-" }}</td></tr>
-    <tr><td>Institusaun Preferida</td>   <td>{{ ci.preferred_institution|default:"-" }}</td></tr>
-    <tr><td>Razaun Preferensia</td>      <td>{{ ci.reason_preference|default:"-" }}</td></tr>
-    <tr><td>Situasaun Pagamentu</td>     <td>{{ ci.get_repayment_status_display|default:"-" }}</td></tr>
-    <tr><td>Nota Pagamentu</td>          <td>{{ ci.repayment_notes|default:"-" }}</td></tr>
-    <tr><td>Rekomendasaun</td>           <td>{{ ci.recommendation|default:"-" }}</td></tr>
-    <tr><td>Kolateral ($)</td>           <td>{{ ci.collateral_amount|default:"-" }}</td></tr>
-    <tr><td>Aprovasaun Banku</td>        <td>{{ ci.approved_by_bank|default:"-" }}</td></tr>
-    <tr><td>Problema Selu Fila?</td>     <td>{{ ci.has_repayment_problem|yesno:"Sin,Lae,-" }}</td></tr>
-    <tr><td>Programa Kontinua?</td>      <td>{{ ci.program_continuation|yesno:"Sin,Lae,-" }}</td></tr>
-  </table>
+  <tr><td style="width:45%">Q35. Foti Tan Kreditu?</td>      <td>{{ ci.took_credit|yesno:"Sin,Lae,-" }}</td></tr>
+  <tr><td>Q36. Provedor</td>                                  <td>{{ ci.provider|default:"-" }}</td></tr>
+  <tr><td>Q37. Montante Hetan ($)</td>                        <td><strong>{{ ci.amount|default:"-" }}</strong></td></tr>
+  <tr><td>Q37b. Tuir Espetativa?</td>                         <td>{{ ci.satisfied|yesno:"Sin,Lae,-" }}</td></tr>
+  <tr><td>Q38. Hakarak Kreditu Futuru?</td>                   <td>{{ ci.wants_more|yesno:"Sin,Lae,-" }}</td></tr>
+  <tr><td>Q38b. Institusaun Preferida</td>                    <td>{{ ci.preferred_institution|default:"-" }}</td></tr>
+  <tr><td>Razaun Preferensia</td>                             <td>{{ ci.reason_preference|default:"-" }}</td></tr>
+  <tr><td>Q39. Situasaun Pagamentu</td>
+    <td>
+      {% if ci.repayment_status == "OnTime" %}<span class="badge badge-success">{{ ci.get_repayment_status_display }}</span>
+      {% elif ci.repayment_status == "Late" %}<span class="badge badge-warning">{{ ci.get_repayment_status_display }}</span>
+      {% elif ci.repayment_status == "Stuck" %}<span class="badge badge-danger">{{ ci.get_repayment_status_display }}</span>
+      {% elif ci.repayment_status == "Done" %}<span class="badge badge-info">{{ ci.get_repayment_status_display }}</span>
+      {% else %}{{ ci.get_repayment_status_display|default:"-" }}
+      {% endif %}
+    </td>
+  </tr>
+  <tr><td>Nota Pagamentu</td>       <td>{{ ci.repayment_notes|default:"-" }}</td></tr>
+  <tr><td>Rekomendasaun</td>        <td>{{ ci.recommendation|default:"-" }}</td></tr>
+  <tr><td>Kolateral ($)</td>        <td>{{ ci.collateral_amount|default:"-" }}</td></tr>
+  <tr><td>Aprovasaun Banku</td>     <td>{{ ci.approved_by_bank|default:"-" }}</td></tr>
+  <tr><td>Problema Selu Fila?</td>  <td>{{ ci.has_repayment_problem|yesno:"Sin,Lae,-" }}</td></tr>
+  <tr><td>Programa Kontinua?</td>   <td>{{ ci.program_continuation|yesno:"Sin,Lae,-" }}</td></tr>
   {% endwith %}
+  {% else %}
+  <tr><td colspan="2" class="text-muted text-center">La iha dadus</td></tr>
   {% endif %}
+</table>
 
 {% endif %}{# end monitoring #}

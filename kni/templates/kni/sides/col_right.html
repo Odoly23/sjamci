@@ -50,9 +50,11 @@
   <tr class="bg-light">
     <th colspan="4">
       PROGRAMA KNI
-      {% for b in businesses %}
+      {% if group == "KNI" %}
+              {% for b in businesses %}
         <a href="{% url 'kni-program-add' benef.hashed %}"><i class="fa fa-edit"></i></a>
       {% endfor %}
+      {% endif %}
     </th>
   </tr>
   <tr class="bg-light">
@@ -106,9 +108,11 @@
   <tr class="bg-light">
     <th colspan="2">
       FINANCIAMENTO
-      {% for b in businesses %}
-        <a href=""><i class="fa fa-edit"></i></a>
-      {% endfor %}
+      {% if group == "KNI" %}
+        {% for b in businesses %}
+          <a href=""><i class="fa fa-edit"></i></a>
+        {% endfor %}
+      {% endif %}
     </th>
   </tr>
   <tr class="bg-light"><th>EMPREZA</th><th>TOTAL FINANCAS</th></tr>

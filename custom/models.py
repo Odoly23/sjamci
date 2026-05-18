@@ -173,3 +173,9 @@ class TIpu_Programa(BaseModel):
 	def __str__(self):
 		template = '{0.name}'
 		return template.format(self)
+
+class TIPO_ATIVIDADE(BaseModel):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name

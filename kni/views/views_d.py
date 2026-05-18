@@ -15,6 +15,7 @@ from kni.models import    Business, LocBussiness, Program, Employee, Finance
 from itertools import groupby
 from operator import itemgetter
 from django.core.paginator import Paginator
+from django.conf import settings
 
 # Create your views here.
 @login_required

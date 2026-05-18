@@ -10,9 +10,7 @@
 				<div class="card-body">
 					<form method="POST" id="addressForm" data-posts-url="{% url 'ajax_load_posts' %}" data-villages-url="{% url 'ajax_load_villages' %}" novalidate>
 						{% csrf_token %}
-                <input type="hidden"
-           name="_form_token"
-           value="{{ form_token }}">
+                <input type="hidden"     name="_form_token"       value="{{ form_token }}">
             <div class="form-row">
               <div class="form-group col-md-4 mb-0">
                 {{ form.municipality|as_crispy_field }}

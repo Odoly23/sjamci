@@ -13,21 +13,303 @@ from custom.models import Minister, Diresaun, Position, Municipality, Administra
 							Sector, Status, Bussines_size, Category_Emp, Year, Faze
 from benefisiariu.models import Benefisiariu, AddressTL, Photo, AddressOrigin
 from kni.models import    Business, LocBussiness, Program, Employee, Finance
+from suave.models import CreditInfo
 
+# =========================================================
+# 1. SEXU BENEFISIARIU
+# =========================================================
 
 class APISexu(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+
     def get(self, request, format=None):
+
         label = []
         obj = []
+
         sexu_choices = ['Mane', 'Feto']
+
         for s in sexu_choices:
-            total = Benefisiariu.objects.filter(sex=s).count()
+
+            total = Benefisiariu.active_objects.filter(
+                Pnegosiu__program_type__name="KNI",
+                sex=s
+            ).distinct().count()
+
             label.append(s)
             obj.append(total)
-        data = {
+
+        return Response({
             'label': label,
             'obj': obj
-        }
-        return Response(data)
+        })
+
+
+# =========================================================
+# 2. MUNICIPIU BENEFISIARIU
+# =========================================================
+
+class APIMunicipiu(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+
+        label = []
+        obj = []
+
+        municipios = Municipality.objects.all().order_by('name')
+
+        for m in municipios:
+
+            total = Benefisiariu.active_objects.filter(
+                Pnegosiu__program_type__name="KNI",
+                locnegosiu__municipality=m
+            ).distinct().count()
+
+            label.append(m.name)
+            obj.append(total)
+
+        return Response({
+            'label': label,
+            'obj': obj
+        })
+
+
+# =========================================================
+# 3. STATUS PROGRAMA
+# =========================================================
+
+class APIStatusPrograma(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+
+        label = []
+        obj = []
+
+        statuss = Status.objects.all()
+
+        for s in statuss:
+
+            total = Program.objects.filter(
+                program_type__name="KNI",
+                status=s
+            ).count()
+
+            label.append(s.name)
+            obj.append(total)
+
+        return Response({
+            'label': label,
+            'obj': obj
+        })
+
+
+# =========================================================
+# 4. APOIU KADA TINAN
+# =========================================================
+
+class APIApoiuTinan(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+
+        label = []
+        obj = []
+
+        years = Year.objects.all().order_by('year')
+
+        for y in years:
+
+            total = Program.objects.filter(
+                program_type__name="KNI",
+                year=y
+            ).aggregate(
+                total=Sum('amount')
+            )['total'] or 0
+
+            label.append(str(y.year))
+            obj.append(float(total))
+
+        return Response({
+            'label': label,
+            'obj': obj
+        })
+
+
+# =========================================================
+# 5. APOIU TUIR FAZE
+# =========================================================
+
+class APIFaze(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+
+        label = []
+        obj = []
+
+        fazes = Faze.objects.exclude(name="KREDITU")
+
+        for f in fazes:
+
+            total = Program.objects.filter(
+                program_type__name="KNI",
+                faze=f
+            ).count()
+
+            label.append(f.name)
+            obj.append(total)
+
+        return Response({
+            'label': label,
+            'obj': obj
+        })
+
+
+# =========================================================
+# 6. SECTOR NEGOSIU
+# =========================================================
+
+class APISector(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+
+        label = []
+        obj = []
+
+        sectors = Sector.objects.all()
+
+        for s in sectors:
+
+            total = Business.objects.filter(
+                benefisiariu__Pnegosiu__program_type__name="KNI",
+                sector=s
+            ).distinct().count()
+
+            label.append(s.name)
+            obj.append(total)
+
+        return Response({
+            'label': label,
+            'obj': obj
+        })
+
+
+# =========================================================
+# 7. TRABALHADOR
+# =========================================================
+
+class APIEmployee(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+
+        employees = Employee.objects.filter(
+            business__benefisiariu__Pnegosiu__program_type__name="KNI"
+        ).distinct()
+
+        total_male = employees.aggregate(
+            total=Sum('male')
+        )['total'] or 0
+
+        total_female = employees.aggregate(
+            total=Sum('female')
+        )['total'] or 0
+
+        total_all = employees.aggregate(
+            total=Sum('total')
+        )['total'] or 0
+
+        return Response({
+            'label': ['Mane', 'Feto', 'Total'],
+            'obj': [
+                total_male,
+                total_female,
+                total_all
+            ]
+        })
+
+
+# =========================================================
+# 8. CREDIT REPAYMENT
+# =========================================================
+
+class APICreditRepayment(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+
+        label = []
+        obj = []
+
+        repayment_choices = [
+            'OnTime',
+            'Late',
+            'Stuck',
+            'Done',
+            'Failed',
+            'Other',
+        ]
+
+        for r in repayment_choices:
+
+            total = CreditInfo.objects.filter(
+                business__benefisiariu__Pnegosiu__program_type__name="KNI",
+                repayment_status=r
+            ).count()
+
+            label.append(r)
+            obj.append(total)
+
+        return Response({
+            'label': label,
+            'obj': obj
+        })
+
+
+# =========================================================
+# 9. KPI DASHBOARD
+# =========================================================
+
+class APIKPI(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+
+        total_benef = Benefisiariu.active_objects.filter(
+            Pnegosiu__program_type__name="KNI"
+        ).distinct().count()
+
+        total_business = Business.objects.filter(
+            benefisiariu__Pnegosiu__program_type__name="KNI"
+        ).distinct().count()
+
+        total_budget = Program.objects.filter(
+            program_type__name="KNI"
+        ).aggregate(
+            total=Sum('amount')
+        )['total'] or 0
+
+        total_employee = Employee.objects.filter(
+            business__benefisiariu__Pnegosiu__program_type__name="KNI"
+        ).aggregate(
+            total=Sum('total')
+        )['total'] or 0
+
+        return Response({
+            'total_benefisiariu': total_benef,
+            'total_business': total_business,
+            'total_budget': float(total_budget),
+            'total_employee': total_employee,
+        })

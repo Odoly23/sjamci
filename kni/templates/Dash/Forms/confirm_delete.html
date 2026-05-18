@@ -1,0 +1,38 @@
+<!-- Simpan di: templates/Dash/Forms/confirm_delete.html -->
+{% extends "main/layout.html" %}
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card border-danger shadow">
+
+        <div class="card-header bg-danger text-white">
+          <i class="fa fa-exclamation-triangle"></i>
+          <strong>{{ title }}</strong>
+        </div>
+
+        <div class="card-body text-center py-4">
+          <p class="mb-1">Ita boot hakarak hamoos rekord ida ne'e?</p>
+          <p class="mb-3">
+            <strong class="text-danger" style="font-size:1.1rem;">{{ obj }}</strong>
+          </p>
+          <p class="text-muted small mb-4">
+            <i class="fa fa-warning"></i> Aksaun ida ne'e la bele desfaz ona.
+          </p>
+
+          <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger mr-2">
+              <i class="fa fa-trash"></i> Sin, Hamoos
+            </button>
+            <a href="{% url 'benef-detail-ks' hashid %}" class="btn btn-secondary">
+              <i class="fa fa-times"></i> Kansela
+            </a>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

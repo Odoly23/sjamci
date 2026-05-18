@@ -2,42 +2,214 @@
 {% load static %}
 
 {% block content %}
+
 <section class="content mb-5">
+
   <div class="container-fluid">
-    <div class="row justify-content-center">
-      <div class="col-sm-12">
-        <div class="card  border-0  p-4">
-           <div class="row">
-              <div class="col-sm-4">
-               <div class="card">
-                 <div class="card-header bg-warning">
-                   <h5 class="text-center text-white">Total KNI Tuir Sexu</h5>
-                 </div>
-                 <div class="card-body">
-                   <canvas id="sexuChart"></canvas>
-                 </div>
-               </div>
-             </div>
-              <div class="col-sm-4">
-               <div class="card">
-                 <div class="card-header bg-warning">
-                   <h5 class="text-center text-white">Total KNI Tuir Sexu</h5>
-                 </div>
-                 <div class="card-body">
-                   <canvas id="sexuChart"></canvas>
-                 </div>
-               </div>
-             </div>
-           </div>
+
+    <!-- KPI -->
+    <div class="row mb-3">
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body text-center">
+            <h6>Total Benefisiariu</h6>
+            <h2 id="totalBenef">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body text-center">
+            <h6>Total Negósiu</h6>
+            <h2 id="totalBusiness">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body text-center">
+            <h6>Total Apoiu ($)</h6>
+            <h2 id="totalBudget">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body text-center">
+            <h6>Total Trabalhador</h6>
+            <h2 id="totalEmployee">0</h2>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROW 1 -->
+    <div class="row">
+
+      <!-- SEXU -->
+      <div class="col-md-4 mb-4">
+
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+
+          <div class="card-header bg-warning">
+            <h5 class="text-center text-white mb-0">
+              Benefisiariu Tuir Sexu
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <canvas id="sexuChart"></canvas>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- MUNICIPIU -->
+      <div class="col-md-8 mb-4">
+
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+
+          <div class="card-header bg-primary">
+            <h5 class="text-center text-white mb-0">
+              Benefisiariu Tuir Munisípiu
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <canvas id="municipiuChart"></canvas>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ROW 2 -->
+    <div class="row">
+
+      <!-- STATUS -->
+      <div class="col-md-4 mb-4">
+
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+
+          <div class="card-header bg-danger">
+            <h5 class="text-center text-white mb-0">
+              Status Programa
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <canvas id="statusChart"></canvas>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FAZE -->
+    <div class="col-md-4 mb-4">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-info">
+          <h5 class="text-center text-white mb-0">
+            Apoiu Tuir Faze
+          </h5>
+        </div>
+        <div class="card-body d-flex flex-column" style="position: relative; min-height: 300px; height: 100%;">
+          <div style="position: relative; flex-grow: 1; height: 300px;">
+            <canvas id="fazeChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+      <!-- TINAN -->
+      <div class="col-md-4 mb-4">
+
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+
+          <div class="card-header bg-success">
+            <h5 class="text-center text-white mb-0">
+              Apoiu Kada Tinan
+            </h5>
+          </div>
+
+          <div class="card-body d-flex flex-column" style="position: relative; min-height: 300px; height: 100%;">
+             <div style="position: relative; flex-grow: 1; height: 300px;">
+               <canvas id="tinanChart"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ROW 3 -->
+    <div class="row">
+
+      <!-- SECTOR -->
+      <div class="col-md-6 mb-4">
+
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+
+          <div class="card-header bg-secondary">
+            <h5 class="text-center text-white mb-0">
+              Sector Negósiu
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <canvas id="sectorChart"></canvas>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- EMPLOYEE -->
+      <div class="col-md-6 mb-4">
+
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+
+          <div class="card-header bg-dark">
+            <h5 class="text-center text-white mb-0">
+              Trabalhador
+            </h5>
+          </div>
+          <div class="card-body">
+            <canvas id="employeeChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
 </section>
+
 {% endblock content %}
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/chart/chart.umd.min.js' %}"></script>
+
 <script>
+  {% include 'chart/kpi_kni.js' %}
   {% include 'chart/sexs_kni.js' %}
+  {% include 'chart/mun_kni.js' %}
+  {% include 'chart/status_kni.js' %}
+  {% include 'chart/faze_kni.js' %}
+  {% include 'chart/tinan_kni.js' %}
+  {% include 'chart/sector_kni.js' %}
+  {% include 'chart/emp_kni.js' %}
+  {% include 'chart/credit_kni.js' %}
 </script>
+
 {% endblock scripts %}

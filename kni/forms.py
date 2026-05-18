@@ -51,7 +51,7 @@ class LocBusinessKNIForm(forms.ModelForm):
     class Meta:
         model  = LocBussiness
         fields = [
-            'municipality', 'administrativepost', 'village',
+            'municipality', 'administrativepost', 'village','address',
             'aldeia', 'latitude', 'longitude', 'area_polygon',
         ]
         widgets = {'area_polygon': forms.HiddenInput()}
@@ -139,6 +139,7 @@ class EmployeeKNIForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'post'
+        self.helper.form_tag = False
         self.helper.layout = Layout(
             HTML(_ALERT),
             Row(

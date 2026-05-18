@@ -9,7 +9,7 @@
         <div class="card  border-0 rounded-4 p-4">
           <form method="POST">
             {% csrf_token %}
-          <input type="hidden"
+            <input type="hidden"
            name="_form_token"
            value="{{ form_token }}">
           {% crispy form %}

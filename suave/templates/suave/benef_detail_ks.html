@@ -10,7 +10,7 @@
         <div class="card-header bg-steel">
           {{ legend|upper }}
           <i class="fa fa-long-arrow-right"></i>
-          <a href="{% url 'benef-update' benef.hashed %}" class="btn btn-sm btn-warning">
+          <a href="{% url 'edit-benef-ks' benef.hashed %}" class="btn btn-sm btn-warning">
             <i class="fa fa-edit"></i>
           </a>
         </div>
@@ -38,5 +38,5 @@
 {% endblock content %}
 
 {% block scripts %}
-  {% include 'kni/_map_script.html' %}
+  {% include 'kni/sides/map_script.html' %}
 {% endblock scripts %}

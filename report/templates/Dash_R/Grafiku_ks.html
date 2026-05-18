@@ -1,0 +1,424 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="content mb-5">
+
+  <div class="container-fluid">
+
+    <!-- KPI -->
+    <div class="row mb-3">
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body text-center">
+            <h6>Total Benefisiariu</h6>
+            <h2 id="totalBenef">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body text-center">
+            <h6>Total Negósiu</h6>
+            <h2 id="totalBusiness">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body text-center">
+            <h6>Total Orsamentu Kreditu ($)</h6>
+            <h2 id="totalBudget">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body text-center">
+            <h6>Total Trabalhador</h6>
+            <h2 id="totalEmployee">0</h2>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- KPI EXTRA -->
+    <div class="row mb-3">
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-primary text-white">
+          <div class="card-body text-center">
+            <h6>Total Ekipa</h6>
+            <h2 id="totalTeam">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-success text-white">
+          <div class="card-body text-center">
+            <h6>Total Revenue ($)</h6>
+            <h2 id="totalRevenue">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-warning text-dark">
+          <div class="card-body text-center">
+            <h6>Total Asset ($)</h6>
+            <h2 id="totalAsset">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-danger text-white">
+          <div class="card-body text-center">
+            <h6>Risk Business</h6>
+            <h2 id="riskBusiness">0</h2>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROW 1 -->
+    <div class="row">
+
+      <!-- SEXU -->
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-warning">
+            <h5 class="text-center text-white mb-0">Benefisiariu Tuir Sexu</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="sexuChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MUNICIPIU -->
+      <div class="col-md-8 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-primary">
+            <h5 class="text-center text-white mb-0">Benefisiariu Tuir Munisípiu</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="municipiuChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROW 2 -->
+    <div class="row">
+
+      <!-- STATUS -->
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-danger">
+            <h5 class="text-center text-white mb-0">Status Programa</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPAYMENT -->
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-dark">
+            <h5 class="text-center text-white mb-0">Credit Repayment</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="creditChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-info">
+            <h5 class="text-center text-white mb-0">Membru Ekipa</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="teamChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROW 3 -->
+    <div class="row">
+
+      <!-- SECTOR -->
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-secondary">
+            <h5 class="text-center text-white mb-0">Sector Negósiu</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="sectorChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMPLOYEE -->
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-success">
+            <h5 class="text-center text-white mb-0">Trabalhador</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="employeeChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROW 4 -->
+    <div class="row">
+
+      <!-- BUDGET MUNICIPALITY -->
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-primary">
+            <h5 class="text-center text-white mb-0">Budget per Municipality</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="budgetMunicipalityChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVENUE SECTOR -->
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-success">
+            <h5 class="text-center text-white mb-0">Revenue per Sector</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="revenueSectorChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROW 5 -->
+    <div class="row">
+
+      <!-- GROWTH -->
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-warning">
+            <h5 class="text-center text-dark mb-0">Growth Revenue</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="growthChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RISK -->
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-danger">
+            <h5 class="text-center text-white mb-0">Risk Classification</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="riskChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROW 6 -->
+    <div class="row">
+
+      <!-- TOP MUNICIPALITY -->
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-info">
+            <h5 class="text-center text-white mb-0">Top Municipality</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="topMunicipalityChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP SECTOR -->
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-dark">
+            <h5 class="text-center text-white mb-0">Top Sector</h5>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; width: 100%; height: 300px;">
+              <canvas id="topSectorChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- ROW GIS -->
+<div class="row">
+
+  <div class="col-md-12 mb-4">
+
+    <div class="card border-0 shadow-sm rounded-4">
+
+      <div class="card-header bg-dark">
+        <h5 class="text-center text-white mb-0">
+          GIS Business Location
+        </h5>
+      </div>
+
+      <div class="card-body p-0">
+
+        <div id="map"
+             style="
+               width:100%;
+               height:500px;
+               border-radius:0 0 1rem 1rem;
+             ">
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+  </div>
+</section>
+
+{% endblock content %}
+{% block scripts %}
+
+<!-- CHART JS -->
+<script src="{% static 'js/chart/chart.umd.min.js' %}"></script>
+
+<!-- LEAFLET -->
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<!-- MARKER CLUSTER -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css"/>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css"/>
+
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js">
+</script>
+
+<!-- KPI -->
+<script>
+  {% include 'chart/ks/kpi_ks.js' %}
+</script>
+
+<!-- CHART -->
+<script>
+  {% include 'chart/ks/sexu_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/municipiu_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/status_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/sector_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/employee_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/credit_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/team_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/budget_municipality_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/revenue_sector_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/growth_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/risk_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/top_municipality_ks.js' %}
+</script>
+
+<script>
+  {% include 'chart/ks/top_sector_ks.js' %}
+</script>
+
+<!-- GIS -->
+<script>
+  {% include 'chart/ks/gis_ks.js' %}
+</script>
+
+{% endblock scripts %}

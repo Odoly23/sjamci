@@ -1,0 +1,527 @@
+{% extends "main/layout.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<section class="content mb-5">
+  <div class="container-fluid">
+
+    {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert">
+          <span>&times;</span>
+        </button>
+      </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="row justify-content-center">
+
+      <div class="col-lg-4 mb-4">
+
+        <!-- PHOTO CARD -->
+        <div class="card border-0 shadow rounded-4 overflow-hidden">
+
+          <div class="card-header text-center bg-success text-white">
+            <h5 class="mb-0">
+              <i class="fa fa-user-circle"></i>
+              Profile Photo
+            </h5>
+          </div>
+
+          <div class="card-body text-center">
+
+            {% if photo and photo.image %}
+              <img src="{{ photo.image.url }}"
+                   class="rounded-circle shadow"
+                   width="220"
+                   height="220"
+                   style="object-fit: cover;">
+            {% else %}
+              <img src="{% static 'img/default.png' %}"
+                   class="rounded-circle shadow"
+                   width="220"
+                   height="220"
+                   style="object-fit: cover;">
+            {% endif %}
+
+            <div class="mt-4">
+
+              <button class="btn btn-warning btn-sm rounded-pill px-4"
+                      data-toggle="modal"
+                      data-target="#updatePhotoModal">
+
+                <i class="fa fa-camera"></i>
+                Update Photo
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- PROFILE INFO -->
+      <div class="col-lg-8">
+
+        <div class="card border-0 shadow rounded-4 overflow-hidden">
+
+          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+              <i class="fa fa-id-card"></i>
+              Informasaun Pessoal
+            </h5>
+
+            <button class="btn btn-light btn-sm rounded-pill"
+                    data-toggle="modal"
+                    data-target="#manageAccountModal">
+
+              <i class="fa fa-user"></i>
+              Manage Account
+
+            </button>
+
+          </div>
+
+          <div class="card-body">
+
+            <div class="table-responsive">
+
+              <table class="table table-borderless">
+
+                <tr>
+                  <th width="30%">Naran Kompletu</th>
+                  <td>: {{ profile.name }}</td>
+                </tr>
+
+                <tr>
+                  <th>Seksu</th>
+                  <td>: {{ profile.sexo }}</td>
+                </tr>
+
+                <tr>
+                  <th>Nu. Telemovel</th>
+                  <td>: {{ profile.phone }}</td>
+                </tr>
+
+                <tr>
+                  <th>Username</th>
+                  <td>: {{ request.user.username }}</td>
+                </tr>
+
+                <tr>
+                  <th>Email</th>
+                  <td>: {{ request.user.email }}</td>
+                </tr>
+
+                <tr>
+                  <th>Gabinete</th>
+                  <td>:
+                    {% if division.gabinete %}
+                      {{ division.gabinete }}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Diresaun</th>
+                  <td>:
+                    {% if division.dn %}
+                      {{ division.dn }}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Departamento</th>
+                  <td>:
+                    {% if division.department %}
+                      {{ division.department }}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Pozisaun</th>
+                  <td>:
+                    {% if position.position %}
+                      {{ position.position }}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                </tr>
+
+              </table>
+
+            </div>
+
+          </div>
+
+          <div class="card-footer text-right">
+
+            <button class="btn btn-info rounded-pill px-4"
+                    data-toggle="modal"
+                    data-target="#updateProfileModal">
+
+              <i class="fa fa-edit"></i>
+              Update Profile
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ================================================= -->
+<!-- UPDATE PROFILE MODAL -->
+<!-- ================================================= -->
+
+<div class="modal fade" id="updateProfileModal">
+
+  <div class="modal-dialog">
+    <div class="modal-content border-0 rounded-4">
+
+      <div class="modal-header bg-info text-white">
+
+        <h5 class="modal-title">
+          Update Profile
+        </h5>
+
+        <button type="button"
+                class="close text-white"
+                data-dismiss="modal">
+
+          &times;
+
+        </button>
+
+      </div>
+
+      <form id="profileForm">
+
+        {% csrf_token %}
+
+        <div class="modal-body">
+
+          <div class="form-group">
+
+            <label>Naran</label>
+
+            <input type="text"
+                   name="name"
+                   value="{{ emp.name }}"
+                   class="form-control">
+
+          </div>
+
+          <div class="form-group">
+
+            <label>Seksu</label>
+
+            <select name="sexo"
+                    class="form-control">
+
+              <option value="Mane"
+                {% if emp.sexo == 'Mane' %}
+                  selected
+                {% endif %}
+              >
+                Mane
+              </option>
+
+              <option value="Feto"
+                {% if emp.sexo == 'Feto' %}
+                  selected
+                {% endif %}
+              >
+                Feto
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="form-group">
+
+            <label>Nu. Telemovel</label>
+
+            <input type="text"
+                   name="phone"
+                   value="{{ emp.phone }}"
+                   class="form-control">
+
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button type="submit"
+                  class="btn btn-info">
+
+            Save Changes
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================================================= -->
+<!-- UPDATE PHOTO -->
+<!-- ================================================= -->
+
+<div class="modal fade" id="updatePhotoModal">
+
+  <div class="modal-dialog">
+    <div class="modal-content border-0 rounded-4">
+
+      <div class="modal-header bg-warning">
+
+        <h5 class="modal-title">
+          Update Photo
+        </h5>
+
+        <button type="button"
+                class="close"
+                data-dismiss="modal">
+
+          &times;
+
+        </button>
+
+      </div>
+
+      <form id="photoForm"
+            enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <div class="modal-body">
+
+          <input type="file"
+                 name="image"
+                 class="form-control"
+                 required>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button type="submit"
+                  class="btn btn-warning">
+
+            Upload Photo
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================================================= -->
+<!-- MANAGE ACCOUNT -->
+<!-- ================================================= -->
+
+<div class="modal fade" id="manageAccountModal">
+
+  <div class="modal-dialog">
+    <div class="modal-content border-0 rounded-4">
+
+      <div class="modal-header bg-primary text-white">
+
+        <h5 class="modal-title">
+          Manage Account
+        </h5>
+
+        <button type="button"
+                class="close text-white"
+                data-dismiss="modal">
+
+          &times;
+
+        </button>
+
+      </div>
+
+      <form id="accountForm">
+
+        {% csrf_token %}
+
+        <div class="modal-body">
+
+          <div class="form-group">
+
+            <label>Username</label>
+
+            <input type="text"
+                   name="username"
+                   value="{{ request.user.username }}"
+                   class="form-control">
+
+          </div>
+
+          <div class="form-group">
+
+            <label>Email</label>
+
+            <input type="email"
+                   name="email"
+                   value="{{ request.user.email }}"
+                   class="form-control">
+
+          </div>
+
+          <div class="form-group">
+
+            <label>Password Foun</label>
+
+            <input type="password"
+                   name="password"
+                   class="form-control">
+
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button type="submit"
+                  class="btn btn-primary">
+
+            Update Account
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+
+<script>
+
+$("#profileForm").submit(function(e){
+
+    e.preventDefault();
+
+    $.ajax({
+
+        url: "{% url 'update_profile_ajax' %}",
+        type: "POST",
+        data: $(this).serialize(),
+
+        success: function(response){
+
+            alert("Profile Atualiza Ho Susesu");
+            location.reload();
+
+        },
+
+        error: function(){
+
+            alert("Error Atualiza Profile");
+
+        }
+
+    });
+
+});
+
+$("#photoForm").submit(function(e){
+
+    e.preventDefault();
+
+    let formData = new FormData(this);
+
+    $.ajax({
+
+        url: "{% url 'update_photo_ajax' %}",
+        type: "POST",
+        data: formData,
+
+        processData: false,
+        contentType: false,
+
+        success: function(response){
+
+            alert("Photo Atualiza Ho Susesu");
+            location.reload();
+
+        },
+
+        error: function(){
+
+            alert("Error Upload Photo");
+
+        }
+
+    });
+
+});
+
+$("#accountForm").submit(function(e){
+
+    e.preventDefault();
+
+    $.ajax({
+
+        url: "{% url 'manage_account_ajax' %}",
+        type: "POST",
+        data: $(this).serialize(),
+
+        success: function(response){
+
+            alert("Account Atualiza Ho Susesu");
+            location.reload();
+
+        },
+
+        error: function(){
+
+            alert("Error Atualiza Account");
+
+        }
+
+    });
+
+});
+
+</script>
+
+{% endblock scripts %}

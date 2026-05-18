@@ -4,7 +4,9 @@
   <tr class="bg-light">
     <th colspan="3">
       INFORMASAUN PESOAL
-      <a href=""><i class="fa fa-edit"></i></a>
+     {% if group == "KNI" %}
+        <a href="{% url 'edit-benef' benef.hashed %}"><i class="fa fa-edit"></i></a>
+     {% endif %}
     </th>
   </tr>
   <tr>
@@ -15,9 +17,11 @@
         <img src="{{ photo.image.url }}" width="120">
       {% endif %}
       <br>
-      <a href="">
+     {% if group == "KNI" %}
+        <a href="">
         <i class="fa fa-edit"></i>
       </a>
+     {% endif %}
     </td>
   </tr>
   <tr><td>Sexu</td>        <td>: {{ benef.sex }}</td></tr>
@@ -35,7 +39,12 @@
   <tr class="bg-light">
     <th colspan="2">
       LOKALIZASAUN MORIS
-      <a href="{% url 'kni-addtl-update' benef.hashed %}"><i class="fa fa-edit"></i></a>
+      {% if group == "KNI" %}
+         <a href="{% url 'kni-addtl-update' benef.hashed %}"><i class="fa fa-edit"></i></a>
+      {% elif group == "KS"%}
+       <a href="{% url 'ks-addtl-update' benef.hashed %}"><i class="fa fa-edit"></i></a>
+      {% endif %}
+     
     </th>
   </tr>
   {% if addtl %}
@@ -52,7 +61,12 @@
   <tr class="bg-light">
     <th colspan="2">
       LOKALIZASAUN NEGOSIU
-      <a href="{% url 'kni-loc-add' benef.hashed %}"><i class="fa fa-edit"></i></a>
+      {% if group == "KNI" %}
+       <a href="{% url 'kni-loc-add' benef.hashed %}"><i class="fa fa-edit"></i></a>
+      {% elif group == "KS" %}
+       <a href="{% url 'ks-loc-add' benef.hashed %}"><i class="fa fa-edit"></i></a>
+      {% endif %}
+     
     </th>
   </tr>
   {% if local %}
@@ -71,7 +85,11 @@
   <tr class="bg-light">
     <th colspan="2">
       ENDERESU ORIGEN
-      <a href="{% url 'kni-addori-update' benef.hashed %}"><i class="fa fa-edit"></i></a>
+      {% if group == "KNI" %}
+        <a href="{% url 'kni-addori-update' benef.hashed %}"><i class="fa fa-edit"></i></a>
+      {% elif group == 'KS' %}
+        <a href="{% url 'kni-addori-update' benef.hashed %}"><i class="fa fa-edit"></i></a>
+      {% endif %}
     </th>
   </tr>
   {% if addori %}

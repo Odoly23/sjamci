@@ -13,9 +13,11 @@
         <div class="card-header bg-steel">
           {{ legend|upper }}
           <i class="fa fa-long-arrow-right"></i>
-          <a href="{% url 'edit-benef' benef.hashed %}" class="btn btn-sm btn-warning">
+         {% if group == "KNI" %}
+            <a href="{% url 'edit-benef' benef.hashed %}" class="btn btn-sm btn-warning">
             <i class="fa fa-edit"></i>
           </a>
+         {% endif %}
         </div>
 
         <div class="card-body">

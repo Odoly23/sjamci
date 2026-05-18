@@ -24,7 +24,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv(
 MAPBOX_TOKEN = config('MAPBOX_TOKEN', default='')
 
 # ══════════════════════════════════════════════════════════════
-#  APLIKASI
+#  APLIKASAUN
 # ══════════════════════════════════════════════════════════════
 INSTALLED_APPS = [
     # Django bawaan
@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'notif',
     'report',
     'users',
+    'mpms'
 ]
 
 MIDDLEWARE = [
@@ -70,6 +71,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Asja.middleware.PreviousURLMiddleware',
+    'Asja.middleware.NoBackAfterLogout',
+    'Asja.middleware.PreventDuplicatePostMiddleware',
 ]
 
 ROOT_URLCONF = 'Asja.urls'
@@ -91,12 +95,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Asja.wsgi.application'
 
-
-# ══════════════════════════════════════════════════════════════
-#  DATABASE
-#  Development  → SQLite (jika DB_ENGINE tidak diset di .env)
-#  Production   → MySQL (isi semua DB_* di .env)
-# ══════════════════════════════════════════════════════════════
 _db_engine = config('DB_ENGINE', default='')
 
 if _db_engine:
@@ -169,6 +167,11 @@ EMAIL_HOST_PASSWORD  = config('EMAIL_PASS', default='')
 LOG_DIR = BASE_DIR / 'logs'
 LOG_DIR.mkdir(exist_ok=True)
 
+# ══════════════════════════════════════════════════════════════
+#  API CORS
+# ══════════════════════════════════════════════════════════════
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 # ══════════════════════════════════════════════════════════════
 #  CRISPY FORMS

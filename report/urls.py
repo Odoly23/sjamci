@@ -9,6 +9,7 @@ urlpatterns = [
 
 
     #sumario-Grafiku
-    path('Sumario-Grafiku-kni/.html', views.grafiku_kni, name='g-kni')
+    path('Sumario-Grafiku-kni/.html', views.grafiku_kni, name='g-kni'),
+    path('Sumario-Grafiku-ks/.html', views.grafiku_ks, name='g-ks'),
 
 ]

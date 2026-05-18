@@ -8,6 +8,7 @@
       <div class="col-sm-12">
         <div class="card  border-0  p-4">
            <div class="row d-flex justify-content-between">
+            {% if group == 'admin' %}
               <div class="col-sm-4">
                <div class="card">
                  <div class="card-header bg-warning">
@@ -56,6 +57,41 @@
                  </div>
                </div>
              </div>
+             {% elif group == "KNI" %}
+              <div class="col-sm-12">
+               <div class="card">
+                 <div class="card-header bg-warning">
+                   <h5 class="text-center text-white">Total KNI</h5>
+                 </div>
+                 <div class="text-center">
+                   <div class="card-body d-flex justify-content-between">
+                     <a href="{% url 'kni-tab' %}"><i class="fa fa-table fa-2x"></i> Sumario</a>
+                     <a href="{% url 'g-kni' %}"><i class="fa fa-table fa-2x"></i> Grafiku</a>
+                   </div>
+                   <center>
+                        <h2 style="margin-bottom: 20px;">{{kni}}</h2>
+                    </center>
+                 </div>
+               </div>
+             </div>
+             {% elif group == 'KS'%}
+                           <div class="col-sm-12">
+               <div class="card">
+                 <div class="card-header bg-info">
+                   <h5 class="text-center text-white">Total Kreditu Suave</h5>
+                 </div>
+                 <div class="text-center">
+                   <div class="card-body d-flex justify-content-between">
+                     <a href=""><i class="fa fa-table fa-2x"></i> Sumario</a>
+                     <a href="{% url 'g-ks' %}"><i class="fa fa-table fa-2x"></i> Grafiku</a>
+                   </div>
+                   <center>
+                        <h2 style="margin-bottom: 20px;">{{ks}}</h2>
+                    </center>
+                 </div>
+               </div>
+             </div>
+            {% endif %}
            </div>
         </div>
       </div>

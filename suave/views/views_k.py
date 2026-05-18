@@ -5,7 +5,8 @@ from django.core.paginator import Paginator
 from config.decorators import allowed_users
 from custom.models import Municipality, Year, Faze
 from benefisiariu.models import Benefisiariu
-
+from kni.models import  Business, LocBussiness, Program, Employee, Finance
+from suave.models import ProductService, EkipaMember, Competitor, MainCustomer, FixedAsset
 
 @login_required
 @allowed_users(allowed_roles=['admin', 'KS', 'XFD'])
@@ -124,51 +125,47 @@ def geral_ks(request):
 def benef_detail_ks(request, hashid):
     group = request.user.groups.all()[0].name
     benef = get_object_or_404(Benefisiariu, hashed=hashid)
-    addtl  = getattr(benef, 'addresstl',     None)
+    addtl = getattr(benef, 'addresstl', None)
     addori = getattr(benef, 'addressorigin', None)
-    photo  = getattr(benef, 'photo',         None)
-    businesses = Business.objects.filter(benefisiariu=benef)
-    programs   = Program.objects.filter(
-        business__in=businesses,
-        program_type='KREDIT'          
-    )
+    photo = getattr(benef, 'photo', None)
+    businesses = Business.objects.filter(benefisiariu=benef).select_related('sector', 'category')
+    programs = Program.objects.filter(benefisiariu=benef, program_type__name="KREDITU SUAVE" ).select_related('program_type', 'faze','year', 'status')
     employees = Employee.objects.filter(business__in=businesses)
-    finances  = Finance.objects.filter(business__in=businesses)
-    kredits   = Kredit.objects.filter(benefisiariu=benef)
+    finances = Finance.objects.filter(business__in=businesses)
+    local = LocBussiness.objects.filter(benefisiariu=benef).first()
+    kredit_business = businesses.first()
     monitoring = None
-    kredit_business = businesses.filter(
-        program__program_type='KREDIT'
-    ).first()
     if kredit_business:
         financial = getattr(kredit_business, 'financial_assessment', None)
         monitoring = {
-            'business':    kredit_business,
-            'products':    ProductService.objects.filter(business=kredit_business),
-            'membro':      EkipaMember.objects.filter(benefisiariu=benef),
-            'customers':   MainCustomer.objects.filter(business=kredit_business),
+            'products': ProductService.objects.filter(business=kredit_business),
+            'membro': EkipaMember.objects.filter(benefisiariu=benef),
+            'customers': MainCustomer.objects.filter(business=kredit_business),
             'competitors': Competitor.objects.filter(business=kredit_business),
-            'market':      getattr(kredit_business, 'market_assessment', None),
-            'financial':   financial,
-            'assets':      FixedAsset.objects.filter(financial=financial) if financial else [],
-            'credit_info': getattr(kredit_business, 'credit_info', None),
+            'market': getattr(kredit_business, 'market_assessment', None),
+            'financial': financial,
+            'assets': FixedAsset.objects.filter(financial=financial) if financial else [],
+            'credit_info': getattr(kredit_business,'credit_info', None),
         }
-
     context = {
-        'group':      group,
-        'benef':      benef,
-        'addtl':      addtl,
-        'addori':     addori,
-        'photo':      photo,
+        'group': group,
+        'benef': benef,
+        'addtl': addtl,
+        'addori': addori,
+        'photo': photo,
+        'local':local,
         'businesses': businesses,
-        'programs':   programs,
-        'employees':  employees,
-        'finances':   finances,
-        'kredits':    kredits,
+        'programs': programs,
+        'employees': employees,
+        'finances': finances,
         'monitoring': monitoring,
-        'title':      'Detalha Benefisiariu KS',
-        'legend':     'Detalha Benefisiariu — Kreditu Suave',
+        'title': 'Detalha Benefisiariu KS',
+        'legend': 'Detalha Benefisiariu — Kreditu Suave',
         'link_antes': [
-            {'link_name': 'dash_kredit', 'link_text': 'Painel Kreditu Suave'},
+            {
+                'link_name': 'dash-ks',
+                'link_text': 'Painel Kreditu Suave',
+            },
         ],
     }
     return render(request, 'suave/benef_detail_ks.html', context)

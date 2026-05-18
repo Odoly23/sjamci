@@ -6,42 +6,53 @@ from config.decorators import allowed_users
 from custom.models import Municipality, Year
 from benefisiariu.models import Benefisiariu
 from manufatureira.models import  Manufatur, Lokalizasaun, Membro, Aktividade
-
+from django.db.models import Count
 
 @login_required
 @allowed_users(allowed_roles=['admin', 'MAN', 'XFD'])
 def dash_man(request):
     group = request.user.groups.all()[0].name
-    mun = Municipality.active_objects.all().order_by('code')
+    mun   = Municipality.active_objects.all().order_by('code')
     tinan = Year.active_objects.all().order_by('-year')
-    paginator = Paginator(tinan, 4)
-    page = request.GET.get('page', 1)
+    paginator  = Paginator(tinan, 4)
+    page       = request.GET.get('page', 1)
     tinan_page = paginator.get_page(page)
+    year_ids = [t.id for t in tinan_page]
+    mun_ids  = [m.id for m in mun]
+ 
+    counts = (
+        Manufatur.objects.filter(atividades__year_id__in=year_ids, lokalidade__municipality_id__in=mun_ids,)
+        .values('atividades__year__year', 'lokalidade__municipality__name')
+        .annotate(total=Count('id', distinct=True))
+    )
+    count_map = {
+        (row['atividades__year__year'], row['lokalidade__municipality__name']): row['total']
+        for row in counts
+    }
+ 
+    # ── Bangun dg dari count_map ───────────────────────────────
     dg = []
     for t in tinan_page:
-        hash_string = f"{t.year}"
-        row_hashed = hashlib.blake2b(hash_string.encode()).hexdigest()
+        row_hashed = hashlib.blake2b(str(t.year).encode()).hexdigest()
         row = {
-            'year': t.year,
-            'mun': {},
+            'year':   t.year,
+            'mun':    {},
             'hashed': row_hashed,
-            'total': 0,
+            'total':  0,
         }
         for m in mun:
-            total = Manufatur.objects.filter(
-                atividades__year=t,
-                lokalidade__municipality=m
-            ).distinct().count()
-            row['mun'][m.name] = total
-            row['total'] += total
+            val = count_map.get((t.year, m.name), 0)
+            row['mun'][m.name] = val
+            row['total']       += val
         dg.append(row)
+ 
     context = {
-        'title': 'Painel Manufatura',
-        'legend': 'Painel Manufatura',
-        'group': group,
-        'mun_list': mun,
+        'title':      'Painel Manufatura',
+        'legend':     'Painel Manufatura',
+        'group':      group,
+        'mun_list':   mun,
         'years_page': tinan_page,
-        'dg': dg,
+        'dg':         dg,
     }
     return render(request, 'Dash_dnim/manufatura.html', context)
 

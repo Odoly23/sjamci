@@ -29,7 +29,7 @@ def Sumario(request):
 	return render(request, 'Dash_R/Sumary.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['admin','KS','KNI','XFD','dnim'])
+@allowed_users(allowed_roles=['admin','KNI','XFD','dnim'])
 def grafiku_kni(request):
 	group = request.user.groups.all()[0].name
 	context = {
@@ -38,6 +38,17 @@ def grafiku_kni(request):
 		'group':group,
 	}
 	return render(request, 'Dash_R/Grafiku_kni.html', context)
+
+@login_required
+@allowed_users(allowed_roles=['admin','KS','XFD','dnim'])
+def grafiku_ks(request):
+	group = request.user.groups.all()[0].name
+	context = {
+		'title':"Sumario Geral",
+		'legend':"Sumario Geral",
+		'group':group,
+	}
+	return render(request, 'Dash_R/Grafiku_ks.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['admin','KS','KNI','XFD','dnim'])

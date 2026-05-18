@@ -1,13 +1,3 @@
-"""
-Proteksi anti-duplikasi submit (double POST) menggunakan session token.
-
-Cara kerja:
-  1. Saat GET  → generate token baru, simpan ke session
-  2. Saat POST → bandingkan token dari form dengan yang di session
-               → jika cocok: proses + hapus token dari session
-               → jika tidak cocok (sudah dipakai / Back+Submit): abaikan
-"""
-
 import uuid
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required

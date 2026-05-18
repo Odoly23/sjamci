@@ -30,6 +30,7 @@ urlpatterns = [
 
 
     #  ── Avaliasaun ──────
+    path('Pajina-Avaliasaun.html/', views.avaliasaun, name='av-dash'),
     path('Lista-Avalisaun.html/', views.avalia_list, name='list-ava'),
     path('rejistu-Avalisaun/<str:hashid>/', views.evaluate_benef, name="benef-evaluation"),
     path('lista-avaliasaun/', views.benef_evaluation_list, name='benef-evaluation-list'),

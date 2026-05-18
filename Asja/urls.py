@@ -33,6 +33,7 @@ urlpatterns = [
     path('custom/', include('custom.urls')),
     path('Relatoriu/', include('report.urls')),
     path('Api/sumario/', include('report.Api.urls')),
+    path('Utilizadores/', include('users.urls')),
 
 ]
 if settings.DEBUG:

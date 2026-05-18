@@ -4,7 +4,8 @@
     <div class="sidenav-header d-flex align-items-center justify-content-center">
       <!-- User Info-->
       <div class="sidenav-header-inner text-center">
-        <h2 class="h5">MCI-GDGI</h2><span>{{ group|upper }}</span>
+        <h2 class="h5">MCI-GDGI</h2><span>{% if group == "KS" %} KREDITU SUAVE 
+          {% else %} {{ group|upper }} {% endif %}</span>
       </div>
       <!-- Small Brand information, appears on minimized sidebar-->
       <div class="sidenav-header-logo"><a href="{% url 'home' %}" class="brand-small text-center"> <strong>GD</strong><strong class="text-primary">GI</strong></a></div>
@@ -26,5 +27,6 @@
       {% else %}
         {% include 'main/sidebar_admin.html' %}
       {% endif %}
+
     {% endif %}
   </div>

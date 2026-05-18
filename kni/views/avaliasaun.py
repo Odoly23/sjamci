@@ -12,6 +12,23 @@ from custom.models import TIpu_Programa, Status
 from config.decorators import allowed_users
 
 
+
+@login_required
+@allowed_users(allowed_roles=['KNI'])
+def avaliasaun(request):
+    group = request.user.groups.all()[0].name
+    context ={
+        'group':group,
+        'title': 'Avaliasaun Benefisiariu Geral',
+        'legend': 'Avaliasaun Geral KNI',
+        'link_antes': [
+            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
+            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'av-dash', 'link_text':'Avaliasaun Benefisiariu'}
+        ],
+    }
+    return render(request, 'avaliasaun/option.html', context)    
+
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def avalia_list(request):
