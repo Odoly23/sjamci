@@ -2,7 +2,7 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, HTML, Field
 from benefisiariu.models import Benefisiariu, AddressTL, AddressOrigin, Photo
-from kni.models import Business, LocBussiness, Program, Employee, Finance
+from kni.models import Business, LocBussiness, Program, Employee, Finance, BusinessBaseline, BusinessMonitoring
 from custom.models import AdministrativePost, Village, Year, Faze
 
 
@@ -169,4 +169,181 @@ class FinanceKNIForm(forms.ModelForm):
                 Column('budget',   css_class='col-md-6'),
             ),
             HTML(_BTN),
+        )
+
+
+
+class BusinessBaselineForm(forms.ModelForm):
+
+    class Meta:
+        model = BusinessBaseline
+
+        fields = [
+            'business',
+            'daily_income_before',
+            'monthly_income_before',
+            'yearly_income_before',
+            'employee_before',
+            'asset_before',
+            'sales_before',
+            'note',
+        ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+
+        self.helper.layout = Layout(
+
+            HTML(_ALERT),
+
+            Row(
+                Column('business', css_class='col-md-12'),
+            ),
+
+            Row(
+                Column('daily_income_before', css_class='col-md-4'),
+                Column('monthly_income_before', css_class='col-md-4'),
+                Column('yearly_income_before', css_class='col-md-4'),
+            ),
+
+            Row(
+                Column('employee_before', css_class='col-md-4'),
+                Column('asset_before', css_class='col-md-4'),
+                Column('sales_before', css_class='col-md-4'),
+            ),
+
+            Row(
+                Column('note', css_class='col-md-12'),
+            ),
+
+            HTML(_BTN),
+        )
+
+
+class BusinessMonitoringForm(forms.ModelForm):
+    class Meta:
+        model = BusinessMonitoring
+        fields = [
+            'month',
+            'daily_income',
+            'monthly_income',
+            'yearly_income',
+            'total_sales',
+            'total_assets',
+            'total_employee',
+            'source_data',
+            'verification_status',
+            'monitoring_status',
+            'evidence_file',
+            'note',
+        ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.enctype = 'multipart/form-data'
+        self.helper.layout = Layout(
+            HTML(_ALERT),
+            Row(
+                Column('month', css_class='col-md-4'),
+                Column('daily_income', css_class='col-md-4'),
+                Column('monthly_income', css_class='col-md-4'),
+            ),
+
+            Row(
+                Column('yearly_income', css_class='col-md-4'),
+                Column('total_sales', css_class='col-md-4'),
+                Column('total_assets', css_class='col-md-4'),
+            ),
+
+            Row(
+                Column('total_employee', css_class='col-md-4'),
+                Column('source_data', css_class='col-md-4'),
+                Column('verification_status', css_class='col-md-4'),
+            ),
+
+            Row(
+                Column('monitoring_status', css_class='col-md-6'),
+                Column('evidence_file', css_class='col-md-6'),
+            ),
+
+            Row(
+                Column('note', css_class='col-md-12'),
+            ),
+
+            HTML(_BTN),
+        )
+
+class BusinessBaselineForm(forms.ModelForm):
+
+    class Meta:
+        model = BusinessBaseline
+
+        fields = [
+            'daily_income_before',
+            'monthly_income_before',
+            'yearly_income_before',
+            'employee_before',
+            'asset_before',
+            'sales_before',
+            'note'
+        ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+
+        self.helper.layout = Layout(
+
+            Row(
+                Column(
+                    'daily_income_before',
+                    css_class='col-md-4'
+                ),
+
+                Column(
+                    'monthly_income_before',
+                    css_class='col-md-4'
+                ),
+
+                Column(
+                    'yearly_income_before',
+                    css_class='col-md-4'
+                ),
+            ),
+
+            Row(
+                Column(
+                    'employee_before',
+                    css_class='col-md-4'
+                ),
+
+                Column(
+                    'asset_before',
+                    css_class='col-md-4'
+                ),
+
+                Column(
+                    'sales_before',
+                    css_class='col-md-4'
+                ),
+            ),
+
+            Row(
+                Column(
+                    'note',
+                    css_class='col-md-12'
+                ),
+            ),
+
+            HTML(_BTN)
         )

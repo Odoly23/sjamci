@@ -52,7 +52,7 @@ class APISexu(APIView):
 
 class APIMunicipiu(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, format=None):
 
@@ -83,7 +83,7 @@ class APIMunicipiu(APIView):
 
 class APIStatusPrograma(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, format=None):
 

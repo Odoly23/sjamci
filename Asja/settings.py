@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ══════════════════════════════════════════════════════════════
 SECRET_KEY = config('SECRET_KEY')
 DEBUG       = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 MAPBOX_TOKEN = config('MAPBOX_TOKEN', default='')
 
 # ══════════════════════════════════════════════════════════════
@@ -71,8 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'Asja.middleware.PreviousURLMiddleware',
-    'Asja.middleware.NoBackAfterLogout',
+    'Asja.middleware.SecurityAndCacheMiddleware',
     'Asja.middleware.PreventDuplicatePostMiddleware',
 ]
 
@@ -189,8 +188,12 @@ LOGIN_URL          = 'login'
 ABSOLUTE_URL_OVERRIDES = {
     'auth.user': lambda u: '/users/users/',
 }
-
-
+# ══════════════════════════════════════════════════════════════
+#  SECURITY SESSIOn
+# ══════════════════════════════════════════════════════════════
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 60 * 60  
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 # ══════════════════════════════════════════════════════════════
 #  MESSAGE TAGS
 # ══════════════════════════════════════════════════════════════

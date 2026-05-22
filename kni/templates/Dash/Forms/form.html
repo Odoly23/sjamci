@@ -1,18 +1,16 @@
 {% extends "main/layout.html" %}
 {% load crispy_forms_tags %}
 {% load static %}
+
 {% block content %}
 <section class="content mb-5">
   <div class="container-fluid">
     <div class="row justify-content-center">
       <div class="col-sm-12">
-        <div class="card  border-0 rounded-4 p-4">
-          <form method="POST">
+        <div class="card border-0 rounded-4 p-4">
+          <form method="POST" id="form-kni" onsubmit="disableSubmitButton()">
             {% csrf_token %}
-            <input type="hidden"
-           name="_form_token"
-           value="{{ form_token }}">
-          {% crispy form %}
+            {% crispy form %}
           </form>
         </div>
       </div>
@@ -20,3 +18,16 @@
   </div>
 </section>
 {% endblock content %}
+
+{% block scripts %}
+<script>
+function disableSubmitButton() {
+    const form = document.getElementById('form-kni');
+    const btn = form.querySelector('button[type="submit"]');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = "Prosesu dadus...";
+    }
+}
+</script>
+{% endblock scripts %}

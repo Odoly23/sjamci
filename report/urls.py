@@ -12,4 +12,8 @@ urlpatterns = [
     path('Sumario-Grafiku-kni/.html', views.grafiku_kni, name='g-kni'),
     path('Sumario-Grafiku-ks/.html', views.grafiku_ks, name='g-ks'),
 
+
+    #Sumario Kreditu Suave
+    path('Sumario-Tabela-Suave.html/', views.tab_ks, name='tab-ks')
+
 ]

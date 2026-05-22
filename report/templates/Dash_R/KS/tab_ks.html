@@ -1,0 +1,68 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+<section class="content mb-5">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-sm-12">
+        <div class="card border-0">
+                          <div class="row mb-4">
+
+                    {% comment %} TOTAL POPULATION SUMMARY {% endcomment %}
+                    <div class="col-md-4 mb-5 text-center">
+                        <span class="text-muted">Total Benefisiariu</span>
+                        <h3><a href="">{{ totalp }}</a></h3>
+                    </div>
+
+                    <div class="col-md-4 mb-5 text-center">
+                        <span class="text-muted">Total Mane</span>
+                        <h3><a href="">{{ totm }}</a></h3>
+                    </div>
+
+                    <div class="col-md-4 mb-5 text-center">
+                        <span class="text-muted">Total Feto</span>
+                        <h3><a href="">{{ totf }}</a></h3>
+                    </div>
+
+                    <div class="col-md-3 mb-5 text-center">
+                        <span class="text-muted">Total Xefe Grupu</span>
+                        <h3><a href="">{{ xfam }}</a></h3>
+                    </div>
+
+                    <div class="col-md-3 mb-5 text-center">
+                        <span class="text-muted">Total Tekniko</span>
+                        <h3><a href="">{{ joven }}</a></h3>
+                    </div>
+
+                    <div class="col-md-3 mb-5 text-center">
+                        <span class="text-muted">Total Into</span>
+                        <h3><a href="">{{ fmane }}</a></h3>
+                    </div>
+
+                    <div class="col-md-3 mb-5 text-center">
+                        <span class="text-muted">Total UNIP.LDA</span>
+                        <h3><a href="">{{ ffaluk }}</a></h3>
+                    </div>
+
+                    <div class="col-md-4 mb-5 text-center">
+                        <span class="text-muted">Total LDA</span>
+                        <h3><a href="">{{ mate }}</a></h3>
+                    </div>
+
+                    <div class="col-md-4 mb-5 text-center">
+                        <span class="text-muted">Total ATIVU</span>
+                        <h3><a href="">0</a></h3>
+                    </div>
+
+                    <div class="col-md-4 mb-5 text-center">
+                        <span class="text-muted">Total PARADO</span>
+                        <h3><a href="">{{ est }}</a></h3>
+                    </div>
+                </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

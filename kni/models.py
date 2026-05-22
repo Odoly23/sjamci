@@ -114,143 +114,101 @@ class Finance(BaseModel):
             self.hashed = hashlib.blake2b(str(self.id).encode()).hexdigest()
             Finance.objects.filter(pk=self.pk).update(hashed=self.hashed)
 
+
+
 class BusinessBaseline(BaseModel):
-    business = models.OneToOneField(Business, on_delete=models.CASCADE, related_name='baseline', verbose_name="Negósiu")
-    daily_income_before = models.DecimalField(max_digits=12,   decimal_places=2, default=0, validators=[MinValueValidator(0)], verbose_name="Rendimentu Loron Antes Apoiu ($)")
+    business = models.OneToOneField( Business, on_delete=models.CASCADE, related_name='baseline', verbose_name="Negósiu")
+    daily_income_before = models.DecimalField(max_digits=12, decimal_places=2, default=0, validators=[MinValueValidator(0)], verbose_name="Rendimentu Loron Antes Apoiu ($)")
     monthly_income_before = models.DecimalField(max_digits=12, decimal_places=2, default=0, validators=[MinValueValidator(0)], verbose_name="Rendimentu Fulan Antes Apoiu ($)")
-    yearly_income_before = models.DecimalField(max_digits=12,  decimal_places=2, default=0, validators=[MinValueValidator(0)], verbose_name="Rendimentu Tinan Antes Apoiu ($)")
-    employee_before = models.IntegerField( default=0, verbose_name="Total Trabalhador Antes Apoiu")
-    asset_before = models.DecimalField(max_digits=12, decimal_places=2, default=0, validators=[MinValueValidator(0)], verbose_name="Total Assets Antes Apoiu ($)")
-    sales_before = models.DecimalField(max_digits=12, decimal_places=2, default=0, validators=[MinValueValidator(0)], verbose_name="Total Vendas Antes Apoiu ($)")
-    note = models.TextField(null=True, blank=True,  verbose_name="Observasaun" )
-    hashed = models.CharField(max_length=128, null=True, blank=True )
+    yearly_income_before = models.DecimalField(max_digits=12, decimal_places=2, default=0, validators=[MinValueValidator(0)], verbose_name="Rendimentu Tinan Antes Apoiu ($)")
+    employee_before = models.IntegerField(default=0, verbose_name="Total Trabalhador Antes Apoiu")
+    asset_before = models.DecimalField(max_digits=12, decimal_places=2,  default=0, validators=[MinValueValidator(0)], verbose_name="Total Assets Antes Apoiu ($)")
+    sales_before = models.DecimalField(max_digits=12, decimal_places=2,  default=0,  validators=[MinValueValidator(0)],verbose_name="Total Vendas Antes Apoiu ($)")
+    note = models.TextField(null=True, blank=True, verbose_name="Observasaun")
+    hashed = models.CharField(max_length=128,  null=True,   blank=True)
 
     def __str__(self):
         return f"{self.business} - Baseline"
 
     def save(self, *args, **kwargs):
-
         is_new = self.pk is None
-
         super().save(*args, **kwargs)
-
         if is_new and not self.hashed:
-
             self.hashed = hashlib.blake2b(
                 str(self.id).encode()
             ).hexdigest()
-
-            BusinessBaseline.objects.filter(
-                pk=self.pk
-            ).update(
-                hashed=self.hashed
-            )
+            BusinessBaseline.objects.filter(pk=self.pk).update(hashed=self.hashed)
 
     class Meta:
         verbose_name = "Dadus Inisiál Negósiu"
         verbose_name_plural = "Dadus Inisiál Negósiu Sira"
         ordering = ['-id']
 
-
-
 class BusinessMonitoring(BaseModel):
-
     STATUS_CHOICES = [
         ('Normal', 'Normal'),
         ('Risk', 'Risku'),
         ('Critical', 'Kritiku'),
         ('Inactive', 'La Ativu'),
     ]
-
     VERIFY_CHOICES = [
         ('Pending', 'Pending'),
         ('Verified', 'Verifikadu'),
         ('Rejected', 'Rejeitadu'),
     ]
-
     SOURCE_CHOICES = [
         ('Benefisiariu', 'Benefisiariu'),
         ('Officer', 'Officer'),
         ('Survey', 'Survey'),
     ]
-
-    business = models.ForeignKey( Business,  on_delete=models.CASCADE,  related_name='monitorings',  verbose_name="Negósiu"   )
-    year = models.ForeignKey( Year, on_delete=models.SET_NULL,  null=True, blank=True,     verbose_name="Tinan"    )
-    month = models.CharField(max_length=20, null=True, blank=True, verbose_name="Fulan"   )
+    business = models.ForeignKey(Business,  on_delete=models.CASCADE, related_name='monitorings', verbose_name="Negósiu")
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Tinan")
+    month = models.CharField(max_length=20, null=True, blank=True, verbose_name="Fulan")
     monitoring_date = models.DateField(auto_now_add=True, verbose_name="Data Monitorizasaun")
-    daily_income = models.DecimalField(max_digits=12,  decimal_places=2,  default=0, validators=[MinValueValidator(0)], verbose_name="Rendimentu Loron ($)")
-    monthly_income = models.DecimalField(max_digits=12,  decimal_places=2, default=0, validators=[MinValueValidator(0)],verbose_name="Rendimentu Fulan ($)")
-    yearly_income = models.DecimalField(max_digits=12, decimal_places=2, default=0, validators=[MinValueValidator(0)], verbose_name="Rendimentu Tinan ($)")
-    total_sales = models.DecimalField(max_digits=12, decimal_places=2, default=0, validators=[MinValueValidator(0)], verbose_name="Total Vendas ($)")
-    total_assets = models.DecimalField( max_digits=12, decimal_places=2, default=0, validators=[MinValueValidator(0)], verbose_name="Total Assets ($)"  )
+    daily_income = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Rendimentu Loron ($)")
+    monthly_income = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Rendimentu Fulan ($)")
+    yearly_income = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Rendimentu Tinan ($)")
+    total_sales = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Total Vendas ($)")
+    total_assets = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Total Assets ($)")
     total_employee = models.IntegerField(default=0, verbose_name="Total Trabalhador")
-    growth_percentage = models.FloatField( default=0, verbose_name="Percentajen Cresimentu (%)")
-    source_data = models.CharField( max_length=20,  choices=SOURCE_CHOICES, default='Benefisiariu',  verbose_name="Fonte Dadus" )
-    verification_status = models.CharField( max_length=20,  choices=VERIFY_CHOICES,   default='Pending', verbose_name="Status Verifikasaun")
-    monitoring_status = models.CharField(max_length=20,  choices=STATUS_CHOICES, default='Normal', verbose_name="Status Monitorizasaun")
-    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,  blank=True,  related_name='business_monitoring_user', verbose_name="Upload Husi")
-    evidence_file = models.FileField(upload_to='monitoring/evidence/', null=True,  blank=True,  verbose_name="Dokumentu Evidensia" )
-    note = models.TextField(null=True,  blank=True, verbose_name="Observasaun")
-    hashed = models.CharField(max_length=128,   null=True,    blank=True)
+    growth_percentage = models.FloatField(default=0, verbose_name="Percentajen Cresimentu (%)")
+    source_data = models.CharField(max_length=20, choices=SOURCE_CHOICES, default='Benefisiariu', verbose_name="Fonte Dadus")
+    verification_status = models.CharField(max_length=20, choices=VERIFY_CHOICES, default='Pending', verbose_name="Status Verifikasaun")
+    monitoring_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Normal', verbose_name="Status Monitorizasaun")
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='business_monitoring_user', verbose_name="Upload Husi")
+    evidence_file = models.FileField(upload_to='monitoring/evidence/', null=True, blank=True, verbose_name="Dokumentu Evidensia")
+    note = models.TextField(null=True, blank=True, verbose_name="Observasaun")
+    hashed = models.CharField(max_length=128, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.business} - {self.month} {self.year}"
+        return f"{self.business} - {self.month or ''} {self.year or ''}"
 
     def save(self, *args, **kwargs):
-
-        baseline = getattr(
-            self.business,
-            'baseline',
-            None
-        )
-
-        if baseline and baseline.monthly_income_before:
-
-            before = float(
-                baseline.monthly_income_before
-            )
-
-            current = float(
-                self.monthly_income
-            )
-
-            if before > 0:
-
-                growth = (
-                    (current - before) / before
-                ) * 100
-
-                self.growth_percentage = round(
-                    growth,
-                    2
-                )
-
-                # AUTO STATUS DETECTION
-
-                if growth < -50:
-                    self.monitoring_status = 'Critical'
-
-                elif growth < 0:
-                    self.monitoring_status = 'Risk'
-
-                else:
-                    self.monitoring_status = 'Normal'
-
+        try:
+            baseline = self.business.baseline
+        except BusinessBaseline.DoesNotExist:
+            baseline = None
+        if self.verification_status == 'Verified':
+            if baseline and baseline.monthly_income_before:
+                before = float(baseline.monthly_income_before)
+                current = float(self.monthly_income or 0)
+                if before > 0:
+                    growth = ((current - before) / before) * 100
+                    self.growth_percentage = round(growth, 2)
+                    if growth < -50:
+                        self.monitoring_status = 'Critical'
+                    elif growth < 0:
+                        self.monitoring_status = 'Risk'
+                    else:
+                        self.monitoring_status = 'Normal'
         is_new = self.pk is None
-
         super().save(*args, **kwargs)
-
         if is_new and not self.hashed:
-
             self.hashed = hashlib.blake2b(
                 str(self.id).encode()
             ).hexdigest()
 
-            BusinessMonitoring.objects.filter(
-                pk=self.pk
-            ).update(
-                hashed=self.hashed
-            )
+            BusinessMonitoring.objects.filter(pk=self.pk).update(hashed=self.hashed)
 
     class Meta:
         verbose_name = "Monitorizasaun Negósiu"

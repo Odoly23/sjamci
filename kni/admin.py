@@ -1,10 +1,217 @@
 from django.contrib import admin
-from kni.models import    Business, LocBussiness, Program, Employee, Finance
+from import_export import resources, fields
+from import_export.admin import ImportExportModelAdmin
+from import_export.widgets import ForeignKeyWidget
+
+from kni.models import Business, LocBussiness, Program, Employee, Finance, BusinessMonitoring, BusinessBaseline
+from benefisiariu.models import Benefisiariu
+from custom.models import (
+    Status, Municipality, AdministrativePost, Village,
+    Category_Emp, TIpu_Programa, Sector, Faze, Year
+)
+
+
+# =========================
+# Resources (Import/Export)
+# =========================
+
+class BusinessResource(resources.ModelResource):
+    benefisiariu = fields.Field(
+        column_name='benefisiariu',
+        attribute='benefisiariu',
+        widget=ForeignKeyWidget(Benefisiariu, field='name')
+    )
+    category = fields.Field(
+        column_name='category',
+        attribute='category',
+        widget=ForeignKeyWidget(Category_Emp, field='name')
+    )
+    sector = fields.Field(
+        column_name='sector',
+        attribute='sector',
+        widget=ForeignKeyWidget(Sector, field='name')
+    )
+
+    class Meta:
+        model = Business
+        fields = ('id', 'benefisiariu', 'category', 'name', 'idea', 'sector', 'hashed')
+        export_order = ('id', 'benefisiariu', 'category', 'name', 'idea', 'sector', 'hashed')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class LocBussinessResource(resources.ModelResource):
+    benefisiariu = fields.Field(
+        column_name='benefisiariu',
+        attribute='benefisiariu',
+        widget=ForeignKeyWidget(Benefisiariu, field='name')
+    )
+    municipality = fields.Field(
+        column_name='municipality',
+        attribute='municipality',
+        widget=ForeignKeyWidget(Municipality, field='name')
+    )
+    administrativepost = fields.Field(
+        column_name='administrativepost',
+        attribute='administrativepost',
+        widget=ForeignKeyWidget(AdministrativePost, field='name')
+    )
+    village = fields.Field(
+        column_name='village',
+        attribute='village',
+        widget=ForeignKeyWidget(Village, field='name')
+    )
+
+    class Meta:
+        model = LocBussiness
+        fields = ('id', 'benefisiariu', 'municipality', 'administrativepost', 'village', 'aldeia', 'latitude', 'longitude', 'hashed')
+        export_order = ('id', 'benefisiariu', 'municipality', 'administrativepost', 'village', 'aldeia', 'latitude', 'longitude', 'hashed')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class ProgramResource(resources.ModelResource):
+    benefisiariu = fields.Field(
+        column_name='benefisiariu',
+        attribute='benefisiariu',
+        widget=ForeignKeyWidget(Benefisiariu, field='name')
+    )
+    program_type = fields.Field(
+        column_name='program_type',
+        attribute='program_type',
+        widget=ForeignKeyWidget(TIpu_Programa, field='name')
+    )
+    faze = fields.Field(
+        column_name='faze',
+        attribute='faze',
+        widget=ForeignKeyWidget(Faze, field='name')
+    )
+    year = fields.Field(
+        column_name='year',
+        attribute='year',
+        widget=ForeignKeyWidget(Year, field='year')
+    )
+    status = fields.Field(
+        column_name='status',
+        attribute='status',
+        widget=ForeignKeyWidget(Status, field='name')
+    )
+
+    class Meta:
+        model = Program
+        fields = ('id', 'benefisiariu', 'program_type', 'faze', 'year', 'approved_amount', 'amount', 'status', 'hashed')
+        export_order = ('id', 'benefisiariu', 'program_type', 'faze', 'year', 'approved_amount', 'amount', 'status', 'hashed')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class EmployeeResource(resources.ModelResource):
+    business = fields.Field(
+        column_name='business',
+        attribute='business',
+        widget=ForeignKeyWidget(Business, field='name')
+    )
+
+    class Meta:
+        model = Employee
+        fields = ('id', 'business', 'male', 'female', 'total', 'hashed')
+        export_order = ('id', 'business', 'male', 'female', 'total', 'hashed')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class FinanceResource(resources.ModelResource):
+    business = fields.Field(
+        column_name='business',
+        attribute='business',
+        widget=ForeignKeyWidget(Business, field='name')
+    )
+
+    class Meta:
+        model = Finance
+        fields = ('id', 'business', 'budget', 'hashed')
+        export_order = ('id', 'business', 'budget', 'hashed')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class BusinessBaselineResource(resources.ModelResource):
+    business = fields.Field(
+        column_name='business',
+        attribute='business',
+        widget=ForeignKeyWidget(Business, field='name')
+    )
+
+    class Meta:
+        model = BusinessBaseline
+        fields = (
+            'id', 'business',
+            'daily_income_before', 'monthly_income_before', 'yearly_income_before',
+            'employee_before', 'asset_before', 'sales_before',
+            'note', 'hashed'
+        )
+        export_order = (
+            'id', 'business',
+            'daily_income_before', 'monthly_income_before', 'yearly_income_before',
+            'employee_before', 'asset_before', 'sales_before',
+            'note', 'hashed'
+        )
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class BusinessMonitoringResource(resources.ModelResource):
+    business = fields.Field(
+        column_name='business',
+        attribute='business',
+        widget=ForeignKeyWidget(Business, field='name')
+    )
+    year = fields.Field(
+        column_name='year',
+        attribute='year',
+        widget=ForeignKeyWidget(Year, field='year')
+    )
+
+    class Meta:
+        model = BusinessMonitoring
+        fields = (
+            'id', 'business', 'year', 'month', 'monitoring_date',
+            'daily_income', 'monthly_income', 'yearly_income',
+            'total_sales', 'total_assets', 'total_employee',
+            'growth_percentage', 'source_data',
+            'verification_status', 'monitoring_status',
+            'note', 'hashed'
+        )
+        export_order = (
+            'id', 'business', 'year', 'month', 'monitoring_date',
+            'daily_income', 'monthly_income', 'yearly_income',
+            'total_sales', 'total_assets', 'total_employee',
+            'growth_percentage', 'source_data',
+            'verification_status', 'monitoring_status',
+            'note', 'hashed'
+        )
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
 
 # =========================
 # Base Admin
 # =========================
-class BaseAdmin(admin.ModelAdmin):
+class BaseAdmin(ImportExportModelAdmin):
     list_per_page = 25
     ordering = ['-id']
 
@@ -39,6 +246,7 @@ class FinanceInline(admin.StackedInline):
 # =========================
 @admin.register(Business)
 class BusinessAdmin(BaseAdmin):
+    resource_classes = [BusinessResource]
 
     list_display = (
         'id',
@@ -97,6 +305,7 @@ class BusinessAdmin(BaseAdmin):
 # =========================
 @admin.register(LocBussiness)
 class LocBussinessAdmin(BaseAdmin):
+    resource_classes = [LocBussinessResource]
 
     list_display = (
         'id',
@@ -151,6 +360,7 @@ class LocBussinessAdmin(BaseAdmin):
 # =========================
 @admin.register(Program)
 class ProgramAdmin(BaseAdmin):
+    resource_classes = [ProgramResource]
 
     list_display = (
         'id',
@@ -208,6 +418,7 @@ class ProgramAdmin(BaseAdmin):
 # =========================
 @admin.register(Employee)
 class EmployeeAdmin(BaseAdmin):
+    resource_classes = [EmployeeResource]
 
     list_display = (
         'id',
@@ -228,6 +439,7 @@ class EmployeeAdmin(BaseAdmin):
 # =========================
 @admin.register(Finance)
 class FinanceAdmin(BaseAdmin):
+    resource_classes = [FinanceResource]
 
     list_display = (
         'id',
@@ -238,4 +450,139 @@ class FinanceAdmin(BaseAdmin):
     search_fields = (
         'business__name',
         'hashed',
+    )
+
+
+# =========================
+# Business Baseline
+# =========================
+@admin.register(BusinessBaseline)
+class BusinessBaselineAdmin(BaseAdmin):
+    resource_classes = [BusinessBaselineResource]
+
+    list_display = (
+        'id',
+        'business',
+        'daily_income_before',
+        'monthly_income_before',
+        'yearly_income_before',
+        'employee_before',
+        'asset_before',
+        'sales_before',
+    )
+
+    search_fields = (
+        'business__name',
+        'hashed',
+    )
+
+    fieldsets = (
+        ('Dadus Inisiál Negósiu', {
+            'fields': (
+                'business',
+                'daily_income_before',
+                'monthly_income_before',
+                'yearly_income_before',
+                'employee_before',
+                'asset_before',
+                'sales_before',
+                'note',
+                'hashed',
+            )
+        }),
+
+        ('System Information', {
+            'classes': ('collapse',),
+            'fields': (
+                'created_at',
+                'updated_at',
+                'deleted_at',
+            )
+        }),
+    )
+
+
+# =========================
+# Business Monitoring
+# =========================
+@admin.register(BusinessMonitoring)
+class BusinessMonitoringAdmin(BaseAdmin):
+    resource_classes = [BusinessMonitoringResource]
+
+    list_display = (
+        'id',
+        'business',
+        'year',
+        'month',
+        'monitoring_date',
+        'monthly_income',
+        'growth_percentage',
+        'monitoring_status',
+        'verification_status',
+    )
+
+    search_fields = (
+        'business__name',
+        'hashed',
+    )
+
+    list_filter = (
+        'year',
+        'month',
+        'monitoring_status',
+        'verification_status',
+        'source_data',
+    )
+
+    readonly_fields = (
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'hashed',
+        'monitoring_date',
+        'growth_percentage',
+        'monitoring_status',
+    )
+
+    fieldsets = (
+        ('Monitorizasaun Negósiu', {
+            'fields': (
+                'business',
+                'year',
+                'month',
+                'monitoring_date',
+                'source_data',
+                'verification_status',
+            )
+        }),
+
+        ('Dadus Finanseiru', {
+            'fields': (
+                'daily_income',
+                'monthly_income',
+                'yearly_income',
+                'total_sales',
+                'total_assets',
+                'total_employee',
+            )
+        }),
+
+        ('Rezultadu Análize', {
+            'fields': (
+                'growth_percentage',
+                'monitoring_status',
+                'note',
+                'evidence_file',
+                'hashed',
+            )
+        }),
+
+        ('System Information', {
+            'classes': ('collapse',),
+            'fields': (
+                'created_at',
+                'updated_at',
+                'deleted_at',
+            )
+        }),
     )

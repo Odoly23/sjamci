@@ -14,23 +14,12 @@ from suave.forms import BusinessKSForm, LocBusinessKSForm, ProgramKSForm, Employ
 from custom.models import TIpu_Programa, Status
 from config.decorators import allowed_users
 from django.http import JsonResponse
+from django.views.decorators.cache import never_cache
 
-def _generate_token(request, key):
-    token = str(uuid.uuid4())
-    request.session[key] = token
-    return token
-
-def _is_duplicate(request, key, posted):
-    saved = request.session.get(key)
-    if not saved:
-        return False
-    if not posted or saved != posted:
-        return False
-    del request.session[key]
-    return True
+#create your views here
 
 # ══════════════════════════════════════════════════════════════
-#  1. REJISTU BENEFISIARIU BARU
+#  1. MAPA KREDITU SUAVE
 # ══════════════════════════════════════════════════════════════
 @login_required
 def APIGISKS(request):
@@ -59,6 +48,9 @@ def APIGISKS(request):
         })
     return JsonResponse({"obj": obj})
 
+# ══════════════════════════════════════════════════════════════
+#  2. ADD BENEFISIARIU
+# ══════════════════════════════════════════════════════════════
 @login_required
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
@@ -96,7 +88,6 @@ def add_benef_ks(request):
 # ══════════════════════════════════════════════════════════════
 #  2. EDIT BENEFISIARIU
 # ══════════════════════════════════════════════════════════════
-
 @login_required
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
@@ -130,18 +121,12 @@ def edit_benef_ks(request, hashid):
 # ══════════════════════════════════════════════════════════════
 #  3. ENDERESU TL
 # ══════════════════════════════════════════════════════════════
-
 @login_required
 @allowed_users(allowed_roles=['KS'])
-def AddressTLUpdate_ks(request, hashid):
+def AddressTLUpdate_kss(request, hashid):
     emp     = get_object_or_404(Benefisiariu, hashed=hashid)
     objects = AddressTL.objects.filter(benefisiariu=emp).first()
-
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_addtl', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = AddressTLForm(request.POST, instance=objects)
         if form.is_valid():
             instance = form.save(commit=False)
@@ -158,13 +143,37 @@ def AddressTLUpdate_ks(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_addtl'),
         'title':      'Altera Enderesu',
         'legend':     'Altera Enderesu',
     }
     return render(request, 'Dash/Forms/form_addressBnf.html', context)
 
+@login_required
+@allowed_users(allowed_roles=['KS']) 
+def AddressTLUpdate_ks(request, hashid):
+    emp     = get_object_or_404(Benefisiariu, hashed=hashid)
+    objects = AddressTL.objects.filter(benefisiariu=emp).first()
+    if request.method == 'POST':            
+        form = AddressTLForm(request.POST, instance=objects)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.benefisiariu = emp
+            if hasattr(instance, 'user'):
+                instance.user = request.user
+            instance.save()
+            messages.success(request, "Enderesu atualiza ona.")
+            return redirect('benef-detail-ks', hashid=hashid)
+    else:
+        form = AddressTLForm(instance=objects)
 
+    context = {
+        'hashid':     hashid,
+        'form':       form,
+        'emp':        emp,
+        'title':      'Altera Enderesu',
+        'legend':     'Altera Enderesu',
+    }
+    return render(request, 'Dash/Forms/form_addressBnf.html', context)
 # ══════════════════════════════════════════════════════════════
 #  4. ENDERESU ORIGIN
 # ══════════════════════════════════════════════════════════════
@@ -172,17 +181,12 @@ def AddressTLUpdate_ks(request, hashid):
 @login_required
 @allowed_users(allowed_roles=['KS'])
 def AddressOriginUpdate_ks(request, hashid):
-    emp     = get_object_or_404(Benefisiariu, hashed=hashid)
+    emp = get_object_or_404(Benefisiariu, hashed=hashid)
     objects = AddressOrigin.objects.filter(benefisiariu=emp).first()
-
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_addori', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = AddressOriginForm(request.POST, instance=objects)
         if form.is_valid():
-            instance              = form.save(commit=False)
+            instance = form.save(commit=False)
             instance.benefisiariu = emp
             instance.save()
             messages.success(request, "Enderesu origin atualiza ona.")
@@ -194,7 +198,6 @@ def AddressOriginUpdate_ks(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_addori'),
         'title':      'Altera Enderesu Origin',
         'legend':     'Altera Enderesu Origin',
     }
@@ -211,12 +214,6 @@ def Localidade_Add_ks(request, hashid):
     emp     = get_object_or_404(Benefisiariu, hashed=hashid)
     objects = LocBussiness.objects.filter(benefisiariu=emp).first()
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        saved_token  = request.session.get('ks_token_loc')
-        if not posted_token or not saved_token or posted_token != saved_token:
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
-        del request.session['ks_token_loc']
         form = LocBusinessKSForm(request.POST, instance=objects)
         if form.is_valid():
             instance              = form.save(commit=False)
@@ -231,7 +228,6 @@ def Localidade_Add_ks(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_loc'),
         'title':      'Lokasaun Negosiu',
         'legend':     'Lokasaun Negosiu',
     }
@@ -241,21 +237,15 @@ def Localidade_Add_ks(request, hashid):
 # ══════════════════════════════════════════════════════════════
 #  6. NEGOSIU
 # ══════════════════════════════════════════════════════════════
-
 @login_required
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def Business_Add_ks(request, hashid):
     emp = get_object_or_404(Benefisiariu, hashed=hashid)
-
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_business', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = BusinessKSForm(request.POST)
         if form.is_valid():
-            obj              = form.save(commit=False)
+            obj= form.save(commit=False)
             obj.benefisiariu = emp
             obj.save()
             messages.success(request, "Negosiu rai ho sukses.")
@@ -267,13 +257,10 @@ def Business_Add_ks(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_business'),
         'title':      'Rejistu Negosiu',
         'legend':     'Rejistu Negosiu Kreditu Suave',
     }
     return render(request, 'Dash/Forms/form.html', context)
-
-
 # ══════════════════════════════════════════════════════════════
 #  7. PROGRAMA KS
 #     Otomatis sinkron total amount ke Finance setelah save
@@ -284,29 +271,16 @@ def Business_Add_ks(request, hashid):
 @transaction.atomic
 def Program_Add_ks(request, hashid):
     emp = get_object_or_404(Benefisiariu, hashed=hashid)
-
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_program', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = ProgramKSForm(request.POST)
         if form.is_valid():
             obj              = form.save(commit=False)
             obj.benefisiariu = emp
             obj.status       = Status.objects.get(pk=1)
             obj.save()
-            print(obj.program_type)
-            print(obj.program_type.name)
-            total = Program.objects.filter(
-                benefisiariu=emp,
-                program_type__name='KREDITU SUAVE'
-            ).aggregate(total=Sum('amount'))['total'] or 0
+            total = Program.objects.filter( benefisiariu=emp, program_type__name='KREDITU SUAVE').aggregate(total=Sum('amount'))['total'] or 0
             for b in Business.objects.filter(benefisiariu=emp):
-                Finance.objects.update_or_create(
-                    business=b,
-                    defaults={'budget': total}
-                )
+                Finance.objects.update_or_create(business=b, defaults={'budget': total})
             messages.success(request, "Programa Kreditu Suave rai ho susesu.")
             return redirect('benef-detail-ks', hashid=hashid)
     else:
@@ -316,7 +290,6 @@ def Program_Add_ks(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_program'),
         'title':      'Rejistu Programa KS',
         'legend':     'Programa Kreditu Suave Foun',
     }
@@ -333,12 +306,7 @@ def Program_Add_ks(request, hashid):
 def Employee_Add_ks(request, hashid):
     emp        = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
-
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_employee', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = EmployeeKSForm(request.POST)
         if form.is_valid():
             form.save()
@@ -352,7 +320,6 @@ def Employee_Add_ks(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_employee'),
         'title':      'Rejistu Trabalhadores',
         'legend':     'Trabalhadores Foun',
     }
@@ -369,12 +336,7 @@ def Employee_Add_ks(request, hashid):
 def Finance_Add_ks(request, hashid):
     emp        = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
-
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_finance', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = FinanceKSForm(request.POST)
         if form.is_valid():
             form.save()
@@ -388,7 +350,6 @@ def Finance_Add_ks(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_finance'),
         'title':      'Rejistu Finansiamento',
         'legend':     'Finansiamento Foun',
     }
@@ -404,14 +365,11 @@ def Finance_Add_ks(request, hashid):
 @transaction.atomic
 def EkipaMember_Add(request, hashid):
     emp = get_object_or_404(Benefisiariu, hashed=hashid)
+    TOKEN_KEY = 'ks_token_ekipa'
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_ekipa', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = EkipaMemberForm(request.POST)
         if form.is_valid():
-            obj              = form.save(commit=False)
+            obj = form.save(commit=False)
             obj.benefisiariu = emp
             obj.save()
             messages.success(request, "Ekipa Membru rai ho sukses.")
@@ -423,7 +381,6 @@ def EkipaMember_Add(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_ekipa'),
         'title':      'Rejistu Ekipa Membru',
         'legend':     'Ekipa Membru Foun',
     }
@@ -440,12 +397,7 @@ def EkipaMember_Add(request, hashid):
 def ProductService_Add(request, hashid):
     emp        = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
-
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_product', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = ProductServiceForm(request.POST)
         if form.is_valid():
             form.save()
@@ -459,7 +411,6 @@ def ProductService_Add(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_product'),
         'title':      'Rejistu Produto/Servisu',
         'legend':     'Produto/Servisu Foun',
     }
@@ -478,10 +429,6 @@ def MainCustomer_Add(request, hashid):
     businesses = Business.objects.filter(benefisiariu=emp)
 
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_customer', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = MainCustomerForm(request.POST)
         if form.is_valid():
             form.save()
@@ -495,7 +442,6 @@ def MainCustomer_Add(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_customer'),
         'title':      'Rejistu Kliente Prinsipal',
         'legend':     'Kliente Prinsipal Foun',
     }
@@ -514,10 +460,6 @@ def Competitor_Add(request, hashid):
     businesses = Business.objects.filter(benefisiariu=emp)
 
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_competitor', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = CompetitorForm(request.POST)
         if form.is_valid():
             form.save()
@@ -531,7 +473,6 @@ def Competitor_Add(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_competitor'),
         'title':      'Rejistu Kompetitor',
         'legend':     'Kompetitor Foun',
     }
@@ -541,7 +482,6 @@ def Competitor_Add(request, hashid):
 # ══════════════════════════════════════════════════════════════
 #  15. AVALIASAUN MERKADU  (OneToOne per Business)
 # ══════════════════════════════════════════════════════════════
-
 @login_required
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
@@ -550,10 +490,6 @@ def MarketAssessment_Add(request, hashid):
     businesses = Business.objects.filter(benefisiariu=emp)
 
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_market', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = MarketAssessmentForm(request.POST)
         if form.is_valid():
             form.save()
@@ -567,7 +503,6 @@ def MarketAssessment_Add(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_market'),
         'title':      'Avaliasaun Merkadu',
         'legend':     'Avaliasaun Merkadu Foun',
     }
@@ -577,7 +512,6 @@ def MarketAssessment_Add(request, hashid):
 # ══════════════════════════════════════════════════════════════
 #  16. AVALIASAUN FINANSEIRU  (OneToOne per Business)
 # ══════════════════════════════════════════════════════════════
-
 @login_required
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
@@ -586,10 +520,6 @@ def FinancialAssessment_Add(request, hashid):
     businesses = Business.objects.filter(benefisiariu=emp)
 
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_financial', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = FinancialAssessmentForm(request.POST)
         if form.is_valid():
             form.save()
@@ -603,7 +533,6 @@ def FinancialAssessment_Add(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_financial'),
         'title':      'Avaliasaun Finanseiru',
         'legend':     'Avaliasaun Finanseiru Foun',
     }
@@ -623,10 +552,6 @@ def FixedAsset_Add(request, hashid):
     financials = FinancialAssessment.objects.filter(business__in=businesses)
 
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_asset', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = FixedAssetForm(request.POST)
         if form.is_valid():
             form.save()
@@ -640,7 +565,6 @@ def FixedAsset_Add(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_asset'),
         'title':      'Rejistu Asset Fixu',
         'legend':     'Asset Fixu Foun',
     }
@@ -657,12 +581,7 @@ def FixedAsset_Add(request, hashid):
 def CreditInfo_Add(request, hashid):
     emp        = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
-
     if request.method == 'POST':
-        posted_token = request.POST.get('_form_token', '')
-        if _is_duplicate(request, 'ks_token_creditinfo', posted_token):
-            messages.warning(request, "Dadus ne'e hotu submete ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
         form = CreditInfoForm(request.POST)
         if form.is_valid():
             form.save()
@@ -676,7 +595,6 @@ def CreditInfo_Add(request, hashid):
         'hashid':     hashid,
         'form':       form,
         'emp':        emp,
-        'form_token': _generate_token(request, 'ks_token_creditinfo'),
         'title':      'Informasaun Kreditu',
         'legend':     'Informasaun Kreditu Foun',
     }

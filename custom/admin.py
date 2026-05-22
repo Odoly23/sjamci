@@ -1,4 +1,8 @@
 from django.contrib import admin
+from import_export import resources, fields
+from import_export.admin import ImportExportModelAdmin
+from import_export.widgets import ForeignKeyWidget
+
 from .models import (
     Minister,
     Diresaun,
@@ -21,9 +25,218 @@ from .models import (
 
 
 # =========================
+# Resources (Import/Export)
+# =========================
+
+class MinisterResource(resources.ModelResource):
+    class Meta:
+        model = Minister
+        fields = ('id', 'code', 'name', 'hashed')
+        export_order = ('id', 'code', 'name', 'hashed')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class DiresaunResource(resources.ModelResource):
+    class Meta:
+        model = Diresaun
+        fields = ('id', 'code', 'name')
+        export_order = ('id', 'code', 'name')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class DepartamentoResource(resources.ModelResource):
+    diresaun = fields.Field(
+        column_name='diresaun',
+        attribute='diresaun',
+        widget=ForeignKeyWidget(Diresaun, field='name')
+    )
+
+    class Meta:
+        model = Departamento
+        fields = ('id', 'code', 'name', 'diresaun')
+        export_order = ('id', 'code', 'name', 'diresaun')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class PositionResource(resources.ModelResource):
+    class Meta:
+        model = Position
+        fields = ('id', 'name')
+        export_order = ('id', 'name')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class GabineteResource(resources.ModelResource):
+    class Meta:
+        model = Gabinete
+        fields = ('id', 'code', 'name', 'hashed')
+        export_order = ('id', 'code', 'name', 'hashed')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class MunicipalityResource(resources.ModelResource):
+    class Meta:
+        model = Municipality
+        fields = ('id', 'code', 'name', 'hckey')
+        export_order = ('id', 'code', 'name', 'hckey')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class AdministrativePostResource(resources.ModelResource):
+    municipality = fields.Field(
+        column_name='municipality',
+        attribute='municipality',
+        widget=ForeignKeyWidget(Municipality, field='name')
+    )
+
+    class Meta:
+        model = AdministrativePost
+        fields = ('id', 'name', 'municipality')
+        export_order = ('id', 'name', 'municipality')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class VillageResource(resources.ModelResource):
+    administrativepost = fields.Field(
+        column_name='administrativepost',
+        attribute='administrativepost',
+        widget=ForeignKeyWidget(AdministrativePost, field='name')
+    )
+
+    class Meta:
+        model = Village
+        fields = ('id', 'name', 'administrativepost')
+        export_order = ('id', 'name', 'administrativepost')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class SectorResource(resources.ModelResource):
+    class Meta:
+        model = Sector
+        fields = ('id', 'name')
+        export_order = ('id', 'name')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class BussinesSizeResource(resources.ModelResource):
+    class Meta:
+        model = Bussines_size
+        fields = ('id', 'code', 'name')
+        export_order = ('id', 'code', 'name')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class StatusResource(resources.ModelResource):
+    class Meta:
+        model = Status
+        fields = ('id', 'name')
+        export_order = ('id', 'name')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class CategoryEmpResource(resources.ModelResource):
+    class Meta:
+        model = Category_Emp
+        fields = ('id', 'name')
+        export_order = ('id', 'name')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class YearResource(resources.ModelResource):
+    class Meta:
+        model = Year
+        fields = ('id', 'year', 'is_active')
+        export_order = ('id', 'year', 'is_active')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class FazeResource(resources.ModelResource):
+    class Meta:
+        model = Faze
+        fields = ('id', 'name', 'is_active')
+        export_order = ('id', 'name', 'is_active')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class TipuApoioResource(resources.ModelResource):
+    class Meta:
+        model = Tipu_Apoio
+        fields = ('id', 'name')
+        export_order = ('id', 'name')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class IndustryTypeResource(resources.ModelResource):
+    class Meta:
+        model = IndustryType
+        fields = ('id', 'name')
+        export_order = ('id', 'name')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+class TipoProgramaResource(resources.ModelResource):
+    class Meta:
+        model = TIpu_Programa
+        fields = ('id', 'name', 'is_active')
+        export_order = ('id', 'name', 'is_active')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
+
+# =========================
 # Base Admin
 # =========================
-class BaseAdmin(admin.ModelAdmin):
+class BaseAdmin(ImportExportModelAdmin):
     list_per_page = 25
     ordering = ['id']
     readonly_fields = (
@@ -31,11 +244,8 @@ class BaseAdmin(admin.ModelAdmin):
         'updated_at',
         'deleted_at',
     )
-
     search_fields = ['name']
-
     list_filter = ['created_at']
-
 
 
 # =========================
@@ -43,6 +253,7 @@ class BaseAdmin(admin.ModelAdmin):
 # =========================
 @admin.register(Minister)
 class MinisterAdmin(BaseAdmin):
+    resource_classes = [MinisterResource]
     list_display = ['id', 'code', 'name', 'hashed']
     search_fields = ['name', 'code']
 
@@ -52,6 +263,7 @@ class MinisterAdmin(BaseAdmin):
 # =========================
 @admin.register(Diresaun)
 class DiresaunAdmin(BaseAdmin):
+    resource_classes = [DiresaunResource]
     list_display = ['id', 'code', 'name']
     search_fields = ['name', 'code']
 
@@ -61,6 +273,7 @@ class DiresaunAdmin(BaseAdmin):
 # =========================
 @admin.register(Departamento)
 class DepartamentoAdmin(BaseAdmin):
+    resource_classes = [DepartamentoResource]
     list_display = ['id', 'code', 'name', 'diresaun']
     list_filter = ['diresaun']
     search_fields = ['name', 'code']
@@ -71,6 +284,7 @@ class DepartamentoAdmin(BaseAdmin):
 # =========================
 @admin.register(Position)
 class PositionAdmin(BaseAdmin):
+    resource_classes = [PositionResource]
     list_display = ['id', 'name']
 
 
@@ -78,7 +292,8 @@ class PositionAdmin(BaseAdmin):
 # Gabinete
 # =========================
 @admin.register(Gabinete)
-class GabineteAdmin(admin.ModelAdmin):
+class GabineteAdmin(ImportExportModelAdmin):
+    resource_classes = [GabineteResource]
     list_display = ['id', 'code', 'name', 'hashed']
     search_fields = ['name', 'code']
 
@@ -88,6 +303,7 @@ class GabineteAdmin(admin.ModelAdmin):
 # =========================
 @admin.register(Municipality)
 class MunicipalityAdmin(BaseAdmin):
+    resource_classes = [MunicipalityResource]
     list_display = ['id', 'code', 'name', 'hckey']
     search_fields = ['name', 'code']
 
@@ -97,6 +313,7 @@ class MunicipalityAdmin(BaseAdmin):
 # =========================
 @admin.register(AdministrativePost)
 class AdministrativePostAdmin(BaseAdmin):
+    resource_classes = [AdministrativePostResource]
     list_display = ['id', 'name', 'municipality']
     list_filter = ['municipality']
     search_fields = ['name']
@@ -107,6 +324,7 @@ class AdministrativePostAdmin(BaseAdmin):
 # =========================
 @admin.register(Village)
 class VillageAdmin(BaseAdmin):
+    resource_classes = [VillageResource]
     list_display = ['id', 'name', 'administrativepost']
     list_filter = ['administrativepost']
     search_fields = ['name']
@@ -117,6 +335,7 @@ class VillageAdmin(BaseAdmin):
 # =========================
 @admin.register(Sector)
 class SectorAdmin(BaseAdmin):
+    resource_classes = [SectorResource]
     list_display = ['id', 'name']
 
 
@@ -125,6 +344,7 @@ class SectorAdmin(BaseAdmin):
 # =========================
 @admin.register(Bussines_size)
 class BussinesSizeAdmin(BaseAdmin):
+    resource_classes = [BussinesSizeResource]
     list_display = ['id', 'code', 'name']
     search_fields = ['name', 'code']
 
@@ -134,6 +354,7 @@ class BussinesSizeAdmin(BaseAdmin):
 # =========================
 @admin.register(Status)
 class StatusAdmin(BaseAdmin):
+    resource_classes = [StatusResource]
     list_display = ['id', 'name']
 
 
@@ -142,6 +363,7 @@ class StatusAdmin(BaseAdmin):
 # =========================
 @admin.register(Category_Emp)
 class CategoryEmpAdmin(BaseAdmin):
+    resource_classes = [CategoryEmpResource]
     list_display = ['id', 'name']
 
 
@@ -149,7 +371,8 @@ class CategoryEmpAdmin(BaseAdmin):
 # Year
 # =========================
 @admin.register(Year)
-class YearAdmin(admin.ModelAdmin):
+class YearAdmin(ImportExportModelAdmin):
+    resource_classes = [YearResource]
     list_display = ['id', 'year', 'is_active']
     list_filter = ['is_active']
     search_fields = ['year']
@@ -159,7 +382,8 @@ class YearAdmin(admin.ModelAdmin):
 # Faze
 # =========================
 @admin.register(Faze)
-class FazeAdmin(admin.ModelAdmin):
+class FazeAdmin(ImportExportModelAdmin):
+    resource_classes = [FazeResource]
     list_display = ['id', 'name', 'is_active']
     list_filter = ['is_active']
 
@@ -169,6 +393,7 @@ class FazeAdmin(admin.ModelAdmin):
 # =========================
 @admin.register(Tipu_Apoio)
 class TipuApoioAdmin(BaseAdmin):
+    resource_classes = [TipuApoioResource]
     list_display = ['id', 'name']
 
 
@@ -177,6 +402,7 @@ class TipuApoioAdmin(BaseAdmin):
 # =========================
 @admin.register(IndustryType)
 class IndustryTypeAdmin(BaseAdmin):
+    resource_classes = [IndustryTypeResource]
     list_display = ['id', 'name']
 
 
@@ -184,6 +410,7 @@ class IndustryTypeAdmin(BaseAdmin):
 # Tipo Programa
 # =========================
 @admin.register(TIpu_Programa)
-class TipoProgramaAdmin(admin.ModelAdmin):
+class TipoProgramaAdmin(ImportExportModelAdmin):
+    resource_classes = [TipoProgramaResource]
     list_display = ['id', 'name', 'is_active']
     list_filter = ['is_active']
