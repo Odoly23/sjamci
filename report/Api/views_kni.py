@@ -114,7 +114,7 @@ class APIStatusPrograma(APIView):
 
 class APIApoiuTinan(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, format=None):
 
@@ -147,7 +147,7 @@ class APIApoiuTinan(APIView):
 
 class APIFaze(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, format=None):
 

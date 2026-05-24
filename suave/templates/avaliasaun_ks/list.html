@@ -4,27 +4,6 @@
 <div class="container-fluid mt-3">
   <div class="row">
     <div class="col-sm-12">
-              <div class="card mb-3">
-          <div class="card-body">
-            <div class="text-center d-flex justify-content-center align-items-center flex-wrap gap-2 mb-2">
-              {% if group == "KNI" %}
-              <a class="btn btn-sm btn-warning mb-2 ml-2"
-                 href="{% url 'baseline-list' %}">
-                Lista Avaliasaun Antes De Apoiu
-                <i class="fa fa-list"></i>
-              </a>
-              <a class="btn btn-sm btn-success mb-2 ml-2"
-                 href="{% url 'monitoring-list' %}">
-                Lista Avaliasaun Depois De Apoiu
-                <i class="fa fa-list"></i>
-              </a>
-              {% endif %}
-            </div>
-            <hr/>
-          </div>
-        </div>
-    </div>
-    <div class="col-sm-12">
       <div class="card shadow-sm border-0">
         <!-- HEADER -->
         <div class="card-header  d-flex justify-content-between align-items-center">
@@ -84,33 +63,13 @@
                   <td class="align-middle">
                     {{ b.addresstl.administrativepost|default:"-" }}
                   </td>                  <!-- ACTION -->
-                  <!-- ACTION -->
-              <td class="text-center align-middle">
-                  {% for biz in b.negosiu.all %}
-                      <!-- SUDAH ADA BASELINE -->
-                      {% if biz.baseline %}
-                          <a class="btn btn-sm btn-success mb-1"
-                             href="{% url 'add-monits' biz.hashed %}">
-                              <i class="fa fa-line-chart"></i>
-                              Depois Apoiu
-                          </a>
-                      {% else %}
-                          <a class="btn btn-sm btn-primary mb-1"
-                             href="{% url 'add-baseline' biz.hashed %}">
-                              <i class="fa fa-database"></i>
-                              Avalia Antes
-                          </a>
-                      {% endif %}
-
-                  {% empty %}
-
-                      <span class="text-muted">
-                          La iha negósiu
-                      </span>
-
-                  {% endfor %}
-
-              </td>
+                  <td class="text-center align-middle">
+                    <div class="btn-group btn-group-sm" role="group">
+                        <a class="btn btn-sm btn-warning" href="{% url 'eva-ks' b.hashed %}">
+                          <i class="fa fa-pencil"></i> Avaliasaun
+                        </a>
+                    </div>
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>

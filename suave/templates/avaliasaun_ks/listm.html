@@ -90,13 +90,13 @@
                       <!-- SUDAH ADA BASELINE -->
                       {% if biz.baseline %}
                           <a class="btn btn-sm btn-success mb-1"
-                             href="{% url 'add-monits' biz.hashed %}">
+                             href="{% url 'depois-ava' biz.hashed %}">
                               <i class="fa fa-line-chart"></i>
                               Depois Apoiu
                           </a>
                       {% else %}
                           <a class="btn btn-sm btn-primary mb-1"
-                             href="{% url 'add-baseline' biz.hashed %}">
+                             href="{% url 'antes-ava' biz.hashed %}">
                               <i class="fa fa-database"></i>
                               Avalia Antes
                           </a>

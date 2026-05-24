@@ -1,0 +1,164 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="content py-5">
+  <div class="container-fluid">
+
+    <!-- HEADER -->
+    <div class="text-center mb-5">
+      <h2 class="font-weight-bold">
+        PAINEL AVALIASAUN
+      </h2>
+
+      <p class="text-muted">
+        Hili avaliasaun ida ne'ebe ita hakarak asesu
+      </p>
+    </div>
+
+    <!-- BUTTON -->
+    <div class="text-center mb-5">
+
+      <button
+        class="btn  btn-primary btn-lg px-5 shadow"
+        type="button"
+        data-toggle="collapse"
+        data-target="#menuPenilayan"
+        aria-expanded="false">
+
+        <i class="fa fa-th-large mr-2"></i>
+        Avalia
+
+      </button>
+
+    </div>
+
+    <!-- MENU -->
+    <div class="collapse" id="menuPenilayan">
+
+      <div class="row justify-content-center">
+
+        <!-- CARD 1 -->
+        <div class="col-md-4 mb-4">
+
+          <div class="card border-0 shadow-lg hover-card h-100">
+
+            <div class="card-body text-center p-5">
+
+              <div class="icon-box bg-primary">
+                <i class="fa fa-line-chart text-white"></i>
+              </div>
+
+              <h4 class="mt-4 text-primary font-weight-bold">
+                Avaliasaun Rendimento
+              </h4>
+
+              <p class="text-muted mt-3">
+                Haree no analiza situasaun finanseira benefisiariu.
+              </p>
+
+              <a href="{% url 'ava-re-ks' %}" class="btn btn-sm btn-danger">
+                <i class="fa fa-arrow-right"></i> Tama
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="col-md-4 mb-4">
+
+          <div class="card border-0 shadow-lg hover-card h-100">
+
+            <div class="card-body text-center p-5">
+
+              <div class="icon-box bg-danger">
+                <i class="fa fa-user text-white"></i>
+              </div>
+
+              <h4 class="mt-4 text-danger font-weight-bold">
+                Avaliasaun Estatutu
+              </h4>
+
+              <p class="text-muted mt-3">
+                Avalia estatutu no kondisaun atual benefisiariu.
+              </p>
+              <a href="{% url 'st-ks-list' %}" class="btn btn-sm btn-danger">
+                <i class="fa fa-arrow-right"></i> Tama
+              </a>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="col-md-4 mb-4">
+
+          <div class="card border-0 shadow-lg hover-card h-100">
+
+            <div class="card-body text-center p-5">
+
+              <div class="icon-box bg-warning">
+                <i class="fa fa-heart text-white"></i>
+              </div>
+
+              <h4 class="mt-4 text-warning font-weight-bold">
+                Novo Apoiu
+              </h4>
+
+              <p class="text-muted mt-3">
+                Kria no jere apoiu foun ba benefisiariu.
+              </p>
+
+              <a href="{% url 'add-benef-ks' %}" class="btn btn-sm btn-warning">
+                <i class="fa fa-arrow-right"> Tama</i>
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+
+.hover-card{
+    transition: 0.3s;
+    border-radius: 20px;
+}
+
+.hover-card:hover{
+    transform: translateY(-10px);
+}
+
+.icon-box{
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+.icon-box i{
+    font-size: 35px;
+}
+
+</style>
+
+{% endblock content %}
+
+{% block scripts %}
+{% endblock %}

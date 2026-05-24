@@ -81,6 +81,7 @@ class mpmsEmpresa(BaseModel):
     tipo_atividade = models.ForeignKey(TIPO_ATIVIDADE, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Tipo Atividade')
     tinan_hari     = models.CharField(max_length=4, null=True, blank=True, verbose_name='Tinan Hari Kompania')
     hashed         = models.CharField(max_length=128, null=True, blank=True)
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.company_name} - {self.benefisiariu}"

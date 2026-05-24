@@ -13,7 +13,7 @@
     <a href="?status=Suspendu" class="btn btn-sm btn-warning mb-2"> <i class="fa fa-refresh"></i> Suspendu <span class="badge badge-light">{{ total_suspendu }}</span>  </a>
     <a href="?status=Pending" class="btn btn-sm btn-info mb-2"><i class="fa fa-clock"></i> Pending <span class="badge badge-light"> {{ total_pending }}</span></a>
     <!-- SHOW ALL -->
-    <a href="{% url 'benef-evaluation-list' %}"
+    <a href="{% url 'ava-fh' %}"
        class="btn btn-sm btn-secondary mb-2">
       <i class="fa fa-list"></i>
       Hotu-Hotu
@@ -75,7 +75,7 @@
                   Avaliasaun
                 </a>
               {% else %}
-              <a href="{% url 'benef-detail-kni' b.hashed %}"
+              <a href="{% url 'benef-detail-ks' b.hashed %}"
                          class="btn btn-warning ml-1"
                          title="View">
 

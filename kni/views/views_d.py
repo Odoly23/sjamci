@@ -23,7 +23,7 @@ from django.conf import settings
 def dash_kni(request):
     group = request.user.groups.all()[0].name
     mun = Municipality.active_objects.all().order_by('code')
-    faze = Faze.active_objects.exclude(name="KREDITU")
+    faze = Faze.active_objects.exclude(name__in=["KREDITU", "mpms"])
     tinan = Year.active_objects.all().order_by('-year')
     paginator = Paginator(tinan, 4)
     page = request.GET.get('page', 1)

@@ -1,0 +1,164 @@
+{% extends "main/layout.html" %}
+
+{% block content %}
+
+<div class="container-fluid mt-3">
+
+  <!-- HEADER -->
+  <div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-primary text-white">
+      {{ empresa.company_name }} - MPMS DASHBOARD
+    </div>
+
+    <div class="card-body">
+
+      <!-- PROGRESS -->
+      <div class="mb-3">
+        <h6>Progress Data Completu</h6>
+
+        <div class="progress" style="height: 25px;">
+          <div class="progress-bar bg-success"
+               role="progressbar"
+               style="width: {{ progress }}%">
+            {{ progress }}%
+          </div>
+        </div>
+      </div>
+
+      {% if empresa.is_completed %}
+        <div class="alert alert-success">
+          ✔ Data kompletu - sistema locked
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="row">
+
+    <!-- LEFT -->
+    <div class="col-md-6">
+
+      <!-- EMPRESA -->
+      <div class="card mb-2">
+        <div class="card-header">1. Empresa</div>
+        <div class="card-body">
+          {{ empresa.company_name }} <br>
+          {{ empresa.tipo_atividade }}
+        </div>
+      </div>
+
+      <!-- LOKALIZASAUN -->
+      <div class="card mb-2">
+        <div class="card-header d-flex justify-content-between">
+          2. Lokasi
+          {% if not empresa.is_completed %}
+            <a href="{% url 'mpms-lokal-add' empresa.hashed %}" class="btn btn-sm btn-primary">Input</a>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          {% if lokal %}
+            {{ lokal.municipality }} - {{ lokal.village }}
+          {% else %}
+            <span class="text-muted">No data</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- LISENSAMENTU -->
+      <div class="card mb-2">
+        <div class="card-header d-flex justify-content-between">
+          3. Lisensamentu
+          {% if not empresa.is_completed %}
+            <a href="{% url 'mpms-lisensamentu-add' empresa.hashed %}" class="btn btn-sm btn-primary">Input</a>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          {% if lisensamentu %}
+            {{ lisensamentu.lisensamentu }} - {{ lisensamentu.lisensamentu_status }}
+          {% else %}
+            <span class="text-muted">No data</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- KAPITAL -->
+      <div class="card mb-2">
+        <div class="card-header d-flex justify-content-between">
+          4. Kapital
+          {% if not empresa.is_completed %}
+            <a href="{% url 'mpms-kapital-add' empresa.hashed %}" class="btn btn-sm btn-primary">Input</a>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          {% if kapital %}
+            $ {{ kapital.lukru_brutu_mes }}
+          {% else %}
+            <span class="text-muted">No data</span>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="col-md-6">
+
+      <!-- EMPREGADOR -->
+      <div class="card mb-2">
+        <div class="card-header d-flex justify-content-between">
+          5. Empregador
+          {% if not empresa.is_completed %}
+            <a href="{% url 'mpms-empregador-add' empresa.hashed %}" class="btn btn-sm btn-primary">Input</a>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          {% if empregador %}
+            Total: {{ empregador.total_empregador }}
+          {% else %}
+            <span class="text-muted">No data</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- MATERIA PRIMA -->
+      <div class="card mb-2">
+        <div class="card-header d-flex justify-content-between">
+          6. Materia Prima
+          {% if not empresa.is_completed %}
+            <a href="{% url 'mpms-materia-add' empresa.hashed %}" class="btn btn-sm btn-primary">Input</a>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          {% if materia %}
+            {{ materia.origem }}
+          {% else %}
+            <span class="text-muted">No data</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- ATIVIDADE -->
+      <div class="card mb-2">
+        <div class="card-header d-flex justify-content-between">
+          7. Atividade / Apoio
+          {% if not empresa.is_completed %}
+            <a href="{% url 'mpms-atividade-add' empresa.hashed %}" class="btn btn-sm btn-primary">Input</a>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          {% for a in atividades %}
+            - {{ a.tipu_apoio }} | ${{ a.amount }} <br>
+          {% empty %}
+            <span class="text-muted">No data</span>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

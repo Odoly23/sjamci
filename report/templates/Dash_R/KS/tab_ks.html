@@ -7,59 +7,232 @@
     <div class="row justify-content-center">
       <div class="col-sm-12">
         <div class="card border-0">
-                          <div class="row mb-4">
 
-                    {% comment %} TOTAL POPULATION SUMMARY {% endcomment %}
-                    <div class="col-md-4 mb-5 text-center">
-                        <span class="text-muted">Total Benefisiariu</span>
-                        <h3><a href="">{{ totalp }}</a></h3>
-                    </div>
+          <div class="row mb-4">
+            {% comment %} TOTAL POPULATION SUMMARY {% endcomment %}
 
-                    <div class="col-md-4 mb-5 text-center">
-                        <span class="text-muted">Total Mane</span>
-                        <h3><a href="">{{ totm }}</a></h3>
-                    </div>
+            <div class="col-md-4 mb-5 text-center">
+              <span class="text-muted">Total Benefisiariu</span>
+              <h3><a href="">{{ totalp }}</a></h3>
+            </div>
 
-                    <div class="col-md-4 mb-5 text-center">
-                        <span class="text-muted">Total Feto</span>
-                        <h3><a href="">{{ totf }}</a></h3>
-                    </div>
+            <div class="col-md-4 mb-5 text-center">
+              <span class="text-muted">Total Mane</span>
+              <h3><a href="">{{ totm }}</a></h3>
+            </div>
 
-                    <div class="col-md-3 mb-5 text-center">
-                        <span class="text-muted">Total Xefe Grupu</span>
-                        <h3><a href="">{{ xfam }}</a></h3>
-                    </div>
+            <div class="col-md-4 mb-5 text-center">
+              <span class="text-muted">Total Feto</span>
+              <h3><a href="">{{ totf }}</a></h3>
+            </div>
 
-                    <div class="col-md-3 mb-5 text-center">
-                        <span class="text-muted">Total Tekniko</span>
-                        <h3><a href="">{{ joven }}</a></h3>
-                    </div>
+            <div class="col-md-4 mb-5 text-center">
+              <span class="text-muted">Total Xefe Grupu</span>
+              <h3><a href="">{{ totek }}</a></h3>
+            </div>
 
-                    <div class="col-md-3 mb-5 text-center">
-                        <span class="text-muted">Total Into</span>
-                        <h3><a href="">{{ fmane }}</a></h3>
-                    </div>
+            <div class="col-md-4 mb-5 text-center">
+              <span class="text-muted">Total Tekniko</span>
+              <h3><a href="">{{ tottk }}</a></h3>
+            </div>
 
-                    <div class="col-md-3 mb-5 text-center">
-                        <span class="text-muted">Total UNIP.LDA</span>
-                        <h3><a href="">{{ ffaluk }}</a></h3>
-                    </div>
+            <div class="col-md-4 mb-5 text-center">
+              <span class="text-muted">Total Membro</span>
+              <h3><a href="">{{ totmk }}</a></h3>
+            </div>
 
-                    <div class="col-md-4 mb-5 text-center">
-                        <span class="text-muted">Total LDA</span>
-                        <h3><a href="">{{ mate }}</a></h3>
-                    </div>
+            <div class="col-md-6 mb-5 text-center">
+              <span class="text-muted">Total ATIVU</span>
+              <h3><a href="">{{ totativu }}</a></h3>
+            </div>
 
-                    <div class="col-md-4 mb-5 text-center">
-                        <span class="text-muted">Total ATIVU</span>
-                        <h3><a href="">0</a></h3>
-                    </div>
+            <div class="col-md-6 mb-5 text-center">
+              <span class="text-muted">Total PARADO</span>
+              <h3><a href="">{{ totparado }}</a></h3>
+            </div>
+          </div>
 
-                    <div class="col-md-4 mb-5 text-center">
-                        <span class="text-muted">Total PARADO</span>
-                        <h3><a href="">{{ est }}</a></h3>
-                    </div>
+          <div class="row mb-4 ml-1">
+
+            <!-- TABLE 1 -->
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">
+                  <h2 class="card-title">
+                    <i class="fa fa-table"></i>
+                    Total Dados Benefisiariu Baseadu Munisipiu
+                  </h2>
                 </div>
+
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered" width="100%">
+                      <thead>
+                        <tr class="text-center">
+                          <th rowspan="2" class="align-middle">Munisipiu</th>
+                          <th colspan="2">Benefisiariu</th>
+                          <th rowspan="2" class="align-middle">Total</th>
+                        </tr>
+                        <tr class="text-center">
+                          <th>Mane</th>
+                          <th>Feto</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {% for obj in objects1 %}
+                        <tr>
+                          <td>{{ obj.0.name }}</td>
+                          <td><a href="" class="text-center">{{ obj.1 }}</a></td>
+                          <td><a href="" class="text-center">{{ obj.2 }}</a></td>
+                          <td><a href="" class="text-center">{{ obj.3 }}</a></td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TABLE 2 -->
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">
+                  <h2 class="card-title">
+                    <i class="fa fa-table"></i>
+                    Total Dados Benefisiariu Baseadu Tinan no Sektor
+                  </h2>
+                </div>
+
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered" width="100%">
+                      <thead>
+                        <tr class="text-center">
+                          <th rowspan="2" class="align-middle">Ano</th>
+                          <th colspan="{{ totsec }}">Benefisiariu</th>
+                        </tr>
+
+                        <tr class="text-center">
+                          {% for s in sec %}
+                          <th>{{ s.name }}</th>
+                          {% endfor %}
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {% for obj in objects2 %}
+                        <tr>
+                          <td>{{ obj.0.year }}</td>
+
+                          {% for obj1 in obj.1 %}
+                          <td class="text-center"><a href="">{{ obj1.1 }}</a></td>
+                          {% endfor %}
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="card-footer">
+                  <div class="mt-3">
+                    <nav>
+                      <ul class="pagination justify-content-center">
+
+                        {% if years_page.has_previous %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page=1">Primeiro</a>
+                        </li>
+
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ years_page.previous_page_number }}">
+                            &laquo;
+                          </a>
+                        </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                          <span class="page-link">{{ years_page.number }}</span>
+                        </li>
+
+                        {% if years_page.has_next %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ years_page.next_page_number }}">
+                            &raquo;
+                          </a>
+                        </li>
+
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ years_page.paginator.num_pages }}">
+                            Ultimu
+                          </a>
+                        </li>
+                        {% endif %}
+
+                      </ul>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TABLE 3 -->
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">
+                  <h2 class="card-title">
+                    <i class="fa fa-table"></i>
+                    Total Dados Benefisiariu Baseadu Munisipiu No Bussines Size
+                  </h2>
+                </div>
+
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered" width="100%">
+                      <thead>
+                        <tr class="text-center">
+                          <th rowspan="3" class="align-middle">Munisipiu</th>
+                          <th colspan="6">Benefisiariu</th>
+                          <th rowspan="3" class="align-middle">Total</th>
+                        </tr>
+
+                        <tr>
+                          {% for s in size %}
+                          <th colspan="2" class="text-center">{{ s.name }}</th>
+                          {% endfor %}
+                        </tr>
+
+                        <tr class="text-center">
+                          {% for s in size %}
+                          <th class="text-center">Mane</th>
+                          <th class="text-center">Feto</th>
+                          {% endfor %}
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {% for obj in objects3 %}
+                        <tr>
+                          <td>{{ obj.0.name }}</td>
+
+                          {% for obj1 in obj.1 %}
+                          <td><a href="" class="text-center">{{ obj1.1 }}</a></td>
+                          <td><a href="" class="text-center">{{ obj1.2 }}</a></td>
+                          {% endfor %}
+
+                          <td><a href="" class="text-center">{{ obj.2 }}</a></td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div> <!-- row -->
         </div>
       </div>
     </div>

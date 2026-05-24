@@ -12,6 +12,7 @@ class EkipaMember(BaseModel):
     ROLE_CHOICES = [
         ("Xefi",    "Xefi Ekipa"),
         ("Tekniko", "Tekniko"),
+        ("Membro", "Membro"),
     ]
     benefisiariu = models.ForeignKey(
         Benefisiariu, on_delete=models.CASCADE,

@@ -27,7 +27,7 @@ _ALERT = """
 class BusinessKNIForm(forms.ModelForm):
     class Meta:
         model  = Business
-        fields = ['name', 'idea', 'sector', 'category']
+        fields = ['name', 'idea', 'sector', 'category','size']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -40,8 +40,9 @@ class BusinessKNIForm(forms.ModelForm):
                 Column('idea', css_class='col-md-6'),
             ),
             Row(
-                Column('sector',   css_class='col-md-6'),
-                Column('category', css_class='col-md-6'),
+                Column('sector',   css_class='col-md-4'),
+                Column('category', css_class='col-md-4'),
+                Column('size', css_class='col-md-4')
             ),
             HTML(_BTN),
         )

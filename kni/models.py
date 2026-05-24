@@ -12,6 +12,7 @@ from django.contrib.auth.models import User, Group
 class Business(BaseModel):
     benefisiariu = models.ForeignKey( Benefisiariu,on_delete=models.CASCADE, verbose_name="Benefisiariu / Sira ne'ebé simu", related_name="negosiu")
     category = models.ForeignKey(Category_Emp, on_delete=models.CASCADE, null=True, blank=True)
+    size = models.ForeignKey(Bussines_size, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100,verbose_name="Naran Negósiu")
     idea = models.CharField(max_length=100,verbose_name="Ideia Negósiu", null=True, blank=True)
     sector = models.ForeignKey(Sector,on_delete=models.CASCADE,null=True, verbose_name="Sector Prinsipal")

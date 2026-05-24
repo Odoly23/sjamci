@@ -14,42 +14,42 @@ from config.decorators import allowed_users
 
 
 @login_required
-@allowed_users(allowed_roles=['KNI'])
-def avaliasaun(request):
+@allowed_users(allowed_roles=['KS'])
+def ks_avaliasaun(request):
     group = request.user.groups.all()[0].name
     context ={
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
         'legend': 'Avaliasaun Geral KNI',
         'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
-            {'link_name': 'av-dash', 'link_text':'Avaliasaun Benefisiariu'}
+            {'link_name': 'dash-ks', 'link_text': 'Painel Kreditu Suave'},
+            {'link_name': 'geral-ks', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'ks-ava', 'link_text':'Avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun/option.html', context)    
+    return render(request, 'avaliasaun_ks/option.html', context)    
 
 @login_required
-@allowed_users(allowed_roles=['KNI'])
-def avalia_list(request):
+@allowed_users(allowed_roles=['KS'])
+def avalia_list_ks(request):
     group = request.user.groups.all()[0].name
-    benefs = Benefisiariu.objects.prefetch_related('negosiu', 'Pnegosiu').all()
+    benefs = Benefisiariu.objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").all()
     context ={
         'benefs': benefs,
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
         'legend': 'Avaliasaun Geral KNI',
         'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'dash-ks', 'link_text': 'Painel Kreditu Suave'},
+            {'link_name': 'geral-ks', 'link_text': 'Lista Benefisiariu'},
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun/list.html', context)
+    return render(request, 'avaliasaun_ks/list.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['KNI'])
-def avalia_list2(request):
+@allowed_users(allowed_roles=['KS'])
+def avalia_list2_ks(request):
     group = request.user.groups.all()[0].name
     benefs = Benefisiariu.objects.prefetch_related('negosiu', 'Pnegosiu','negosiu__monitorings','negosiu__baseline',).all()
     context ={
@@ -58,16 +58,16 @@ def avalia_list2(request):
         'title': 'Avaliasaun Benefisiariu Geral',
         'legend': 'Avaliasaun Geral KNI',
         'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'dash-ks', 'link_text': 'Painel Kreditu Suave'},
+            {'link_name': 'geral-ks', 'link_text': 'Lista Benefisiariu'},
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun/listm.html', context)
+    return render(request, 'avaliasaun_ks/listm.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['KNI'])
-def benef_evaluation_list(request):
+@allowed_users(allowed_roles=['KS'])
+def benef_evaluation_list_ks(request):
     filter_status = request.GET.get('status')
     benefs = Benefisiariu.objects.select_related('status').prefetch_related('evaluations').all()
     if filter_status:
@@ -87,17 +87,17 @@ def benef_evaluation_list(request):
         'legend': 'Lista Avaliasaun Benefisiariu',
         'link_antes': [
             {
-                'link_name': 'kni-dash',
-                'link_text': 'Painel KNI'
+                'link_name': 'dash-ks',
+                'link_text': 'Painel Kreditu Suave'
             },
         ],
     }
-    return render(request, 'avaliasaun/list2.html', context)
+    return render(request, 'avaliasaun_ks/list2.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['KNI'])
+@allowed_users(allowed_roles=['KS'])
 @transaction.atomic
-def evaluate_benef(request, hashid):
+def evaluate_benef_ks(request, hashid):
     benef = get_object_or_404(Benefisiariu, hashed=hashid)
     if request.method == 'POST':
         form = BeneficiariuEvaluationForm(request.POST)
@@ -111,30 +111,32 @@ def evaluate_benef(request, hashid):
                 benef.save()
             else:
                 messages.error(request, f"Status '{evaluation.status}' la Ejiste iha tabela Status.")
-                return redirect('benef-evaluation-list')
-            messages.success(request, "Avaliasaun sukses.")
-            return redirect('benef-evaluation-list')
+                return redirect('ava-fh')
+            messages.success(request, "Avalia ona ho susesu.")
+            return redirect('ava-fh')
+
     else:
         form = BeneficiariuEvaluationForm()
+
     context = {
         'benef': benef,
         'form': form,
         'title': 'Avaliasaun Benefisiariu Geral',
         'legend': 'Avaliasaun Geral KNI',
         'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
-            {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
+            {'link_name': 'dash-ks', 'link_text': 'Painel Kreditu Suave'},
+            {'link_name': 'geral-ks', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'list-ava', 'link_text': 'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun/forms.html', context)
 
+    return render(request, 'avaliasaun_ks/forms.html', context)
 
 
 @login_required
-@allowed_users(allowed_roles=['Employee', 'KNI'])
+@allowed_users(allowed_roles=['Employee', 'KNI','KS'])
 @transaction.atomic
-def monitoring_create(request, hashid):
+def monitoring_create_ks(request, hashid):
     business = get_object_or_404(Business, hashed=hashid)
     if not hasattr(business, 'baseline'):
         messages.warning(request, "Presiza halo baseline antes monitoring.")
@@ -160,10 +162,10 @@ def monitoring_create(request, hashid):
         'legend': 'Depois Apoiu Monitoring'
     }
 
-    return render(request, 'avaliasaun/forms.html', context)
+    return render(request, 'avaliasaun_ks/forms.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['KNI'])
+@allowed_users(allowed_roles=['KS','KNI'])
 @transaction.atomic
 def baseline_create(request, hashid):
     business = get_object_or_404(Business, hashed=hashid)
@@ -190,10 +192,10 @@ def baseline_create(request, hashid):
         'title': 'Input Baseline',
         'legend': 'Baseline Antes Apoiu',
     }
-    return render(request, 'avaliasaun/forms.html', context)
+    return render(request, 'avaliasaun_ks/forms.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['KNI'])
+@allowed_users(allowed_roles=['KS'])
 def baseline_list(request):
 
     baselines = BusinessBaseline.objects.select_related(
@@ -209,46 +211,30 @@ def baseline_list(request):
 
     return render(
         request,
-        'avaliasaun/baseline_list.html',
+        'avaliasaun_ks/baseline_list.html',
         context
     )
 
 @login_required
-@allowed_users(allowed_roles=['KNI'])
+@allowed_users(allowed_roles=['KS'])
 def monitoring_list(request):
+    group = request.user.groups.all()[0].name
     monitorings = BusinessMonitoring.objects.select_related('business', 'business__benefisiariu')
     pending = monitorings.filter(verification_status='Pending').count()
-    verified = monitorings.filter(verification_status='Verified'
-    ).count()
-
-    critical = monitorings.filter(
-        monitoring_status='Critical'
-    ).count()
-
-    risk = monitorings.filter(
-        monitoring_status='Risk'
-    ).count()
-
-    normal = monitorings.filter(
-        monitoring_status='Normal'
-    ).count()
-
+    verified = monitorings.filter(verification_status='Verified').count()
+    critical = monitorings.filter(monitoring_status='Critical').count()
+    risk = monitorings.filter(monitoring_status='Risk').count()
+    normal = monitorings.filter(monitoring_status='Normal').count()
     context = {
         'monitorings': monitorings,
-
         'pending': pending,
         'verified': verified,
-
         'critical': critical,
         'risk': risk,
         'normal': normal,
-
+        'group':group,
         'title': 'Lista Monitoring',
         'legend': 'Dadus Monitoring',
     }
 
-    return render(
-        request,
-        'avaliasaun/monitoring_list.html',
-        context
-    )
+    return render(request, 'avaliasaun_ks/monitoring_list.html', context)

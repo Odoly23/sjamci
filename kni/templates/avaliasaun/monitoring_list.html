@@ -16,7 +16,7 @@
                     <h4>{{ pending }}</h4>
 
                     <span class="badge badge-warning">
-                        Pending
+                        Hein
                     </span>
 
                 </div>
@@ -34,7 +34,7 @@
                     <h4>{{ verified }}</h4>
 
                     <span class="badge badge-success">
-                        Verified
+                        Verifikado
                     </span>
 
                 </div>
@@ -70,7 +70,7 @@
                     <h4>{{ risk }}</h4>
 
                     <span class="badge badge-danger">
-                        Risk
+                        Risku
                     </span>
 
                 </div>
@@ -228,20 +228,20 @@
 
                                         {% if m.verification_status == 'Pending' %}
 
-                                            <span class="badge badge-warning">
-                                                Pending
+                                            <span class="badge badge-warning rounded-pill px-3">
+                                                Hein Hela   <i class="fa fa-spin fa-refresh"></i>
                                             </span>
 
                                         {% elif m.verification_status == 'Verified' %}
 
-                                            <span class="badge badge-success">
-                                                Verified
+                                            <span class="badge badge-success rounded-pill px-3">
+                                                Verifikado  <i class="fa fa-check-circle"></i>
                                             </span>
 
                                         {% else %}
 
-                                            <span class="badge badge-danger">
-                                                Rejected
+                                            <span class="badge badge-danger rounded-pill px-3">
+                                                Rejected  <i class="fa fa-times"></i>
                                             </span>
 
                                         {% endif %}

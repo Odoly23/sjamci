@@ -33,6 +33,7 @@ urlpatterns = [
     path('custom/', include('custom.urls')),
     path('Relatoriu/', include('report.urls')),
     path('Api/sumario/', include('report.Api.urls')),
+    path('Mpms-Home/', include('mpms.urls')),
     path('Utilizadores/', include('users.urls')),
 
 ]

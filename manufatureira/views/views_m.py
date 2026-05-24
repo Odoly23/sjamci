@@ -9,7 +9,7 @@ from manufatureira.models import  Manufatur, Lokalizasaun, Membro, Aktividade
 from django.db.models import Count
 
 @login_required
-@allowed_users(allowed_roles=['admin', 'MAN', 'XFD'])
+@allowed_users(allowed_roles=['admin', 'MAN', 'XFD','dnim'])
 def dash_man(request):
     group = request.user.groups.all()[0].name
     mun   = Municipality.active_objects.all().order_by('code')
@@ -19,18 +19,13 @@ def dash_man(request):
     tinan_page = paginator.get_page(page)
     year_ids = [t.id for t in tinan_page]
     mun_ids  = [m.id for m in mun]
- 
-    counts = (
-        Manufatur.objects.filter(atividades__year_id__in=year_ids, lokalidade__municipality_id__in=mun_ids,)
+    counts = (Manufatur.objects.filter(atividades__year_id__in=year_ids, lokalidade__municipality_id__in=mun_ids,)
         .values('atividades__year__year', 'lokalidade__municipality__name')
         .annotate(total=Count('id', distinct=True))
     )
-    count_map = {
-        (row['atividades__year__year'], row['lokalidade__municipality__name']): row['total']
+    count_map = {(row['atividades__year__year'], row['lokalidade__municipality__name']): row['total']
         for row in counts
     }
- 
-    # ── Bangun dg dari count_map ───────────────────────────────
     dg = []
     for t in tinan_page:
         row_hashed = hashlib.blake2b(str(t.year).encode()).hexdigest()
@@ -57,7 +52,7 @@ def dash_man(request):
     return render(request, 'Dash_dnim/manufatura.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['admin', 'MAN', 'XFD'])
+@allowed_users(allowed_roles=['admin', 'MAN', 'XFD','dnim'])
 def list_man(request, year, mun):
     group = request.user.groups.all()[0].name
     data = Manufatur.objects.filter(atividades__year__year=year, lokalidade__municipality__name=mun).distinct().order_by('name')
@@ -72,7 +67,7 @@ def list_man(request, year, mun):
     return render(request, 'Dash_dnim/list.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['admin', 'MAN', 'XFD'])
+@allowed_users(allowed_roles=['admin', 'MAN', 'XFD','dnim'])
 def total_man(request, year):
     group = request.user.groups.all()[0].name
     data = Manufatur.objects.filter(atividades__year__year=year ).distinct().order_by('name')
@@ -87,7 +82,7 @@ def total_man(request, year):
     return render(request, 'Dash_dnim/list_man.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['admin', 'MAN', 'XFD'])
+@allowed_users(allowed_roles=['admin', 'MAN', 'XFD','dnim'])
 def geral_man(request):
     group = request.user.groups.all()[0].name
     data = Manufatur.objects.all().distinct().order_by('name')
@@ -111,7 +106,7 @@ def geral_man(request):
 
 
 @login_required
-@allowed_users(allowed_roles=['admin', 'MAN', 'XFD'])
+@allowed_users(allowed_roles=['admin', 'MAN', 'XFD','dnim'])
 def detail_man(request, hashid):
     group = request.user.groups.all()[0].name
     manufatur = Manufatur.objects.get(hashed=hashid)

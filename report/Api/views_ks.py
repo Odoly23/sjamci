@@ -17,43 +17,13 @@ class APIKPIKS(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-
-        total_benefisiariu = Benefisiariu.active_objects.filter(
-            Pnegosiu__program_type__name=KS_PROGRAM
-        ).distinct().count()
-
-        total_business = Business.objects.filter(
-            benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM
-        ).distinct().count()
-
-        total_budget = Program.objects.filter(
-            program_type__name=KS_PROGRAM
-        ).aggregate(
-            total=Sum('amount')
-        )['total'] or 0
-
-        total_employee = Employee.objects.filter(
-            business__benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM
-        ).aggregate(
-            total=Sum('total')
-        )['total'] or 0
-
-        total_team = EkipaMember.objects.filter(
-            benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM
-        ).count()
-
-        total_revenue = FinancialAssessment.objects.filter(
-            business__benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM
-        ).aggregate(
-            total=Sum('annual_revenue')
-        )['total'] or 0
-
-        total_asset = FinancialAssessment.objects.filter(
-            business__benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM
-        ).aggregate(
-            total=Sum('total_assets')
-        )['total'] or 0
-
+        total_benefisiariu = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").count()
+        total_business = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").count()
+        total_budget = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").aggregate(total=Sum('amount'))['total'] or 0
+        total_employee = Employee.objects.filter(business__benefisiariu__Pnegosiu__program_type__name="KREDITU SUAVE").aggregate(total=Sum('total'))['total'] or 0
+        total_team = EkipaMember.objects.filter(benefisiariu__Pnegosiu__program_type__name="KREDITU SUAVE").count()
+        total_revenue = FinancialAssessment.objects.filter(business__benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM).aggregate(total=Sum('annual_revenue'))['total'] or 0
+        total_asset = FinancialAssessment.objects.filter(business__benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM).aggregate(total=Sum('total_assets'))['total'] or 0
         return Response({
             'total_benefisiariu': total_benefisiariu,
             'total_business': total_business,

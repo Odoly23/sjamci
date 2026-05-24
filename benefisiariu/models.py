@@ -67,7 +67,7 @@ class Photo(BaseModel):
 class BeneficiariuEvaluation(BaseModel):
     STATUS_CHOICES = [
         ('Ativu', 'Ativu'),
-        ('La_ativu', 'La_ativu'),
+        ('Parado', 'Parado'),
         ('Suspendu', 'Suspendu'),
         ('Pending', 'Pending'),
     ]

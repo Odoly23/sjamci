@@ -12,18 +12,13 @@
           <div class="card-body">
             <div class="text-center d-flex justify-content-center align-items-center flex-wrap gap-2 mb-2">
               {% if group == "KS" %}
-              <a class="btn btn-sm btn-info mb-2"
-                 href="{% url 'add-benef-ks' %}">
-                REJISTU DADUS
-                <i class="fa fa-plus-square"></i>
-              </a>
               <a class="btn btn-sm btn-success mb-2 ml-2"
                  href="">
                 IMPORTA EXCEL
                 <i class="fa fa-download"></i>
               </a>
                 <a class="btn btn-sm btn-danger mb-2 ml-2"
-                 href="">
+                 href="{% url 'ks-ava' %}">
                 AVALIASAUN
                 <i class="fa fa-check-circle"></i>
               </a>
