@@ -1,15 +1,20 @@
 import hashlib
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from config.decorators import allowed_users
 from custom.models import Municipality, Year
-from benefisiariu.models import Benefisiariu
+from benefisiariu.models import Benefisiariu, AddressTL, AddressOrigin, Photo
 from manufatureira.models import  Manufatur, Lokalizasaun, Membro, Aktividade
-from django.db.models import Count
+from django.db.models import Count, Sum
+from kni.models import Business, Program, LocBussiness, Finance, Employee
+from django.conf import settings
+
+
+
 
 @login_required
-@allowed_users(allowed_roles=['admin', 'MAN', 'XFD','dnim'])
+@allowed_users(allowed_roles=['admin', 'dnim'])
 def dash_man(request):
     group = request.user.groups.all()[0].name
     mun   = Municipality.active_objects.all().order_by('code')
@@ -52,7 +57,7 @@ def dash_man(request):
     return render(request, 'Dash_dnim/manufatura.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['admin', 'MAN', 'XFD','dnim'])
+@allowed_users(allowed_roles=['admin', 'dnim'])
 def list_man(request, year, mun):
     group = request.user.groups.all()[0].name
     data = Manufatur.objects.filter(atividades__year__year=year, lokalidade__municipality__name=mun).distinct().order_by('name')
@@ -67,7 +72,7 @@ def list_man(request, year, mun):
     return render(request, 'Dash_dnim/list.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['admin', 'MAN', 'XFD','dnim'])
+@allowed_users(allowed_roles=['admin', 'dnim'])
 def total_man(request, year):
     group = request.user.groups.all()[0].name
     data = Manufatur.objects.filter(atividades__year__year=year ).distinct().order_by('name')
@@ -82,10 +87,11 @@ def total_man(request, year):
     return render(request, 'Dash_dnim/list_man.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['admin', 'MAN', 'XFD','dnim'])
+@allowed_users(allowed_roles=['admin', 'dnim'])
 def geral_man(request):
     group = request.user.groups.all()[0].name
-    data = Manufatur.objects.all().distinct().order_by('name')
+    data = Benefisiariu.objects.filter(Pnegosiu__program_type__name="MANUFATUREIRA").prefetch_related('locnegosiu').all()
+    print(data)
     year = request.GET.get('year')
     mun  = request.GET.get('mun')
     if year:
@@ -106,7 +112,7 @@ def geral_man(request):
 
 
 @login_required
-@allowed_users(allowed_roles=['admin', 'MAN', 'XFD','dnim'])
+@allowed_users(allowed_roles=['admin', 'dnim'])
 def detail_man(request, hashid):
     group = request.user.groups.all()[0].name
     manufatur = Manufatur.objects.get(hashed=hashid)
@@ -126,3 +132,40 @@ def detail_man(request, hashid):
     }
 
     return render(request, 'Dash_dnim/detail_man.html', context)
+
+@login_required
+@allowed_users(allowed_roles=['admin', 'staff', 'dnim'])
+def manuf_detail_dnim(request, hashid):
+    group = request.user.groups.all()[0].name
+    benef = get_object_or_404(Benefisiariu, hashed=hashid)
+    addtl  = getattr(benef, 'addresstl',     None)
+    addori = getattr(benef, 'addressorigin', None)
+    photo  = getattr(benef, 'photo',         None)
+    businesses = Business.active_objects.filter(benefisiariu=benef)
+    programs   = Program.active_objects.filter(benefisiariu=benef, program_type__name='MANUFATUREIRA')
+    total_amount = programs.aggregate(total=Sum('amount'))['total'] or 0
+    local = LocBussiness.active_objects.filter(benefisiariu=benef).first()
+    employees = Employee.active_objects.filter(business__in=businesses)
+    finances  = Finance.active_objects.filter(business__in=businesses)
+    context = {
+        'group':      group,
+        'benef':      benef,
+        'addtl':      addtl,
+        'addori':     addori,
+        'photo':      photo,
+        'businesses': businesses,
+        'programs':   programs,
+        'employees':  employees,
+        'finances':   finances,
+        'total_amount': total_amount,
+        'local':local,
+        'legend': 'Detalha Manufatureira',
+        'title': 'Dadus Detaillu',
+        'MAPBOX_TOKEN': settings.MAPBOX_TOKEN,
+        'link_antes': [
+            {'link_name': 'dash-man', 'link_text': 'Painel Manufatureira'},
+            {'link_name': 'geral_man', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'manuf-detail-dnim', 'link_param':benef.hashed, 'link_text':f'Detaillu Dados Benefisiariu {benef.name}'}
+        ],
+    }
+    return render(request, 'DNIM/manuf_detail.html', context)

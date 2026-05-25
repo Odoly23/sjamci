@@ -19,16 +19,16 @@
             <div class="text-center d-flex justify-content-center align-items-center flex-wrap gap-2">
 
               {% if group == "dnim" %}
-              <a class="btn btn-sm btn-info mb-2"
-                 href="">
-                REJISTU DADUS
-                <i class="fa fa-plus-square"></i>
-              </a>
-
               <a class="btn btn-sm btn-success mb-2 ml-2"
                  href="">
                 IMPORTA EXCEL
                 <i class="fa fa-download"></i>
+              </a>
+
+                <a class="btn btn-sm btn-danger mb-2 ml-2"
+                 href="{% url 'dmin-ava' %}">
+                AVALIASAUN
+                <i class="fa fa-check-circle"></i>
               </a>
               {% endif %}
 

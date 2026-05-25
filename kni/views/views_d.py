@@ -133,7 +133,6 @@ def benef_detail_kni(request, hashid):
     local = LocBussiness.active_objects.filter(benefisiariu=benef).first()
     employees = Employee.active_objects.filter(business__in=businesses)
     finances  = Finance.active_objects.filter(business__in=businesses)
-    print(local)
     context = {
         'group':      group,
         'benef':      benef,

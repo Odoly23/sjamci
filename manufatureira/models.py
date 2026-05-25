@@ -7,19 +7,8 @@ from kni.models import Business, Program
 
 class Manufatur(BaseModel):
     name         = models.CharField(max_length=200, verbose_name="Naran Manufatura")
-    benefisiariu = models.ForeignKey(
-        Benefisiariu, on_delete=models.CASCADE,
-        null=True, blank=True,
-        related_name="manufatur_set",
-        verbose_name="Benefisiariu"
-    )
-    business     = models.ForeignKey(
-        Business, on_delete=models.CASCADE,
-        null=True, blank=True,
-        related_name="manufatur_set",
-        verbose_name="Negosiu (se iha ona)",
-        help_text="Opsionál — liga ba Business se benefisiariu ne'e registu iha KNI/KS/ADI"
-    )
+    benefisiariu = models.ForeignKey(Benefisiariu, on_delete=models.CASCADE, null=True, blank=True, related_name="manufatur_set", verbose_name="Benefisiariu")
+    business     = models.ForeignKey(Business, on_delete=models.CASCADE, null=True, blank=True, related_name="manufatur_setes", verbose_name="Negosiu (se iha ona)", help_text="Opsionál — liga ba Business se benefisiariu ne'e registu iha KNI/KS/ADI")
     leader_name  = models.CharField(max_length=200, verbose_name="Naran Lider")
     phone        = models.CharField(max_length=20, null=True, blank=True, verbose_name="Telefone")
     status       = models.CharField(max_length=50, null=True, blank=True, verbose_name="Estadu")
@@ -42,10 +31,7 @@ class Manufatur(BaseModel):
 
 
 class Lokalizasaun(BaseModel):
-    manufatur          = models.OneToOneField(
-        Manufatur, on_delete=models.CASCADE,
-        related_name='lokalidade'
-    )
+    manufatur          = models.OneToOneField(Manufatur, on_delete=models.CASCADE, related_name='lokalidade', null=True, blank=True)
     municipality       = models.ForeignKey(Municipality,       on_delete=models.CASCADE, null=True)
     administrativepost = models.ForeignKey(AdministrativePost, on_delete=models.CASCADE, null=True)
     village            = models.ForeignKey(Village,            on_delete=models.CASCADE, null=True)

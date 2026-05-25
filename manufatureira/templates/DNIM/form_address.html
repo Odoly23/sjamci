@@ -1,0 +1,277 @@
+{% extends "main/layout.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container-fluid"><br/>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card shadow-lg pt-3 rounded">
+        <div class="card-header">{{ legend|upper }}</div>
+        <div class="card-body">
+
+          <form method="POST" id="addressForm"
+                data-posts-url="{% url 'ajax_load_posts' %}"
+                data-villages-url="{% url 'ajax_load_villages' %}"
+                novalidate>
+            {% csrf_token %}
+            <div class="form-row">
+              <div class="form-group col-md-4 mb-0">
+                {{ form.address|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-4 mb-0">
+                {{ form.latitude|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-4 mb-0">
+                {{ form.longitude|as_crispy_field }}
+              </div>
+            </div>
+
+            <!-- ROW 2: LOKASAUN -->
+            <div class="form-row">
+              <div class="form-group col-md-4 mb-0">
+                {{ form.municipality|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-4 mb-0">
+                {{ form.administrativepost|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-4 mb-0">
+                {{ form.village|as_crispy_field }}
+              </div>
+            </div>
+            <input type="hidden" name="area_polygon" id="id_area_polygon">
+
+
+            <!-- MAP -->
+            <div class="form-row mt-3">
+              <div class="col-md-12">
+                <div id="map" style="width:100%; height:550px; border-radius:6px; border:1px solid #ccc;"></div>
+                <div id="polygon-info" class="mt-1" style="display:none;">
+                  <span class="badge badge-success">
+                    <i class="fa fa-check"></i> Área marka ona — 
+                    <span id="polygon-point-count">0</span> Kornadas
+                  </span>
+                  <button type="button" class="btn btn-sm btn-outline-danger ml-2" id="btn-clear-polygon">
+                    <i class="fa fa-trash"></i> Hamos area
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="button-row d-flex mt-3">
+              <a class="btn btn-secondary" href="{% url 'benef-detail-kni' hashid=hashid %}">
+                <i class="fa fa-close"></i> Cancela
+              </a>
+              <button class="btn btn-primary ml-1" type="submit">
+                Rai <i class="fa fa-save"></i>
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
+<script>
+  // ===== AJAX: Municipality → AdministrativePost =====
+  $("#id_municipality").change(function () {
+    var url   = $("#addressForm").attr("data-posts-url");
+    var munId = $(this).val();
+    $.ajax({
+      url: url,
+      data: { 'municipality': munId },
+      success: function (data) {
+        $("#id_administrativepost").html(data);
+        $("#id_village").html('<option value="">---------</option>');
+      }
+    });
+  });
+
+  // ===== AJAX: AdministrativePost → Village =====
+  $("#id_administrativepost").change(function () {
+    var url    = $("#addressForm").attr("data-villages-url");
+    var postId = $(this).val();
+    $.ajax({
+      url: url,
+      data: { 'post': postId },
+      success: function (data) {
+        $("#id_village").html(data);
+      }
+    });
+  });
+
+  // ===== MAP SETUP =====
+  var peta1 = L.tileLayer(
+    'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={{ MAPBOX_TOKEN }}',
+    { attribution: '© Mapbox © OpenStreetMap', id: 'mapbox/streets-v11' }
+  );
+  var peta2 = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3']
+  });
+  var peta3 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+    attribution: '© Google Maps', maxZoom: 20
+  });
+  var peta9 = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+    maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'], attribution: '© Google Maps'
+  });
+
+  var latInput = document.querySelector("[name=latitude]");
+  var lngInput = document.querySelector("[name=longitude]");
+  var polygonInput = document.getElementById("id_area_polygon");
+
+  var initLat = parseFloat(latInput.value) || -8.905915;
+  var initLng = parseFloat(lngInput.value) || 125.196845;
+
+  var map = L.map('map', {
+    center: [initLat, initLng],
+    zoom: initLat === -8.905915 ? 8 : 13,
+    layers: [peta9]
+  });
+
+  L.control.layers({
+    'Default':     peta1,
+    'Street':      peta3,
+    'Satelite':    peta2,
+    'Map detail':  peta9,
+  }).addTo(map);
+  map.attributionControl.setPrefix(false);
+
+  // ===== MARKER UTAMA (lokasi rumah/objek) =====
+  var marker = L.marker([initLat, initLng], { draggable: true }).addTo(map);
+  marker.bindPopup("Arasta marker ba fatin loos").openPopup();
+
+  marker.on('dragend', function (e) {
+    var pos = marker.getLatLng();
+    latInput.value = pos.lat.toFixed(7);
+    lngInput.value = pos.lng.toFixed(7);
+    marker.bindPopup("Lat: " + pos.lat.toFixed(5) + " | Lng: " + pos.lng.toFixed(5)).openPopup();
+  });
+
+  map.on('click', function (e) {
+    var lat = e.latlng.lat;
+    var lng = e.latlng.lng;
+    marker.setLatLng(e.latlng);
+    latInput.value = lat.toFixed(7);
+    lngInput.value = lng.toFixed(7);
+    marker.bindPopup("Lat: " + lat.toFixed(5) + " | Lng: " + lng.toFixed(5)).openPopup();
+  });
+
+  latInput.addEventListener('change', updateMarkerFromInput);
+  lngInput.addEventListener('change', updateMarkerFromInput);
+
+  function updateMarkerFromInput() {
+    var lat = parseFloat(latInput.value);
+    var lng = parseFloat(lngInput.value);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      marker.setLatLng([lat, lng]);
+      map.setView([lat, lng], 13);
+    }
+  }
+
+  // ===== POLYGON / AREA DRAWING =====
+  var drawnItems = new L.FeatureGroup();
+  map.addLayer(drawnItems);
+
+  // Load polygon yang sudah ada dari database
+  var existingPolygon = polygonInput.value;
+  if (existingPolygon) {
+    try {
+      var coords = JSON.parse(existingPolygon);
+      var poly = L.polygon(coords, {
+        color: '#185FA5',
+        fillColor: '#378ADD',
+        fillOpacity: 0.3,
+        weight: 2
+      });
+      drawnItems.addLayer(poly);
+      showPolygonInfo(coords.length);
+    } catch(e) {}
+  }
+
+  var drawControl = new L.Control.Draw({
+    position: 'topleft',
+    draw: {
+      polygon: {
+        allowIntersection: false,
+        showArea: true,
+        shapeOptions: {
+          color: '#185FA5',
+          fillColor: '#378ADD',
+          fillOpacity: 0.3,
+          weight: 2
+        },
+        metric: true
+      },
+      polyline:     false,
+      rectangle:    false,
+      circle:       false,
+      circlemarker: false,
+      marker:       false
+    },
+    edit: {
+      featureGroup: drawnItems,
+      remove: true
+    }
+  });
+  map.addControl(drawControl);
+
+  // Saat polygon selesai digambar
+  map.on(L.Draw.Event.CREATED, function (e) {
+    drawnItems.clearLayers();
+    drawnItems.addLayer(e.layer);
+
+    var latlngs = e.layer.getLatLngs()[0];
+    var coordsArray = latlngs.map(function(c) {
+      return [parseFloat(c.lat.toFixed(7)), parseFloat(c.lng.toFixed(7))];
+    });
+
+    polygonInput.value = JSON.stringify(coordsArray);
+    showPolygonInfo(coordsArray.length);
+  });
+
+  // Saat polygon diedit
+  map.on(L.Draw.Event.EDITED, function (e) {
+    e.layers.eachLayer(function (layer) {
+      var latlngs = layer.getLatLngs()[0];
+      var coordsArray = latlngs.map(function(c) {
+        return [parseFloat(c.lat.toFixed(7)), parseFloat(c.lng.toFixed(7))];
+      });
+      polygonInput.value = JSON.stringify(coordsArray);
+      showPolygonInfo(coordsArray.length);
+    });
+  });
+
+  // Saat polygon dihapus via toolbar
+  map.on(L.Draw.Event.DELETED, function () {
+    polygonInput.value = '';
+    hidePolygonInfo();
+  });
+
+  // Tombol hapus area
+  document.getElementById('btn-clear-polygon').addEventListener('click', function () {
+    drawnItems.clearLayers();
+    polygonInput.value = '';
+    hidePolygonInfo();
+  });
+
+  function showPolygonInfo(pointCount) {
+    var info = document.getElementById('polygon-info');
+    document.getElementById('polygon-point-count').textContent = pointCount;
+    info.style.display = 'block';
+  }
+
+  function hidePolygonInfo() {
+    document.getElementById('polygon-info').style.display = 'none';
+  }
+</script>
+{% endblock %}

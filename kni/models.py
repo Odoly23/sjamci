@@ -3,7 +3,7 @@ from django.db import models
 from benefisiariu.models import Benefisiariu
 from django.utils import timezone
 from custom.models import BaseModel, Status, Municipality, AdministrativePost, Village, Bussines_size, Category_Emp, TIpu_Programa, Sector, Faze,\
-							Year
+							Year, Tipu_Apoio
 from config.upload_utils import upload_estado, upload_photo
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User, Group
@@ -13,9 +13,9 @@ class Business(BaseModel):
     benefisiariu = models.ForeignKey( Benefisiariu,on_delete=models.CASCADE, verbose_name="Benefisiariu / Sira ne'ebé simu", related_name="negosiu")
     category = models.ForeignKey(Category_Emp, on_delete=models.CASCADE, null=True, blank=True)
     size = models.ForeignKey(Bussines_size, on_delete=models.CASCADE, null=True, blank=True)
-    name = models.CharField(max_length=100,verbose_name="Naran Negósiu")
+    name = models.CharField(max_length=100,verbose_name="Naran Negósiu", null=True, blank=True)
     idea = models.CharField(max_length=100,verbose_name="Ideia Negósiu", null=True, blank=True)
-    sector = models.ForeignKey(Sector,on_delete=models.CASCADE,null=True, verbose_name="Sector Prinsipal")
+    sector = models.ForeignKey(Sector,on_delete=models.CASCADE,null=True, verbose_name="Sector Prinsipal", blank=True)
     hashed = models.CharField(max_length=128, null=True, blank=True)
 
     def __str__(self):
@@ -54,12 +54,13 @@ class LocBussiness(BaseModel):
 
 class Program(BaseModel):
     benefisiariu = models.ForeignKey( Benefisiariu,on_delete=models.CASCADE, verbose_name="Benefisiariu / Sira ne'ebé simu", related_name="Pnegosiu")
-    program_type = models.ForeignKey(TIpu_Programa, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Tipu Apoiu")
-    faze = models.ForeignKey(Faze,on_delete=models.CASCADE,null=True,verbose_name="Faze (I, II, III)")
-    year = models.ForeignKey(Year,on_delete=models.CASCADE,null=True,verbose_name="Tinan")
-    approved_amount = models.DecimalField(decimal_places=2,max_digits=10,verbose_name="Montante Aprova",null=True)
-    amount = models.DecimalField(decimal_places=2,max_digits=10,verbose_name="Montante Apoiu",null=True)
-    status = models.ForeignKey(Status,on_delete=models.CASCADE,null=True,verbose_name="Estadu")
+    program_type = models.ForeignKey(TIpu_Programa, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Tipu Programa")
+    t_apoiu = models.ForeignKey(Tipu_Apoio, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Tipu Apoiu")
+    faze = models.ForeignKey(Faze,on_delete=models.CASCADE,null=True, blank=True, verbose_name="Faze (I, II, III)")
+    year = models.ForeignKey(Year,on_delete=models.CASCADE,null=True, blank=True, verbose_name="Tinan")
+    approved_amount = models.DecimalField(decimal_places=2,max_digits=10,verbose_name="Montante Aprova",null=True, blank=True)
+    amount = models.DecimalField(decimal_places=2,max_digits=10,verbose_name="Montante Apoiu",null=True, blank=True)
+    status = models.ForeignKey(Status,on_delete=models.CASCADE,null=True,verbose_name="Estadu", blank=True)
     hashed = models.CharField(max_length=128, null=True, blank=True)
 
     def __str__(self):
