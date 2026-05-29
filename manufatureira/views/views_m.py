@@ -141,31 +141,39 @@ def manuf_detail_dnim(request, hashid):
     addtl  = getattr(benef, 'addresstl',     None)
     addori = getattr(benef, 'addressorigin', None)
     photo  = getattr(benef, 'photo',         None)
-    businesses = Business.active_objects.filter(benefisiariu=benef)
-    programs   = Program.active_objects.filter(benefisiariu=benef, program_type__name='MANUFATUREIRA')
+    businesses   = Business.active_objects.filter(benefisiariu=benef)
+    programs     = Program.active_objects.filter(benefisiariu=benef, program_type__name='MANUFATUREIRA')
     total_amount = programs.aggregate(total=Sum('amount'))['total'] or 0
-    local = LocBussiness.active_objects.filter(benefisiariu=benef).first()
-    employees = Employee.active_objects.filter(business__in=businesses)
-    finances  = Finance.active_objects.filter(business__in=businesses)
+    local        = LocBussiness.active_objects.filter(benefisiariu=benef).first()
+    employees    = Employee.active_objects.filter(business__in=businesses)
+    finances     = Finance.active_objects.filter(business__in=businesses)
+    manufaturs   = Manufatur.objects.filter(benefisiariu=benef).select_related(
+        'business', 'lokalidade__municipality',
+        'lokalidade__administrativepost', 'lokalidade__village',
+    ).prefetch_related('members_data', 'atividades__year',
+                       'atividades__support_type', 'atividades__industry_type',
+                       'atividades__status')
     context = {
-        'group':      group,
-        'benef':      benef,
-        'addtl':      addtl,
-        'addori':     addori,
-        'photo':      photo,
-        'businesses': businesses,
-        'programs':   programs,
-        'employees':  employees,
-        'finances':   finances,
+        'group':        group,
+        'benef':        benef,
+        'addtl':        addtl,
+        'addori':       addori,
+        'photo':        photo,
+        'businesses':   businesses,
+        'programs':     programs,
+        'employees':    employees,
+        'finances':     finances,
         'total_amount': total_amount,
-        'local':local,
-        'legend': 'Detalha Manufatureira',
-        'title': 'Dadus Detaillu',
+        'local':        local,
+        'manufaturs':   manufaturs,       # ← tambahan
+        'legend':       'Detalha Manufatureira',
+        'title':        'Dadus Detaillu',
         'MAPBOX_TOKEN': settings.MAPBOX_TOKEN,
         'link_antes': [
-            {'link_name': 'dash-man', 'link_text': 'Painel Manufatureira'},
-            {'link_name': 'geral_man', 'link_text': 'Lista Benefisiariu'},
-            {'link_name': 'manuf-detail-dnim', 'link_param':benef.hashed, 'link_text':f'Detaillu Dados Benefisiariu {benef.name}'}
+            {'link_name': 'dash-man',          'link_text': 'Painel Manufatureira'},
+            {'link_name': 'geral_man',          'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'manuf-detail-dnim',  'link_param': benef.hashed,
+             'link_text': f'Detaillu {benef.name}'},
         ],
     }
     return render(request, 'DNIM/manuf_detail.html', context)

@@ -3,7 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, HTML, Field
 
 from manufatureira.models import Manufatur, Lokalizasaun, Membro, Aktividade
-from custom.models import Municipality, AdministrativePost, Village, Year, Status, IndustryType, Tipu_Apoio
+from custom.models import Municipality, AdministrativePost, Village, Year, Status, IndustryType, Tipu_Apoio, Faze
 from kni.models import Program, Business, LocBussiness, Employee, Finance
 
 
@@ -111,19 +111,20 @@ class LocBusinessDNIMForm(forms.ModelForm):
 class ProgramDNIMForm(forms.ModelForm):
     class Meta:
         model  = Program
-        fields = ['faze', 'year', 'approved_amount', 'amount']
+        fields = ['faze', 'year', 'approved_amount', 'amount','t_apoiu']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.fields['year'].queryset = Year.active_objects.all().order_by('-year')
-        self.fields['faze'].queryset = Faze.active_objects.exclude(name="KREDITU")
+        self.fields['year'].queryset = Year.active_objects.filter(is_active=True)
+        self.fields['faze'].queryset = Faze.active_objects.filter(name="manufatur")
         self.helper.form_method = 'post'
         self.helper.layout = Layout(
             HTML(_ALERT),
             Row(
-                Column('year', css_class='col-md-6'),
-                Column('faze', css_class='col-md-6')
+                Column('year', css_class='col-md-4'),
+                Column('faze', css_class='col-md-4'),
+                Column('t_apoiu', css_class='col-md-4'),
             ),
             Row(
                 Column('approved_amount', css_class='col-md-6'),

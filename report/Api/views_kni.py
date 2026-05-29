@@ -154,7 +154,7 @@ class APIFaze(APIView):
         label = []
         obj = []
 
-        fazes = Faze.objects.exclude(name="KREDITU")
+        fazes = Faze.objects.exclude(name__in=["KREDITU", "mpms",'manufatur'])
 
         for f in fazes:
 
@@ -178,7 +178,7 @@ class APIFaze(APIView):
 
 class APISector(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, format=None):
 
@@ -209,7 +209,7 @@ class APISector(APIView):
 
 class APIEmployee(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, format=None):
 
@@ -245,7 +245,7 @@ class APIEmployee(APIView):
 
 class APICreditRepayment(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, format=None):
 
@@ -283,7 +283,7 @@ class APICreditRepayment(APIView):
 
 class APIKPI(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, format=None):
 

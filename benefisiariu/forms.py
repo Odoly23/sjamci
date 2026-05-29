@@ -68,7 +68,8 @@ class BenefisiariuForm(forms.ModelForm):
 
     class Meta:
         model = Benefisiariu
-        fields = ['name', 'pob', 'dob', 'sex', 'marital', 'status', 'phone', 'file']
+        fields = ['name', 'pob', 'dob', 'sex', 'nivel_edukasaun',
+                  'marital', 'status', 'phone', 'email_website', 'file']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -86,13 +87,15 @@ class BenefisiariuForm(forms.ModelForm):
                 Column('pob', css_class='col-md-6'),
             ),
             Row(
-                Column('sex', css_class='col-md-4'),
-                Column('marital', css_class='col-md-4'),
-                Column('dob', css_class='col-md-4'),
+                Column('sex', css_class='col-md-3'),
+                Column('marital', css_class='col-md-3'),
+                Column('dob', css_class='col-md-3'),
+                Column('nivel_edukasaun', css_class='col-md-3'),
             ),
             Row(
-                Column('phone', css_class='col-md-6'),
-                Column('file', css_class='col-md-6'),
+                Column('phone', css_class='col-md-4'),
+                Column('file', css_class='col-md-4'),
+                Column('email_website', css_class='col-md-4'),
             ),
             HTML("""
                 <div class="mt-4 d-flex" style="gap: 0.5rem;">

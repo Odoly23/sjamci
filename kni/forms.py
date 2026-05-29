@@ -237,8 +237,6 @@ class BusinessMonitoringForm(forms.ModelForm):
             'total_assets',
             'total_employee',
             'source_data',
-            'verification_status',
-            'monitoring_status',
             'evidence_file',
             'note',
         ]
@@ -266,12 +264,8 @@ class BusinessMonitoringForm(forms.ModelForm):
             Row(
                 Column('total_employee', css_class='col-md-4'),
                 Column('source_data', css_class='col-md-4'),
-                Column('verification_status', css_class='col-md-4'),
-            ),
-
-            Row(
-                Column('monitoring_status', css_class='col-md-6'),
                 Column('evidence_file', css_class='col-md-6'),
+                
             ),
 
             Row(
@@ -279,72 +273,4 @@ class BusinessMonitoringForm(forms.ModelForm):
             ),
 
             HTML(_BTN),
-        )
-
-class BusinessBaselineForm(forms.ModelForm):
-
-    class Meta:
-        model = BusinessBaseline
-
-        fields = [
-            'daily_income_before',
-            'monthly_income_before',
-            'yearly_income_before',
-            'employee_before',
-            'asset_before',
-            'sales_before',
-            'note'
-        ]
-
-    def __init__(self, *args, **kwargs):
-
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-
-        self.helper.layout = Layout(
-
-            Row(
-                Column(
-                    'daily_income_before',
-                    css_class='col-md-4'
-                ),
-
-                Column(
-                    'monthly_income_before',
-                    css_class='col-md-4'
-                ),
-
-                Column(
-                    'yearly_income_before',
-                    css_class='col-md-4'
-                ),
-            ),
-
-            Row(
-                Column(
-                    'employee_before',
-                    css_class='col-md-4'
-                ),
-
-                Column(
-                    'asset_before',
-                    css_class='col-md-4'
-                ),
-
-                Column(
-                    'sales_before',
-                    css_class='col-md-4'
-                ),
-            ),
-
-            Row(
-                Column(
-                    'note',
-                    css_class='col-md-12'
-                ),
-            ),
-
-            HTML(_BTN)
         )

@@ -56,8 +56,12 @@ class AuditLogin(models.Model):
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="audituserlogin")
 	login_time = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+	logout_time  = models.DateTimeField(null=True, blank=True)
+	duration     = models.DurationField(null=True, blank=True)        
+	ip_address   = models.GenericIPAddressField(null=True, blank=True)
+	user_agent   = models.TextField(null=True, blank=True)            
+	is_active    = models.BooleanField(default=True)  
 
-		
 	def __str__(self):
-		template = '{0.user}, {0.login_time}'
-		return template.format(self)
+		return f'{self.user} - {self.login_time}'
+		

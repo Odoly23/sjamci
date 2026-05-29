@@ -2,7 +2,7 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, HTML, Field
 
-from custom.models import AdministrativePost, Village, Year
+from custom.models import AdministrativePost, Village, Year, Faze
 from .models import (
     mpmsEmpresa,
     mpmsLokalizasaun,
@@ -12,7 +12,7 @@ from .models import (
     mpmsMateriaPrima,
     mpmsAtividade
 )
-
+from kni.models import Program
 # =========================================================
 # SHARED UI
 # =========================================================
@@ -42,6 +42,30 @@ _ALERT = """
 # =========================================================
 # EMPRESA
 # =========================================================
+class ProgramMPMSForm(forms.ModelForm):
+    class Meta:
+        model  = Program
+        fields = ['faze', 'year', 'approved_amount', 'amount','t_fundus']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.fields['year'].queryset = Year.active_objects.all().order_by('-year')
+        self.fields['faze'].queryset = Faze.active_objects.filter(name="mpms")
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            HTML(_ALERT),
+            Row(
+                Column('year', css_class='col-md-4'),
+                Column('faze', css_class='col-md-4'),
+                Column('t_fundus', css_class='col-md-4'),
+            ),
+            Row(
+                Column('approved_amount', css_class='col-md-6'),
+                Column('amount',          css_class='col-md-6'),
+            ),
+            HTML(_BTN),
+        )
 
 class MpmsEmpresaForm(forms.ModelForm):
 
@@ -49,8 +73,6 @@ class MpmsEmpresaForm(forms.ModelForm):
         model = mpmsEmpresa
 
         fields = [
-            'benefisiariu',
-            'business',
             'company_name',
             'tipo_atividade',
             'tinan_hari',
@@ -66,12 +88,6 @@ class MpmsEmpresaForm(forms.ModelForm):
         self.helper.layout = Layout(
 
             HTML(_ALERT),
-
-            Row(
-                Column('benefisiariu', css_class='col-md-6'),
-                Column('business', css_class='col-md-6'),
-            ),
-
             Row(
                 Column('company_name', css_class='col-md-8'),
                 Column('tinan_hari', css_class='col-md-4'),

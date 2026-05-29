@@ -7,7 +7,7 @@ from kni.models import Business, LocBussiness, Program, Employee, Finance, Busin
 from benefisiariu.models import Benefisiariu
 from custom.models import (
     Status, Municipality, AdministrativePost, Village,
-    Category_Emp, TIpu_Programa, Sector, Faze, Year
+    Category_Emp, TIpu_Programa, Sector, Faze, Year, Tipu_Fundus_Kapital
 )
 
 
@@ -100,10 +100,14 @@ class ProgramResource(resources.ModelResource):
         attribute='status',
         widget=ForeignKeyWidget(Status, field='name')
     )
-
+    t_fundus = fields.Field(
+        column_name='t_fundus',
+        attribute='t_fundus',
+        widget=ForeignKeyWidget(Tipu_Fundus_Kapital, field='name')
+    )
     class Meta:
         model = Program
-        fields = ('id', 'benefisiariu', 'program_type', 'faze', 'year', 'approved_amount', 'amount', 'status', 'hashed')
+        fields = ('id', 'benefisiariu', 'program_type', 'faze', 'year', 'approved_amount', 'amount', 'status', 'hashed','t_fundus')
         export_order = ('id', 'benefisiariu', 'program_type', 'faze', 'year', 'approved_amount', 'amount', 'status', 'hashed')
         import_id_fields = ('id',)
         skip_unchanged = True
@@ -395,6 +399,7 @@ class ProgramAdmin(BaseAdmin):
                 'approved_amount',
                 'amount',
                 'status',
+                't_fundus',
                 'hashed',
             )
         }),

@@ -10,7 +10,7 @@ from manufatureira.models import Manufatur, Lokalizasaun, Membro, Aktividade
 from benefisiariu.forms import BenefisiariuForm, AddressTLForm, AddressOriginForm, PhotoUploadForm
 from manufatureira.forms import ManufaturForm, LokalizasaunForm, MembroForm, AktividadeForm, BusinessDNIMForm, \
                                 LocBusinessDNIMForm, ProgramDNIMForm, EmployeeDNIMForm, FinanceDNIMForm
-from custom.models import Status,Tipu_Apoio, TIpu_Programa
+from custom.models import Status,Tipu_Apoio, TIpu_Programa, Faze
 from config.decorators import allowed_users
 from django.conf import settings
 
@@ -29,39 +29,29 @@ def add_benef_dnim(request):
         if form.is_valid():
             name  = form.cleaned_data.get('name')
             phone = form.cleaned_data.get('phone')
-            if Benefisiariu.objects.filter(Q(name=name) | Q(phone=phone)).exists():
-                messages.warning(request, "Benefisiariu ho naran ka telefone hanesan iha ona.")
-                return redirect('add-benef-kni')
-            obj = form.save(commit=False)
-            obj.created_by = request.user
-            obj.status = Status.objects.get(pk=1)
+            duplicate = False
+            if phone and Benefisiariu.objects.filter(phone=phone).exists():
+                duplicate = True
+                messages.warning(request, "Benefisiariu ho telefone hanesan iha ona.")
+            if duplicate:
+                return redirect('add-benef-dnim')
+            obj              = form.save(commit=False)
+            obj.created_by   = request.user
+            obj.status       = Status.objects.get(pk=1)
             obj.save()
-            obj1 = Manufatur.objects.get_or_create(
-                benefisiariu = obj,
-                leader_name = obj,
-                status = Status.objects.get(name="Ativu"),
-                created_by = request.user)
-            obj2 = Program.objects.get_or_create(
-                benefisiariu = obj,
-                program_type = TIpu_Programa.objects.get(pk=3),
-                status = Status.objects.get(pk=1),
-                created_by = request.user
-                )
-            obj3 = Business.objects.get_or_create(
-                benefisiariu = obj
-                )
+
             messages.success(request, "Dadus Benefisiariu rai ho susesu.")
             return redirect('manuf-detail-dnim', hashid=obj.hashed)
     else:
         form = BenefisiariuForm()
-        
+
     context = {
-        'group': group,
-        'form': form,
-        'title': 'Registo Dados',
-        'legend': 'Registo Dados Benefisiariu Manufatureira ',
+        'group':  group,
+        'form':   form,
+        'title':  'Registo Dados',
+        'legend': 'Registo Dados Benefisiariu Manufatureira',
         'link_antes': [
-            {'link_name': 'dash-man', 'link_text': 'Painel Manufatureira'},
+            {'link_name': 'dash-man',  'link_text': 'Painel Manufatureira'},
             {'link_name': 'geral_man', 'link_text': 'Lista Benefisiariu'},
         ],
     }
@@ -167,28 +157,43 @@ def AddressOriginUpdate_dnim(request, hashid):
 # ══════════════════════════════════════════════════════════════
 @login_required
 @allowed_users(allowed_roles=['dnim'])
+@transaction.atomic
 def Localidade_Add_dnim(request, hashid):
     emp     = get_object_or_404(Benefisiariu, hashed=hashid)
     objects = LocBussiness.objects.filter(benefisiariu=emp).first()
+
     if request.method == 'POST':
         form = LocBusinessDNIMForm(request.POST, instance=objects)
         if form.is_valid():
-            instance = form.save(commit=False)
+
+            # ── Simpan LocBussiness ──────────────────────────
+            instance              = form.save(commit=False)
             instance.benefisiariu = emp
-            instance.created_by = request.user
             instance.save()
-            obj = Lokalizasaun.objects.get_or_create(
-                municipality = instance.municipality,
-                administrativepost = instance.administrativepost,
-                village = instance.village,
-                latitude = instance.latitude,
-                longitude = instance.longitude,
-                area_polygon = instance.area_polygon,
-                created_by = request.user)
+
+            # ── Sync ke Lokalizasaun semua Manufatur ─────────
+            # Satu benefisiariu bisa punya lebih dari satu Manufatur
+            manufaturs = Manufatur.objects.filter(benefisiariu=emp)
+
+            for manuf in manufaturs:
+                Lokalizasaun.objects.update_or_create(
+                    manufatur=manuf,
+                    defaults={
+                        'municipality':       instance.municipality,
+                        'administrativepost': instance.administrativepost,
+                        'village':            instance.village,
+                        'aldeia':             instance.aldeia,
+                        'latitude':           instance.latitude,
+                        'longitude':          instance.longitude,
+                        'area_polygon':       instance.area_polygon,
+                    }
+                )
+
             messages.success(request, "Lokasaun negosiu atualiza ona.")
             return redirect('manuf-detail-dnim', hashid=hashid)
     else:
         form = LocBusinessDNIMForm(instance=objects)
+
     context = {
         'hashid':       hashid,
         'form':         form,
@@ -198,7 +203,6 @@ def Localidade_Add_dnim(request, hashid):
         'legend':       'Lokasaun Negosiu',
     }
     return render(request, 'DNIM/form_address.html', context)
-
 # ══════════════════════════════════════════════════════════════
 #  5. REJISTU NEGOSIU No Edit
 # ══════════════════════════════════════════════════════════════
@@ -207,52 +211,82 @@ def Localidade_Add_dnim(request, hashid):
 @transaction.atomic
 def Business_Add_dnim(request, hashid):
     emp = get_object_or_404(Benefisiariu, hashed=hashid)
+
     if request.method == 'POST':
         form = BusinessDNIMForm(request.POST)
         if form.is_valid():
-            obj = form.save(commit=False)
-            obj.benefisiariu = emp
-            obj.save()
-            messages.success(request, "Negosiu rai ho susesu.")
+
+            # ── Simpan Business ──────────────────────────────
+            business              = form.save(commit=False)
+            business.benefisiariu = emp
+            business.save()
+
+            # ── Otomatis buat Manufatur ──────────────────────
+            # Pakai business sebagai key get_or_create
+            # agar tidak duplikasi jika Business yang sama di-submit lagi
+            Manufatur.objects.get_or_create(
+                business=business,
+                defaults={
+                    'benefisiariu': emp,
+                    'name':         business.name or emp.name,
+                    'leader_name':  emp.name,
+                    'phone':        emp.phone or '',
+                    'status':       'Ativu',
+                }
+            )
+
+            messages.success(request, "Negosiu no Manufatur rai ho susesu.")
             return redirect('manuf-detail-dnim', hashid=hashid)
     else:
         form = BusinessDNIMForm()
 
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Rejistu Negosiu',
-        'legend':     'Rejistu Negosiu KNI',
+        'hashid': hashid,
+        'form':   form,
+        'emp':    emp,
+        'title':  'Rejistu Negosiu',
+        'legend': 'Rejistu Negosiu Manufatureira',
     }
     return render(request, 'DNIM/form.html', context)
+
+
+# ══════════════════════════════════════════════════════════════
+#  EDIT NEGOSIU
+#  — update Business
+#  — sinkron perubahan nama ke Manufatur yang terkait
+# ══════════════════════════════════════════════════════════════
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])
 @transaction.atomic
 def Business_Edit_dnim(request, hashid):
-    emp = get_object_or_404(Business, hashed=hashid)
+    business = get_object_or_404(Business, hashed=hashid)
+
     if request.method == 'POST':
-        form = BusinessDNIMForm(request.POST, instance=emp)
+        form = BusinessDNIMForm(request.POST, instance=business)
         if form.is_valid():
-            obj = form.save(commit=False)
-            obj.save()
-            obj1 = Manufatur.objects.get(benefisiariu = obj.benefisiariu, name = obj.name)
-            obj.save
-            messages.success(request, "Negosiu rai ho susesu.")
-            return redirect('manuf-detail-dnim', hashid=hashid)
+            old_name = business.name
+            obj      = form.save()
+
+            # ── Sinkron nama ke Manufatur jika berubah ───────
+            if old_name != obj.name:
+                Manufatur.objects.filter(
+                    business=obj
+                ).update(name=obj.name)
+
+            messages.success(request, "Negosiu atualiza ho susesu.")
+            return redirect('manuf-detail-dnim', hashid=obj.benefisiariu.hashed)
     else:
-        form = BusinessDNIMForm(instance=emp)
+        form = BusinessDNIMForm(instance=business)
 
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Altera Negosiu',
-        'legend':     'Altera Negosiu Manufatureira',
+        'hashid': hashid,
+        'form':   form,
+        'emp':    business,
+        'title':  'Altera Negosiu',
+        'legend': 'Altera Negosiu Manufatureira',
     }
     return render(request, 'DNIM/form.html', context)
-
 # ══════════════════════════════════════════════════════════════
 #  6. REJISTU PROGRAMA KNI
 # ══════════════════════════════════════════════════════════════
@@ -261,31 +295,50 @@ def Business_Edit_dnim(request, hashid):
 @transaction.atomic
 def Program_Add_dnim(request, hashid):
     emp = get_object_or_404(Benefisiariu, hashed=hashid)
+
     if request.method == 'POST':
         form = ProgramDNIMForm(request.POST)
         if form.is_valid():
-            obj = form.save(commit=False)
+            obj              = form.save(commit=False)
             obj.benefisiariu = emp
-            obj.program_type = TIpu_Programa.objects.get(name='dnim')
-            obj.status_id = 1
+            obj.program_type = TIpu_Programa.objects.get(name='MANUFATUREIRA')
             obj.save()
-            total_budget = Program.objects.filter(benefisiariu=emp, program_type__name='dnim').aggregate(total=Sum('amount'))['total'] or 0
+            total_budget = Program.objects.filter(
+                benefisiariu=emp,
+                program_type__name='MANUFATUREIRA'
+            ).aggregate(total=Sum('amount'))['total'] or 0
             for b in Business.objects.filter(benefisiariu=emp):
-                Finance.objects.update_or_create(business=b, defaults={'budget': total_budget})
-            messages.success(request, "Programa KNI rai ho susesu.")
+                Finance.objects.update_or_create(
+                    business=b,
+                    defaults={'budget': total_budget}
+                )
+            manufaturs = Manufatur.objects.filter(benefisiariu=emp)
+            for manuf in manufaturs:
+                Aktividade.objects.get_or_create(
+                    manufatur=manuf,
+                    program=obj,       
+                    year=obj.year,
+                    defaults={
+                        'support_type':  obj.t_apoiu, 
+                        'amount':        float(obj.amount) if obj.amount else None,
+                        'status':        obj.status,
+                        'industry_type': None,       
+                    }
+                )
+
+            messages.success(request, "Dados Guardado Ho Suseso")
             return redirect('manuf-detail-dnim', hashid=hashid)
     else:
         form = ProgramDNIMForm()
 
     context = {
         'hashid': hashid,
-        'form': form,
-        'emp': emp,
-        'title': 'Rejistu Programa KNI',
-        'legend': 'Programa KNI Foun',
+        'form':   form,
+        'emp':    emp,
+        'title':  'Rejistu Programa Manufatureira',
+        'legend': 'Programa Manufatureira Foun',
     }
     return render(request, 'DNIM/form.html', context)
-
 
 # ══════════════════════════════════════════════════════════════
 #  7. TRABALHADORES
@@ -300,19 +353,29 @@ def Employee_Add_dnim(request, hashid):
     if request.method == 'POST':
         form = EmployeeDNIMForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Trabalhadores rai ho susesu.")
+            employee = form.save()
+            manufatur = Manufatur.objects.filter(
+                business=employee.business
+            ).first()
+            if manufatur:
+                Membro.objects.update_or_create(
+                    manufatur=manufatur,
+                    defaults={
+                        'male':   employee.male,
+                        'female': employee.female,
+                    }
+                )
+            messages.success(request, "Trabalhadores no Membro rai ho susesu.")
             return redirect('manuf-detail-dnim', hashid=hashid)
     else:
         form = EmployeeDNIMForm()
         form.fields['business'].queryset = businesses
-
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Rejistu Trabalhadores',
-        'legend':     'Trabalhadores Foun',
+        'hashid': hashid,
+        'form':   form,
+        'emp':    emp,
+        'title':  'Rejistu Trabalhadores',
+        'legend': 'Trabalhadores Foun',
     }
     return render(request, 'DNIM/form.html', context)
 

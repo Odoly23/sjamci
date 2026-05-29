@@ -11,7 +11,7 @@
     <div class="card mb-3">
       <div class="card-body text-center">
 
-        {% if group == "KNI" or group == "admin" %}
+        {% if group == "mpms" %}
 
         <a class="btn btn-sm btn-success mb-2 ml-2"
            href="#">
@@ -20,7 +20,7 @@
         </a>
 
         <a class="btn btn-sm btn-danger mb-2 ml-2"
-           href="{% url 'av-mpms' %}">
+           href="{% url 'ava-mpms' %}">
           AVALIASAUN MPMS
           <i class="fa fa-check-circle"></i>
         </a>
@@ -34,7 +34,7 @@
         </a>
 
         <a class="btn btn-sm btn-warning mb-2 ml-2"
-           href="#">
+           href="{% url 'sum-gr' %}">
           SUMARIO MPMS
           <i class="fa fa-table"></i>
         </a>
@@ -60,11 +60,11 @@
 
           <table class="table table-bordered table-sm text-center">
 
-            <thead style="background-color:#2c3e50; color:white;">
+            <thead style="background-color: chocolate; color: white;">
 
               <tr>
                 <th rowspan="2" class="align-middle">Tinan</th>
-                <th rowspan="2" class="align-middle">Faze</th>
+                <th rowspan="2" class="align-middle">TIPU APOIU</th>
 
                 <th colspan="{{ mun_list|length }}">
                   Munisipiu
@@ -97,7 +97,7 @@
                 {% endif %}
 
                 <td class="align-middle">
-                  {{ row.faze }}
+                  MANUFATUREIRA
                 </td>
 
                 {% for m in mun_list %}

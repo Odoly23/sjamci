@@ -3,7 +3,7 @@ from django.db import models
 from benefisiariu.models import Benefisiariu
 from django.utils import timezone
 from custom.models import BaseModel, Status, Municipality, AdministrativePost, Village, Bussines_size, Category_Emp, TIpu_Programa, Sector, Faze,\
-							Year, Tipu_Apoio
+							Year, Tipu_Apoio, Tipu_Fundus_Kapital
 from config.upload_utils import upload_estado, upload_photo
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User, Group
@@ -56,6 +56,7 @@ class Program(BaseModel):
     benefisiariu = models.ForeignKey( Benefisiariu,on_delete=models.CASCADE, verbose_name="Benefisiariu / Sira ne'ebé simu", related_name="Pnegosiu")
     program_type = models.ForeignKey(TIpu_Programa, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Tipu Programa")
     t_apoiu = models.ForeignKey(Tipu_Apoio, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Tipu Apoiu")
+    t_fundus = models.ForeignKey(Tipu_Fundus_Kapital, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Tipu Fundus Kapital")
     faze = models.ForeignKey(Faze,on_delete=models.CASCADE,null=True, blank=True, verbose_name="Faze (I, II, III)")
     year = models.ForeignKey(Year,on_delete=models.CASCADE,null=True, blank=True, verbose_name="Tinan")
     approved_amount = models.DecimalField(decimal_places=2,max_digits=10,verbose_name="Montante Aprova",null=True, blank=True)

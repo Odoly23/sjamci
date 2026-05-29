@@ -15,16 +15,17 @@ from config.decorators import allowed_users
 # Create your views here.
 
 @login_required
-@allowed_users(allowed_roles=['admin','KS','KNI','XFD','dnim'])
+@allowed_users(allowed_roles=['admin','KS','KNI','XFD','dnim','mpms'])
 def Sumario(request):
 	group = request.user.groups.all()[0].name
 	kni = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KNI").count()
 	ks = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").count()
-	mf = Manufatur.active_objects.all().count()
+	mpms = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="MPMS").count()
+	mf = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="MANUFATUREIRA").count()
 	context = {
 		'title':"Sumario Geral",
 		'legend':"Sumario Geral",
-		'group':group,'kni':kni, 'ks':ks, 'mf':mf
+		'group':group,'kni':kni, 'ks':ks, 'mf':mf,'mpms':mpms
 	}
 	return render(request, 'Dash_R/Sumary.html', context)
 

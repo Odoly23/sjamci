@@ -18,10 +18,16 @@ urlpatterns = [
     path('dnim/locali/add/<str:hashid>/', views.Localidade_Add_dnim, name='dn-loc'),
     path('dnim/bussiness/add/<str:hashid>/', views.Business_Add_dnim, name='dn-bus'),
     path('dnim/bussiness/edit/<str:hashid>/', views.Business_Edit_dnim, name='dn-bus-ed'),
+    path('dnim/programa/add/<str:hashid>/', views.Program_Add_dnim, name='dn-prog'),
+    path('dnim/employee/add/<str:hashid>/', views.Employee_Add_dnim, name='dn-emp'),
     # MANUFATUR
     path('dnim/manuf/add/<str:hashid>/', views.Manufatur_Add_dnim, name='manuf-add-dnim'),
     path('dnim/manuf/detail/<str:hashid>/', views.manuf_detail_dnim, name='manuf-detail-dnim'),
 
+    path('manuf-edit/<str:hashid>/',  views.Manufatur_Add_dnim,    name='dn-manuf-edit'),
+    path('manuf-lok/<str:hashid>/',   views.Lokalizasaun_Add_dnim,  name='dn-manuf-lok'),
+    path('membro/<str:hashid>/',      views.Membro_Add_dnim,        name='dn-membro'),
+    path('atividade/<str:hashid>/',   views.Aktividade_Add_dnim,    name='dn-atividade'),
 
     # LOKAL
     path('dnim/manuf/lokal/<str:hashid>/', views.Lokalizasaun_Add_dnim, name='manuf-lokal-add'),

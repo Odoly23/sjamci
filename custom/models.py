@@ -179,3 +179,11 @@ class TIPO_ATIVIDADE(BaseModel):
 
     def __str__(self):
         return self.name
+
+class Tipu_Fundus_Kapital(BaseModel):
+	name = models.CharField(max_length=20, null=True, blank=False)
+	is_active = models.BooleanField(default=False)
+	
+	def __str__(self):
+		template = '{0.name}'
+		return template.format(self)

@@ -1,0 +1,164 @@
+{% extends "main/layout.html" %}
+{% block content %}
+
+<div class="container-fluid mt-3">
+
+  <!-- FILTER -->
+  <div class="card mb-3">
+    <div class="card-header">
+      <i class="fa fa-filter"></i> FILTRO
+    </div>
+
+    <div class="card-body">
+      <form method="GET">
+
+        <div class="row">
+
+          <div class="col-md-3 mb-2">
+            <label>Tinan</label>
+            <select name="year" class="form-control form-control-sm">
+              <option value="">Hotu</option>
+
+              {% for y in years %}
+              <option value="{{ y.year }}"
+                {% if year == y.year|stringformat:"s" %}
+                  selected
+                {% endif %}
+              >
+                {{ y.year }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-3 mb-2">
+            <label>Faze</label>
+            <select name="faze" class="form-control form-control-sm">
+              <option value="">Hotu</option>
+
+              {% for f in fazes %}
+              <option value="{{ f.name }}"
+                {% if faze == f.name %}
+                  selected
+                {% endif %}
+              >
+                {{ f.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-3 mb-2">
+            <label>Munisipiu</label>
+            <select name="mun" class="form-control form-control-sm">
+              <option value="">Hotu</option>
+
+              {% for m in muns %}
+              <option value="{{ m.name }}"
+                {% if mun == m.name %}
+                  selected
+                {% endif %}
+              >
+                {{ m.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-3 mb-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-sm btn-primary">
+              <i class="fa fa-search"></i> Buka
+            </button>
+
+            <a href="" class="btn btn-sm btn-secondary ml-2">
+              Reset
+            </a>
+          </div>
+
+        </div>
+
+      </form>
+    </div>
+  </div>
+  <!-- TABLE -->
+  <div class="card">
+    <div class="card-header">
+      <i class="fa fa-list"></i> {{ legend|upper }}
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-sm" id="example1">
+          <thead >
+            <tr>
+              <th>#</th>
+              <th>Naran</th>
+              <th>Sexu</th>
+              <th>Telefone</th>
+              <th>Munisipiu</th>
+              <th>Postu</th>
+              <th>Programa</th>
+              <th>Faze</th>
+              <th>Tinan</th>
+              <th>Aksaun</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            {% for b in data %}
+            <tr>
+
+              <td>{{ forloop.counter }}</td>
+
+              <td>
+                {{ b.name }}
+              </td>
+
+              <td>
+                {{ b.sex }}
+              </td>
+
+              <td>
+                {{ b.phone }}
+              </td>
+
+              <td>
+                {{ b.locnegosiu.first.municipality }}
+              </td>
+
+              <td>
+                {{ b.locnegosiu.first.administrativepost }}
+              </td>
+
+              <td>
+                KNI
+              </td>
+
+              <td>
+                {{ b.Pnegosiu.first.faze }}
+              </td>
+
+              <td>
+                {{ b.Pnegosiu.first.year }}
+              </td>
+
+              <td class="text-center">
+
+                <a href="{% url 'mpms-detail' b.hashed %}"
+                   class="btn btn-sm btn-info">
+                  <i class="fa fa-eye"></i>
+                </a>
+
+              </td>
+
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

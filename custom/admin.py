@@ -21,6 +21,7 @@ from .models import (
     Tipu_Apoio,
     IndustryType,
     TIpu_Programa,
+    Tipu_Fundus_Kapital
 )
 
 
@@ -232,6 +233,16 @@ class TipoProgramaResource(resources.ModelResource):
         report_skipped = False
         use_bulk = False
 
+class Tipu_Fundus_KapitalResource(resources.ModelResource):
+    class Meta:
+        model = Tipu_Fundus_Kapital
+        fields = ('id', 'name', 'is_active')
+        export_order = ('id', 'name', 'is_active')
+        import_id_fields = ('id',)
+        skip_unchanged = True
+        report_skipped = False
+        use_bulk = False
+
 
 # =========================
 # Base Admin
@@ -412,5 +423,12 @@ class IndustryTypeAdmin(BaseAdmin):
 @admin.register(TIpu_Programa)
 class TipoProgramaAdmin(ImportExportModelAdmin):
     resource_classes = [TipoProgramaResource]
+    list_display = ['id', 'name', 'is_active']
+    list_filter = ['is_active']
+
+
+@admin.register(Tipu_Fundus_Kapital)
+class Tipu_Fundus_KapitalAdmin(ImportExportModelAdmin):
+    resource_classes = [Tipu_Fundus_KapitalResource]
     list_display = ['id', 'name', 'is_active']
     list_filter = ['is_active']

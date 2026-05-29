@@ -9,10 +9,10 @@
         <div class="card  border-0  p-4">
            <div class="row d-flex justify-content-between">
             {% if group == 'admin' %}
-              <div class="col-sm-4">
+              <div class="col-sm-3">
                <div class="card">
                  <div class="card-header bg-warning">
-                   <h5 class="text-center text-white">Total KNI</h5>
+                   <h5 class="text-center text-white">RELATORIU KNI</h5>
                  </div>
                  <div class="text-center">
                    <div class="card-body d-flex justify-content-between">
@@ -25,10 +25,10 @@
                  </div>
                </div>
              </div>
-              <div class="col-sm-4">
+              <div class="col-sm-3">
                <div class="card">
                  <div class="card-header bg-info">
-                   <h5 class="text-center text-white">Total Kreditu Suave</h5>
+                   <h5 class="text-center text-white">RELATORIU Kreditu Suave</h5>
                  </div>
                  <div class="text-center">
                    <div class="card-body d-flex justify-content-between">
@@ -41,10 +41,10 @@
                  </div>
                </div>
              </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                <div class="card">
                  <div class="card-header bg-primary">
-                   <h5 class="text-center text-white">Total Manufatureira</h5>
+                   <h5 class="text-center text-white">RELATORIU Manufatureira</h5>
                  </div>
                  <div class="text-center">
                    <div class="card-body d-flex justify-content-between">
@@ -57,11 +57,27 @@
                  </div>
                </div>
              </div>
+            <div class="col-sm-3">
+               <div class="card">
+                 <div class="card-header bg-primary">
+                   <h5 class="text-center text-white">RELATORIU MPMS</h5>
+                 </div>
+                 <div class="text-center">
+                   <div class="card-body d-flex justify-content-between">
+                     <a href="{% url 'tab-mpms' %}"><i class="fa fa-table fa-2x"></i> Sumario</a>
+                     <a href=""><i class="fa fa-table fa-2x"></i> Grafiku</a>
+                   </div>
+                   <center>
+                        <h2 style="margin-bottom: 20px;">{{mpms}}</h2>
+                    </center>
+                 </div>
+               </div>
+             </div>
              {% elif group == "KNI" %}
               <div class="col-sm-12">
                <div class="card">
                  <div class="card-header bg-warning">
-                   <h5 class="text-center text-white">Total KNI</h5>
+                   <h5 class="text-center text-white">RELATORIU KNI</h5>
                  </div>
                  <div class="text-center">
                    <div class="card-body d-flex justify-content-between">
@@ -78,7 +94,7 @@
                            <div class="col-sm-12">
                <div class="card">
                  <div class="card-header bg-info">
-                   <h5 class="text-center text-white">Total Kreditu Suave</h5>
+                   <h5 class="text-center text-white">RELATORIU Kreditu Suave</h5>
                  </div>
                  <div class="text-center">
                    <div class="card-body d-flex justify-content-between">
@@ -95,7 +111,7 @@
                            <div class="col-sm-12">
                <div class="card">
                  <div class="card-header bg-info">
-                   <h5 class="text-center text-white">Total Manufatureira</h5>
+                   <h5 class="text-center text-white">RELATORIU Manufatureira</h5>
                  </div>
                  <div class="text-center">
                    <div class="card-body d-flex justify-content-between">
@@ -103,7 +119,24 @@
                      <a href=""><i class="fa fa-table fa-2x"></i> Grafiku</a>
                    </div>
                    <center>
-                        <h2 style="margin-bottom: 20px;">{{ks}}</h2>
+                        <h2 style="margin-bottom: 20px;">{{mf}}</h2>
+                    </center>
+                 </div>
+               </div>
+             </div>
+             {% elif group == 'mpms'%}
+                           <div class="col-sm-12">
+               <div class="card">
+                 <div class="card-header bg-info">
+                   <h5 class="text-center text-white">RELATORIU MPMS</h5>
+                 </div>
+                 <div class="text-center">
+                   <div class="card-body d-flex justify-content-between">
+                     <a href="{% url 'tab-mpms' %}"><i class="fa fa-table fa-2x"></i> Sumario</a>
+                     <a href=""><i class="fa fa-table fa-2x"></i> Grafiku</a>
+                   </div>
+                   <center>
+                        <h2 style="margin-bottom: 20px;">{{mpms}}</h2>
                     </center>
                  </div>
                </div>

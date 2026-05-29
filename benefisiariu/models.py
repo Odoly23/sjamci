@@ -8,6 +8,16 @@ from custom.models import BaseModel, Status, Municipality, AdministrativePost, V
 from config.upload_utils import upload_estado, upload_photo
 
 
+NIVEL_EDUKASAUN_CHOICES = [
+    ('primaria',       'Primária'),
+    ('pre_secundaria', 'Pré-Secundária'),
+    ('secundaria',     'Secundária'),
+    ('lisensiatura',   'Lisensiatura'),
+    ('mestrado',       'Mestrado'),
+    ('doutoramento',   'Doutoramento'),
+    ('seluk',          'Seluk'),
+]
+
 class Benefisiariu(BaseModel):
     name = models.CharField(max_length=100, null=True, verbose_name="Naran Empreza")
     pob = models.CharField(max_length=100, blank=True, null=True, verbose_name="Fatin Moris")
@@ -17,6 +27,8 @@ class Benefisiariu(BaseModel):
     status = models.ForeignKey(Status, on_delete=models.CASCADE, null=True, blank=True)
     file = models.FileField(upload_to=upload_estado, null=True, blank=True, validators=[FileExtensionValidator(['pdf'])], verbose_name="Anexa Eleitoral")
     phone = models.CharField(max_length=20, null=True, blank=True)
+    nivel_edukasaun = models.CharField(max_length=20, choices=NIVEL_EDUKASAUN_CHOICES, null=True, blank=True, verbose_name="Nivel Edukasaun")
+    email_website = models.CharField(max_length=200, null=True, blank=True, verbose_name="Email / Website")
     hashed = models.CharField(max_length=128, blank=True, null=True)
 
     def __str__(self):
@@ -84,3 +96,51 @@ class BeneficiariuEvaluation(BaseModel):
         if not self.hashed:
             self.hashed = hashlib.blake2b(str(self.id).encode()).hexdigest()
             super().save(update_fields=['hashed'])
+
+
+class BenefisiariuUser(models.Model):
+    benefisiariu = models.OneToOneField(Benefisiariu, on_delete=models.CASCADE, related_name="benefisiariuuser")
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        template = '{0.benefisiariu} {0.user}'
+        return template.format(self)
+
+
+class Pedidu(BaseModel):
+    TIPO_CHOICES = [
+        ('Partisipa Treinamentu',   'Partisipa Treinamentu'),
+        ('Pedidu Informasaun', 'Pedidu Informasaun'),
+        ('Reclamasaun',     'Reclamasaun'),
+        ('seluk',       'Seluk'),
+    ]
+    STATUS_CHOICES = [
+        ('pending',   'pending'),
+        ('prosesu',   'prosesu'),
+        ('resolvidu', 'resolvidu'),
+        ('rejeita',   'rejeita'),
+    ]
+
+    benefisiariu  = models.ForeignKey(Benefisiariu, on_delete=models.CASCADE, related_name='pedidus')
+    tipo          = models.CharField(max_length=90, choices=TIPO_CHOICES, verbose_name='Tipo Pedidu')
+    assuntu       = models.CharField(max_length=200, verbose_name='Assuntu')
+    deskrisaun    = models.TextField(verbose_name='Deskrisaun / Razaun')
+    status        = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='Status')
+    resposta      = models.TextField(null=True, blank=True, verbose_name='Resposta Officer')
+    resolvidu_by  = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Resolvidu Husi')
+    hashed        = models.CharField(max_length=128, null=True, blank=True)
+
+    class Meta:
+        ordering            = ['-created_at']
+        verbose_name        = 'Pedidu'
+        verbose_name_plural = 'Pedidu Sira'
+
+    def __str__(self):
+        return f"{self.benefisiariu} - {self.tipo}"
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new and not self.hashed:
+            self.hashed = hashlib.blake2b(str(self.id).encode()).hexdigest()
+            Pedidu.objects.filter(pk=self.pk).update(hashed=self.hashed)

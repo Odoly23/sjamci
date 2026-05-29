@@ -58,14 +58,14 @@
     </th>
   </tr>
   <tr class="bg-light">
-    <th>PROGRAMA</th><th>TINAN</th><th>FAZE</th><th>VALOR</th>
+    <th>PROGRAMA</th><th>TINAN</th><th>FAZE</th><th>FUNDUS APOIU</th>
   </tr>
   {% for p in programs %}
     <tr>
       <td>{{ p.program_type }}</td>
       <td>{{ p.year }}</td>
       <td>{{ p.faze }}</td>
-      <td>{{ p.amount }}</td>
+      <td>$.{{ p.amount }}</td>
     </tr>
   {% empty %}
     <tr><td colspan="4" class="text-muted">La iha dadus</td></tr>
