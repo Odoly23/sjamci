@@ -9,38 +9,81 @@
     <div class="col-sm-12">
       <div class="card shadow-lg pt-1 border-primary rounded">
 
-        <!-- ── Header ──────────────────────────────────────── -->
-        <div class="card-header bg-steel">
-          {{ legend|upper }}
-          <i class="fa fa-long-arrow-right"></i>
-         {% if group == "dnim" %}
+        <!-- HEADER -->
+        <div class="card-header bg-steel d-flex justify-content-between align-items-center">
+          <span>{{ legend|upper }}</span>
+          {% if group == "dnim" %}
             <a href="{% url 'edit-benef' benef.hashed %}" class="btn btn-sm btn-warning">
-            <i class="fa fa-edit"></i>
-          </a>
-         {% endif %}
+              <i class="fa fa-edit"></i> Edit
+            </a>
+          {% endif %}
         </div>
 
         <div class="card-body">
-          <div class="row">
 
-            <!-- ── Kolom Kiri ─────────────────────────────── -->
-            <div class="col-sm-6">
-              {% include 'sides_D/col_left.html' %}
+          <!-- TAB NAVIGATION -->
+          <ul class="nav nav-tabs mb-3" id="manufDetailTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="pessoal-tab" data-toggle="tab" href="#pessoal" role="tab">
+                <i class="fa fa-user"></i> Pessoal
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="negosiu-tab" data-toggle="tab" href="#negosiu" role="tab">
+                <i class="fa fa-building"></i> Negosiu & Programa
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="trabalhador-tab" data-toggle="tab" href="#trabalhador" role="tab">
+                <i class="fa fa-users"></i> Trabalhadores & Finansas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="manufatur-tab" data-toggle="tab" href="#manufatur" role="tab">
+                <i class="fa fa-industry"></i> Manufatur Detail
+              </a>
+            </li>
+          </ul>
+
+          <!-- TAB CONTENT -->
+          <div class="tab-content">
+
+            <!-- ========== TAB 1: PESSOAL ========== -->
+            <div class="tab-pane fade show active" id="pessoal" role="tabpanel">
+              <div class="row">
+                <div class="col-md-6">
+                  {% include 'sides_D/tab_pessoal_left.html' %}
+                </div>
+                <div class="col-md-6">
+                  {% include 'sides_D/tab_pessoal_right.html' %}
+                </div>
+              </div>
             </div>
 
-            <!-- ── Kolom Kanan ────────────────────────────── -->
-            <div class="col-sm-6">
-              {% include 'sides_D/col_right.html' %}
+            <!-- ========== TAB 2: NEGOSIU & PROGRAMA ========== -->
+            <div class="tab-pane fade" id="negosiu" role="tabpanel">
+              {% include 'sides_D/tab_negosiu_programa.html' %}
+            </div>
+
+            <!-- ========== TAB 3: TRABALHADORES & FINANSAS ========== -->
+            <div class="tab-pane fade" id="trabalhador" role="tabpanel">
+              {% include 'sides_D/tab_trabalhador_finansa.html' %}
+            </div>
+
+            <!-- ========== TAB 4: MANUFATUR DETAIL ========== -->
+            <div class="tab-pane fade" id="manufatur" role="tabpanel">
+              {% include 'sides_D/tab_manufatur_detail.html' %}
             </div>
 
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   </div>
 </div>
 {% endblock content %}
+
 {% block scripts %}
   {% include 'sides_D/map_script.html' %}
 {% endblock scripts %}

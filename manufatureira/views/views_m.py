@@ -111,27 +111,27 @@ def geral_man(request):
     return render(request, 'Dash_dnim/list_geral.html', context)
 
 
-@login_required
-@allowed_users(allowed_roles=['admin', 'dnim'])
-def detail_man(request, hashid):
-    group = request.user.groups.all()[0].name
-    manufatur = Manufatur.objects.get(hashed=hashid)
-    lokalidade = getattr(manufatur,'lokalidade', None)
-    membro = getattr(manufatur, 'members_data', None)
-    atividades = Aktividade.objects.filter(manufatur=manufatur)
-    benef = manufatur.benefisiariu
-    context = {
-        'group': group,
-        'manufatur': manufatur,
-        'lokalidade': lokalidade,
-        'membro': membro,
-        'atividades': atividades,
-        'benef': benef,
-        'title': 'Detalha Manufatura',
-        'legend': 'Detalha Manufatura',
-    }
+# @login_required
+# @allowed_users(allowed_roles=['admin', 'dnim'])
+# def detail_man(request, hashid):
+#     group = request.user.groups.all()[0].name
+#     manufatur = Manufatur.objects.get(hashed=hashid)
+#     lokalidade = getattr(manufatur,'lokalidade', None)
+#     membro = getattr(manufatur, 'members_data', None)
+#     atividades = Aktividade.objects.filter(manufatur=manufatur)
+#     benef = manufatur.benefisiariu
+#     context = {
+#         'group': group,
+#         'manufatur': manufatur,
+#         'lokalidade': lokalidade,
+#         'membro': membro,
+#         'atividades': atividades,
+#         'benef': benef,
+#         'title': 'Detalha Manufatura',
+#         'legend': 'Detalha Manufatura',
+#     }
 
-    return render(request, 'Dash_dnim/detail_man.html', context)
+#     return render(request, 'Dash_dnim/detail_man.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['admin', 'staff', 'dnim'])

@@ -1,0 +1,71 @@
+{% load static %}
+
+<!-- INFORMASAUN PESOAL -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="3">
+      INFORMASAUN PESOAL
+      {% if group == "dnim" %}
+        <a href="{% url 'edit-benef-dnim' benef.hashed %}"><i class="fa fa-edit"></i></a>
+      {% endif %}
+    </th>
+  </tr>
+  <tr>
+    <td>Naran</th>
+    <td>: {{ benef.name }}</th>
+    <td rowspan="6" class="text-center">
+      {% if photo and photo.image %}
+        <img src="{{ photo.image.url }}" width="120">
+      {% endif %}
+      <br>
+      {% if group == "dnim" %}
+        <a href=""><i class="fa fa-edit"></i></a>
+      {% endif %}
+    </td>
+  </tr>
+  <tr><th>Sexu</th>        <td>: {{ benef.sex }}</td></tr>
+  <tr><th>Fatin Moris</th> <td>: {{ benef.pob }}</td></tr>
+  <tr><th>Data Moris</th>  <td>: {{ benef.dob }}</td></tr>
+  <tr><th>Idade</th>       <td>: {{ benef.age }}</td></tr>
+  <tr><th>Estado Civil</th><td>: {{ benef.marital }}</td></tr>
+  <tr><th>Telefone</th>    <td colspan="2">: {{ benef.phone }}</td></tr>
+  <tr>
+    <th>Status</th>
+    <td colspan="2">: {{ benef.status }}</td>
+  </tr>
+</table>
+
+<!-- LOKALIZASAUN MORIS -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="2">
+      LOKALIZASAUN MORIS
+      {% if group == "dnim" %}
+        <a href="{% url 'dn-addres' benef.hashed %}"><i class="fa fa-edit"></i></a>
+      {% endif %}
+    </th>
+  </tr>
+  {% if addtl %}
+    <tr><th>Municipiu</th>   <td>: {{ addtl.municipality }}</td></tr>
+    <tr><th>Postu</th>       <td>: {{ addtl.administrativepost }}</td></tr>
+    <tr><th>Suku</th>        <td>: {{ addtl.village }}</td></tr>
+  {% else %}
+    <tr><td colspan="2" class="text-muted">La iha dadus</td></tr>
+  {% endif %}
+</table>
+
+<!-- ENDERESU ORIGEN -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="2">
+      ENDERESU ORIGEN
+      <a href="{% url 'dn-orig' benef.hashed %}"><i class="fa fa-edit"></i></a>
+    </th>
+  </tr>
+  {% if addori %}
+    <tr><th>Cidade</th>  <td>: {{ addori.city }}</td></tr>
+    <tr><th>Enderesu</th><td>: {{ addori.address }}</td></tr>
+  {% else %}
+    <tr><td colspan="2" class="text-muted">La iha dadus</td></tr>
+  {% endif %}
+</table>

@@ -1,0 +1,165 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="content mb-5">
+
+  <div class="container-fluid">
+
+    <!-- HEADER -->
+    <div class="row mb-3">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-steel">
+            <strong>
+              <i class="fa fa-chart-bar"></i>
+              {{ legend|upper }}
+            </strong>
+            <a href="javascript:history.back()" class="btn btn-sm btn-secondary float-right">
+              <i class="fa fa-arrow-left"></i> Fila
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ROW 1: Grafik 1 & 2 -->
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-primary text-white">
+            <h5 class="text-center mb-0">1. Grupu Ativo vs Parado Tuir Municipiu</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="grupuStatusChart" style="height: 350px; width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-success text-white">
+            <h5 class="text-center mb-0">2. Total Dados tuir Tipu Industria</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="tipuIndustriaChart" style="height: 350px; width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+            <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="text-center mb-0">3. Total Valor Apoio tuir Municipiu</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="valorMunicipiuChart" style="height: 350px; width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 2: Grafik 3 & 4 -->
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-info text-white">
+            <h5 class="text-center mb-0">4. Total Valor Apoio tuir  Tinan</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="valorTinanChart" style="height: 350px; width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-danger text-white">
+            <h5 class="text-center mb-0">5. Top 10 Grupu Valor Boot</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="topGrupuChart" style="height: 350px; width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-secondary text-white">
+            <h5 class="text-center mb-0">6. Total Dados tuir Tipu Apoio</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="tipuApoioChart" style="height: 350px; width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 4: Grafik 7 & 8 -->
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-dark text-white">
+            <h5 class="text-center mb-0">7. Total Membro (Mane vs Feto) tuir Municipiu</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="membroMunicipiuChart" style="height: 350px; width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-info text-white">
+            <h5 class="text-center mb-0">8. Rasio Mane:Feto Tuir Municipiu (%)</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="rasioManeFetoChart" style="height: 350px; width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+            <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-success text-white">
+            <h5 class="text-center mb-0">9. Status Ativo vs Parado (Overall)</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="statusOverallChart" style="height: 350px; width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 5: Grafik 9 & 10 -->
+    <div class="row">
+
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="text-center mb-0">10. Top Municipiu ho Grupu Barak</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="topMunicipiuChart" style="height: 350px; width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/chart/chart.umd.min.js' %}"></script>
+<!-- Load semua file JS grafik DNIM -->
+<script>
+  {% include 'chart/dnim/kpi_dnim.js' %}
+  {% include 'chart/dnim/grupu_status_dnim.js' %}
+  {% include 'chart/dnim/tipu_industria_dnim.js' %}
+  {% include 'chart/dnim/valor_municipiu_dnim.js' %}
+  {% include 'chart/dnim/valor_tinan_dnim.js' %}
+  {% include 'chart/dnim/top_grupu_dnim.js' %}
+  {% include 'chart/dnim/tipu_apoio_dnim.js' %}
+  {% include 'chart/dnim/membro_municipiu_dnim.js' %}
+  {% include 'chart/dnim/rasio_mane_feto_dnim.js' %}
+  {% include 'chart/dnim/status_overall_dnim.js' %}
+  {% include 'chart/dnim/top_municipiu_dnim.js' %}
+</script> 
+{% endblock scripts %}

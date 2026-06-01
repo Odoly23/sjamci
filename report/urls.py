@@ -9,15 +9,18 @@ urlpatterns = [
 
 
     #sumario-Grafiku
-    path('Sumario-Grafiku-kni/.html', views.grafiku_kni, name='g-kni'),
-    path('Sumario-Grafiku-ks/.html', views.grafiku_ks, name='g-ks'),
-
+    path('Sumario-Grafiku-kni.html/', views.grafiku_kni, name='g-kni'),
+    path('Sumario-Grafiku-ks.html/', views.grafiku_ks, name='g-ks'),
+    path('Sumario-Grafiku-Dnim.html/', views.grafiku_dnim, name='g-dnim'),
 
     #Sumario Kreditu Suave
     path('Sumario-Tabela-Suave.html/', views.tab_ks, name='tab-ks'),
 
 
 
-    path('Sumario-Tabela-MPMS/', views.tab_mpms, name="tab-mpms")
+    path('Sumario-Tabela-MPMS/', views.tab_mpms, name="tab-mpms"),
+
+    #tabela dnim
+    path('Sumario-Tabela-dnim/', views.tab_dnim, name='tab_dnim')
 
 ]

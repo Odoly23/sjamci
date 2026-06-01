@@ -1,0 +1,121 @@
+{% if manufaturs %}
+  {% for manuf in manufaturs %}
+    <div class="card mb-3 border-info">
+      <div class="card-header bg-info text-white">
+        <strong><i class="fa fa-cogs"></i> {{ manuf.business.name|default:"Manufatur" }}</strong>
+        {% if group == 'dnim' %}
+          <a href="{% url 'dn-manuf-edit' manuf.pk %}" class="btn btn-xs btn-warning float-right ml-1">
+            <i class="fa fa-edit"></i>
+          </a>
+        {% endif %}
+      </div>
+      <div class="card-body">
+
+        <!-- Informasaun Básiku -->
+        <div class="row">
+          <div class="col-md-6">
+            <table class="table table-sm table-bordered">
+              <tr><th width="40%">Tipu Produtu</th><td>{{ manuf.product_type|default:"-" }}</td></tr>
+              <tr><th>Kapasidade Produsaun</th><td>{{ manuf.production_capacity|default:"-" }}</td></tr>
+              <tr><th>Materia Prima</th><td>{{ manuf.raw_material|default:"-" }}</td></tr>
+              <tr><th>Ekipamentu</th><td>{{ manuf.equipment|default:"-" }}</td></tr>
+            </table>
+          </div>
+          <div class="col-md-6">
+            <table class="table table-sm table-bordered">
+              <tr><th width="40%">Sertifikasaun</th><td>{{ manuf.certification|default:"-" }}</td></tr>
+              <tr><th>Merkadu Alvu</th><td>{{ manuf.target_market|default:"-" }}</td></tr>
+              <tr><th>Desafio Prinsipal</th><td>{{ manuf.main_challenge|default:"-" }}</td></tr>
+              <tr><th>Status</th><td>{{ manuf.status|default:"-" }}</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Lokalidade -->
+        {% if manuf.lokalidade %}
+        <hr>
+        <h6 class="text-primary"><i class="fa fa-map-marker"></i> Lokalidade</h6>
+        <div class="row">
+          <div class="col-md-6">
+            <table class="table table-sm">
+              <tr><th width="40%">Municipiu</th><td>{{ manuf.lokalidade.municipality|default:"-" }}</td></tr>
+              <tr><th>Postu</th><td>{{ manuf.lokalidade.administrativepost|default:"-" }}</td></tr>
+            </table>
+          </div>
+          <div class="col-md-6">
+            <table class="table table-sm">
+              <tr><th width="40%">Suku</th><td>{{ manuf.lokalidade.village|default:"-" }}</td></tr>
+              <tr><th>Enderesu</th><td>{{ manuf.lokalidade.address|default:"-" }}</td></tr>
+            </table>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Members Data -->
+        {% with members=manuf.members_data.all %}
+          {% if members %}
+          <hr>
+          <h6 class="text-primary"><i class="fa fa-users"></i> Membru Sira</h6>
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered">
+              <thead class="bg-light">
+                <tr><th>Naran</th><th>Funsaun</th><th>Sexu</th><th>Telefone</th></tr>
+              </thead>
+              <tbody>
+                {% for m in members %}
+                <tr>
+                  <td>{{ m.name|default:"-" }}</td>
+                  <td>{{ m.role|default:"-" }}</td>
+                  <td>{{ m.sex|default:"-" }}</td>
+                  <td>{{ m.phone|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endif %}
+        {% endwith %}
+
+        <!-- Atividades -->
+        {% with atividades=manuf.atividades.all %}
+          {% if atividades %}
+          <hr>
+          <h6 class="text-primary"><i class="fa fa-calendar"></i> Atividades</h6>
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered">
+              <thead class="bg-light">
+                <tr>
+                  <th>Tipu Apoiu</th><th>Industry Type</th>
+                  <th>Tinan</th><th>Montante</th><th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for a in atividades %}
+                <tr>
+                  <td>{{ a.support_type|default:"-" }}</td>
+                  <td>{{ a.industry_type|default:"-" }}</td>
+                  <td>{{ a.year|default:"-" }}</td>
+                  <td>{{ a.amount|default:"-" }}</td>
+                  <td>{{ a.status|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endif %}
+        {% endwith %}
+
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="alert alert-warning">
+    <i class="fa fa-exclamation-triangle"></i>
+    La iha dadus Manufatur ba benefisiariu ida ne'e.
+    {% if group == 'dnim' %}
+      <a href="#" class="btn btn-sm btn-success ml-2">
+        <i class="fa fa-plus"></i> Aumenta Manufatur
+      </a>
+    {% endif %}
+  </div>
+{% endif %}

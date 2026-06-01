@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views_kni
 from . import views_ks
+from . import views_manuf
 
 urlpatterns = [
 
@@ -33,5 +34,20 @@ urlpatterns = [
     path('grafiku/top-municipality/', views_ks.APITopMunicipalityKS.as_view(), name='api-top-municipality-ks'),
     path('grafiku/top-sector/', views_ks.APITopSectorKS.as_view(), name='api-top-sector-ks'),
     path('map/benefisiariu/', views_ks.APIGISKS.as_view(), name='api-gis-ks'),
+
+
+
+    #DNIM
+    path('api/dnim/grupu-status-per-municipiu/', views_manuf.APIGrupuStatusPerMunicipiu.as_view(), name='api-dnim-grupu-status'),
+    path('api/dnim/tipu-industria/', views_manuf.APIDistribusiTipuIndustria.as_view(), name='api-dnim-tipu-industria'),
+    path('api/dnim/total-valor-per-municipiu/', views_manuf.APITotalValorPerMunicipiu.as_view(), name='api-dnim-valor-municipiu'),
+    path('api/dnim/total-valor-per-tinan/', views_manuf.APITotalValorPerTinan.as_view(), name='api-dnim-valor-tinan'),
+    path('api/dnim/top-10-grupu/', views_manuf.APITop10GrupuValor.as_view(), name='api-dnim-top-grupu'),
+    path('api/dnim/tipu-apoio/', views_manuf.APIDistribusiTipuApoio.as_view(), name='api-dnim-tipu-apoio'),
+    path('api/dnim/jumlah-membro-per-municipiu/', views_manuf.APIJumlahMembroPerMunicipiu.as_view(), name='api-dnim-membro'),
+    path('api/dnim/rasio-mane-feto/', views_manuf.APIRasioManeFeto.as_view(), name='api-dnim-rasio'),
+    path('api/dnim/status-overall/', views_manuf.APIStatusOverall.as_view(), name='api-dnim-status'),
+    path('api/dnim/top-municipiu/', views_manuf.APITopMunicipiu.as_view(), name='api-dnim-top-municipiu'),
+    path('api/dnim/kpi/', views_manuf.APIKPIDnim.as_view(), name='api-dnim-kpi'),
 
 ]

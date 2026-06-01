@@ -1,0 +1,60 @@
+<!-- AKTIVIDADE NEGOSIU / MANUFATUREIRA -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="3">
+      AKTIVIDADE NEGOSIU/MANUFATUREIRA
+      {% if group == 'dnim' %}
+        <a href="{% url 'dn-bus' benef.hashed %}" class="btn btn-xs btn-success ml-1">
+          <i class="fa fa-plus"></i>
+        </a>
+      {% endif %}
+    </th>
+  </tr>
+  <tr class="bg-light"><th>NEGOSIU</th><th>SEITOR</th><th>#</th></tr>
+  {% for b in businesses %}
+    <tr>
+      <td>{{ b.name }}</td>
+      <td>{{ b.sector }}</td>
+      <td>
+        {% if group == 'dnim' %}
+          <a href="{% url 'dn-bus-ed' b.hashed %}"><i class="fa fa-edit"></i></a>
+        {% endif %}
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="3" class="text-muted">La iha dadus</td></tr>
+  {% endfor %}
+</table>
+
+<hr>
+
+<!-- PROGRAMA MANUFATUREIRA -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="4">
+      PROGRAMA MANUFATUREIRA
+      {% if group == 'dnim' %}
+        <a href="{% url 'dn-prog' benef.hashed %}" class="btn btn-xs btn-success ml-1">
+          <i class="fa fa-plus"></i>
+        </a>
+      {% endif %}
+    </th>
+  </tr>
+  <tr class="bg-light">
+    <th>PROGRAMA</th><th>TINAN</th><th>FAZE</th><th>VALOR</th>
+  </tr>
+  {% for p in programs %}
+    <tr>
+      <td>{{ p.program_type }}</td>
+      <td>{{ p.year }}</td>
+      <td>{{ p.faze }}</td>
+      <td>{{ p.amount }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4" class="text-muted">La iha dadus</td></tr>
+  {% endfor %}
+  <tr class="font-weight-bold bg-light">
+    <td colspan="3" class="text-center">TOTAL</td>
+    <td>{{ total_amount }}</td>
+  </tr>
+</table>

@@ -5,8 +5,8 @@
 </div>
 
 <!-- PRODUTO / SERVISU -->
-<table class="table table-sm table-bordered mb-2">
-  <tr class="bg-primary text-white">
+<table  class="table table-sm">
+  <tr>
     <th colspan="6">
       <i class="fa fa-cubes"></i> Produto / Servisu Prinsipal
       <a href="{% url 'ks-product-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
@@ -45,8 +45,8 @@
 <table>
 
 <!-- KLIENTE PRINSIPAL -->
-<table class="table table-sm table-bordered mb-2">
-  <tr class="bg-primary text-white">
+<table  class="table table-sm">
+  <tr>
     <th colspan="4">
       <i class="fa fa-handshake-o"></i> Kliente Prinsipal Sira
       <a href="{% url 'ks-customer-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
@@ -80,7 +80,7 @@
 
 <!-- KOMPETITOR -->
 <table class="table table-sm table-bordered mb-2">
-  <tr class="bg-primary text-white">
+  <tr>
     <th colspan="4">
       <i class="fa fa-flag"></i> Kompetitor Sira
       <a href="{% url 'ks-competitor-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
@@ -114,7 +114,7 @@
 
 <!-- AVALIASAUN MERKADU -->
 <table class="table table-sm table-bordered mb-2">
-  <tr class="bg-primary text-white">
+  <tr>
     <th colspan="2">
       <i class="fa fa-search"></i> Avaliasaun Merkadu (Q23–Q27)
       {% if monitoring.market %}

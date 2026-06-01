@@ -51,6 +51,18 @@ def grafiku_ks(request):
 	}
 	return render(request, 'Dash_R/Grafiku_ks.html', context)
 
+
+@login_required
+@allowed_users(allowed_roles=['admin','KS','XFD','dnim'])
+def grafiku_dnim(request):
+	group = request.user.groups.all()[0].name
+	context = {
+		'title':"Sumario Geral",
+		'legend':"Sumario Geral",
+		'group':group,
+	}
+	return render(request, 'Dash_R/Grafiku_dnim.html', context)
+
 @login_required
 @allowed_users(allowed_roles=['admin','KS','KNI','XFD','dnim'])
 def tab_kni(request):
