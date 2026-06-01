@@ -1,0 +1,35 @@
+<!-- FINANSIAMENTO -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="2">FINANSIAMENTO</th>
+  </tr>
+  <tr class="bg-light"><th>EMPREZA</th><th>TOTAL</th></tr>
+  {% for k in finances %}
+    <tr><td>{{ k.business }}</td><td>${{ k.budget }}</td></tr>
+  {% empty %}
+    <tr><td colspan="2" class="text-muted">La iha dadus</td></tr>
+  {% endfor %}
+</table>
+
+<!-- KAPITAL -->
+{% if kapital %}
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="2">
+      KAPITAL
+      {% if group == 'mpms' %}
+        <a href="{% url 'mpms-kapital-add' empresa.hashed %}" class="btn btn-xs btn-warning ml-1">
+          <i class="fa fa-edit"></i>
+        </a>
+      {% endif %}
+    </th>
+  </tr>
+  <tr><th>Kapital Investimento</th>   <td>: {{ kapital.get_kapital_investimento_display }}</td></tr>
+  <tr><th>Tipu Fundus</th>            <td>: {{ kapital.get_tipu_fundus_display }}</td></tr>
+  <tr><th>Total Fundus</th>           <td>: {{ kapital.get_total_fundus_display }}</td></tr>
+  <tr><th>Lukru Brutu / Mes</th>      <td>: ${{ kapital.lukru_brutu_mes }}</td></tr>
+  <tr><th>Lukru Brutu / Ano</th>      <td>: ${{ kapital.lukru_brutu_ano }}</td></tr>
+  <tr><th>Lukru Likidu / Mes</th>     <td>: ${{ kapital.lukru_likidu_mes }}</td></tr>
+  <tr><th>Lukru Likidu / Ano</th>     <td>: ${{ kapital.lukru_likidu_ano }}</td></tr>
+</table>
+{% endif %}

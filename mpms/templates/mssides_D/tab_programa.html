@@ -1,0 +1,53 @@
+<!-- PROGRAMA MPMS -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="4">
+      PROGRAMA MPMS
+      {% if group == 'mpms' %}
+        <a href="{% url 'mpms-program-add' benef.hashed %}" class="btn btn-xs btn-success ml-1">
+          <i class="fa fa-plus"></i>
+        </a>
+      {% endif %}
+    </th>
+  </tr>
+  <tr class="bg-light"><th>TIPU</th><th>TINAN</th><th>FAZE</th><th>MONTANTE</th></tr>
+  {% for p in programs %}
+    <tr>
+      <td>{{ p.program_type }}</td>
+      <td>{{ p.year }}</td>
+      <td>{{ p.faze }}</td>
+      <td>${{ p.amount }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4" class="text-muted">La iha dadus</td></tr>
+  {% endfor %}
+  <tr class="font-weight-bold bg-light">
+    <td colspan="3" class="text-right">TOTAL</td>
+    <td>${{ total_program }}</td>
+  </tr>
+</table>
+
+<!-- ATIVIDADE APOIO -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="4">
+      ATIVIDADE APOIO
+      {% if group == 'mpms' and empresa %}
+        <a href="{% url 'mpms-atividade-add' empresa.hashed %}" class="btn btn-xs btn-success ml-1">
+          <i class="fa fa-plus"></i>
+        </a>
+      {% endif %}
+    </th>
+  </tr>
+  <tr class="bg-light"><th>TIPU APOIO</th><th>TINAN</th><th>MONTANTE</th><th>STATUS</th></tr>
+  {% for a in atividades %}
+    <tr>
+      <td>{{ a.get_tipu_apoio_display }}</td>
+      <td>{{ a.year }}</td>
+      <td>${{ a.amount }}</td>
+      <td>{{ a.status }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4" class="text-muted">La iha dadus</td></tr>
+  {% endfor %}
+</table>

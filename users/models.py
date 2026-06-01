@@ -55,6 +55,7 @@ class EmpPhoto(models.Model):
 class AuditLogin(models.Model):
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="audituserlogin")
+	user_type = models.CharField(max_length=20, null=True, blank=True)
 	login_time = models.DateTimeField(auto_now_add=True,null=True,blank=True)
 	logout_time  = models.DateTimeField(null=True, blank=True)
 	duration     = models.DurationField(null=True, blank=True)        

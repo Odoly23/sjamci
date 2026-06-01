@@ -1,0 +1,59 @@
+{% if empresa %}
+
+<!-- EMPRESA MPMS -->
+<table class="table table-sm">
+  <tr class="bg-primary text-white">
+    <th colspan="2">EMPRESA MPMS</th>
+  </tr>
+  <tr><th>Naran Kompania</th>   <td>: {{ empresa.company_name }}</td></tr>
+  <tr><th>Tipo Atividade</th>   <td>: {{ empresa.tipo_atividade }}</td></tr>
+  <tr><th>Tinan Hari</th>       <td>: {{ empresa.tinan_hari }}</td></tr>
+</table>
+
+<!-- EMPREGADOR MPMS -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="4">
+      EMPREGADOR MPMS
+      {% if group == 'mpms' %}
+        <a href="{% url 'mpms-empregador-add' empresa.hashed %}" class="btn btn-xs btn-{% if empregador %}warning{% else %}success{% endif %} ml-1">
+          <i class="fa fa-{% if empregador %}edit{% else %}plus{% endif %}"></i>
+        </a>
+      {% endif %}
+    </th>
+  </tr>
+  {% if empregador %}
+    <tr class="bg-light"><th></th><th>MANE</th><th>FETO</th><th>TOTAL</th></tr>
+    <tr>
+      <td>Nasionál</td>
+      <td>{{ empregador.nasional_mane }}</td>
+      <td>{{ empregador.nasional_feto }}</td>
+      <td>{{ empregador.total_nasional }}</td>
+    </tr>
+    <tr>
+      <td>Internasionál</td>
+      <td>{{ empregador.internasional_mane }}</td>
+      <td>{{ empregador.internasional_feto }}</td>
+      <td>{{ empregador.total_internasional }}</td>
+    </tr>
+    <tr class="font-weight-bold bg-light">
+      <td>TOTAL</td>
+      <td colspan="2"></td>
+      <td>{{ empregador.total_empregador }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="4" class="text-muted">La iha dadus</td></tr>
+  {% endif %}
+</table>
+
+{% else %}
+<div class="alert alert-warning">
+  <i class="fa fa-exclamation-triangle"></i>
+  Empresa MPMS seidauk hari.
+  {% if group == 'mpms' %}
+    <a href="{% url 'mpms-business-add' benef.hashed %}" class="btn btn-sm btn-success ml-2">
+      <i class="fa fa-plus"></i> Hari Negosiu
+    </a>
+  {% endif %}
+</div>
+{% endif %}

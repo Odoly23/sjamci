@@ -56,5 +56,9 @@ urlpatterns = [
     path('Lista-Avaliasaun-Finisih/', views.benef_evaluation_list_ks, name='ava-fh'),
     path('Lista-Avaliasaun-Rendimento/', views.avalia_list2_ks, name='ava-re-ks'),
     path('Avaliasaun-Antes/<str:hashid>/', views.baseline_create, name='antes-ava'),
-    path('Avaliasaun-Depois/<str:hashid>/', views.monitoring_create_ks, name='depois-ava')
+    path('Avaliasaun-Depois/<str:hashid>/', views.monitoring_create_ks, name='depois-ava'),
+
+
+    path('import/excel/', views.import_kreditu_suave_excel, name='import_ks_excel'),
+    path('export/excel/', views.export_kreditu_suave_excel, name='export_ks_excel'),
 ]

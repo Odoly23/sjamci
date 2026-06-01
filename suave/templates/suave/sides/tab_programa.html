@@ -1,0 +1,94 @@
+<!-- PROGRAMA KREDITU SUAVE -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-dark text-white">
+    <th colspan="5">
+      <i class="fa fa-money"></i> Programa Kreditu Suave
+      <a href="{% url 'ks-program-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+    </th>
+   </tr>
+  <tr class="bg-light">
+    <th>Programa</th><th>Faze</th><th>Tinan</th>
+    <th class="text-right">Aprovadu ($)</th>
+    <th class="text-right">Montante ($)</th>
+   </tr>
+  {% for p in programs %}
+  <tr>
+    <td>{{ p.program_type }}</td>
+    <td>{{ p.faze }}</td>
+    <td>{{ p.year }}</td>
+    <td class="text-right">{{ p.approved_amount|default:"-" }}</td>
+    <td class="text-right"><strong>{{ p.amount|default:"-" }}</strong></td>
+   </tr>
+  {% empty %}
+  <tr><td colspan="5" class="text-muted text-center">La iha dadus</td>
+   </tr>
+  {% endfor %}
+</table>
+
+<!-- TRABALHADORES -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-dark text-white">
+    <th colspan="5">
+      <i class="fa fa-user"></i> Trabalhadores
+      {% for b in businesses %}
+      <a href="{% url 'ks-employee-add' b.benefisiariu.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+      {% endfor %}
+    </th>
+   </tr>
+  <tr class="bg-light">
+    <th>Empreza</th><th class="text-center">Mane</th>
+    <th class="text-center">Feto</th><th class="text-center">Total</th>
+    <th class="text-center">Aksaun</th>
+   </tr>
+  {% for k in employees %}
+  <tr>
+    <td>{{ k.business.name }}</td>
+    <td class="text-center">{{ k.male }}</td>
+    <td class="text-center">{{ k.female }}</td>
+    <td class="text-center"><strong>{{ k.total }}</strong></td>
+    <td class="text-center">
+      <a href="{% url 'ks-employee-edit' benef.hashed k.pk %}" class="btn btn-xs btn-info">
+        <i class="fa fa-pencil"></i>
+      </a>
+    </td>
+   </tr>
+  {% empty %}
+  <tr><td colspan="5" class="text-muted text-center">La iha dadus</td>
+   </tr>
+  {% endfor %}
+</table>
+
+<!-- FINANSIAMENTO -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-dark text-white">
+    <th colspan="3">
+      <i class="fa fa-dollar"></i> Finansiamento
+      {% for b in businesses %}
+      <a href="{% url 'ks-finance-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+      {% endfor %}
+    </th>
+   </tr>
+  <tr class="bg-light">
+    <th>Empreza</th><th class="text-right">Total Finansas ($)</th><th class="text-center">Aksaun</th>
+   </tr>
+  {% for k in finances %}
+  <tr>
+    <td>{{ k.business.name }}</td>
+    <td class="text-right"><strong>{{ k.budget|default:"-" }}</strong></td>
+    <td class="text-center">
+      <a href="{% url 'ks-finance-edit' benef.hashed k.pk %}" class="btn btn-xs btn-info">
+        <i class="fa fa-pencil"></i>
+      </a>
+    </td>
+   </tr>
+  {% empty %}
+  <tr><td colspan="3" class="text-muted text-center">La iha dadus</td>
+   </tr>
+  {% endfor %}
+</table>

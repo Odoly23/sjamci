@@ -1,0 +1,32 @@
+<!-- ks/templates/KS/import.html -->
+{% extends "main/layout.html" %}
+{% load static %}
+{% load custom_tags %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h4>Import Dadus Kreditu Suave</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Hili File Excel</label>
+                    <input type="file" name="excel_file" class="form-control" accept=".xlsx" required>
+                </div>
+                <div class="alert alert-info">
+                    <strong>Format Excel:</strong>
+                    <ul>
+                        <li>Sheet tenke iha kolos: Naran Empreza, Naran Emprezariu, Telefone, Munisipio</li>
+                        <li>Total Fundo Aprovadu (Amount)</li>
+                        <li>Mane no Feto (Employee)</li>
+                    </ul>
+                </div>
+                <button type="submit" class="btn btn-success">Import</button>
+                <a href="{% url 'dash-ks' %}" class="btn btn-secondary">Kansela</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

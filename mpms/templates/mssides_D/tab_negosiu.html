@@ -1,0 +1,64 @@
+<!-- NEGOSIU -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="3">
+      NEGOSIU
+      {% if group == 'mpms' %}
+        <a href="{% url 'mpms-business-add' benef.hashed %}" class="btn btn-xs btn-success ml-1">
+          <i class="fa fa-plus"></i>
+        </a>
+      {% endif %}
+    </th>
+  </tr>
+  <tr class="bg-light"><th>NARAN</th><th>SEITOR</th><th>#</th></tr>
+  {% for b in businesses %}
+    <tr>
+      <td>{{ b.name }}</td>
+      <td>{{ b.sector }}</td>
+      <td>
+        {% if group == 'mpms' %}
+          <a href="{% url 'mpms-business-edit' b.hashed %}"><i class="fa fa-edit"></i></a>
+        {% endif %}
+       </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="3" class="text-muted">La iha dadus</td></tr>
+  {% endfor %}
+</table>
+
+<!-- TRABALHADORES -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="4">
+      TRABALHADORES
+      {% if group == 'mpms' and businesses %}
+        <a href="{% url 'mpms-employee-add' benef.hashed %}" class="btn btn-xs btn-success ml-1">
+          <i class="fa fa-plus"></i>
+        </a>
+      {% endif %}
+    </th>
+  </tr>
+  <tr class="bg-light"><th>EMPREZA</th><th>MANE</th><th>FETO</th><th>TOTAL</th></tr>
+  {% for k in employees %}
+    <tr>
+      <td>{{ k.business }}</td>
+      <td>{{ k.male }}</td>
+      <td>{{ k.female }}</td>
+      <td>{{ k.total }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4" class="text-muted">La iha dadus</td></tr>
+  {% endfor %}
+</table>
+
+<!-- MATERIA PRIMA (jika ada) -->
+{% if materia %}
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="2">MATERIA PRIMA</th>
+  </tr>
+  <tr><th>Kustu</th>       <td>: ${{ materia.kustu }}</td></tr>
+  <tr><th>Origem</th>      <td>: {{ materia.get_origem_display }}</td></tr>
+  <tr><th>Deskrisaun</th>  <td>: {{ materia.deskrisaun }}</td></tr>
+</table>
+{% endif %}

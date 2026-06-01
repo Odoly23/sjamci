@@ -1,0 +1,102 @@
+{% if monitoring %}
+
+<div class="alert alert-secondary py-1 px-2 mb-1">
+  <i class="fa fa-credit-card"></i> <strong>IV. INFORMASAUN KREDITU (Q35–Q39)</strong>
+</div>
+
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-warning">
+    <th colspan="2">
+      <i class="fa fa-bank"></i> Informasaun Kreditu
+      {% if monitoring.credit_info %}
+      <a href="{% url 'ks-creditinfo-edit' benef.hashed monitoring.credit_info.pk %}" class="btn btn-xs btn-dark float-right ml-1" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      {% else %}
+      <a href="{% url 'ks-creditinfo-add' benef.hashed %}" class="btn btn-xs btn-dark float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+      {% endif %}
+    </th>
+  </tr>
+
+  {% if monitoring.credit_info %}
+    {% with ci=monitoring.credit_info %}
+      <tr>
+        <td style="width:45%">Q35. Foti Tan Kreditu?</td>
+        <td>: {{ ci.took_credit|yesno:"Sin,Lae,-" }}</td>
+      </tr>
+      <tr>
+        <td>Q36. Provedor</td>
+        <td>: {{ ci.provider|default:"-" }}</td>
+      </tr>
+      <tr>
+        <td>Q37. Montante Hetan ($)</td>
+        <td>: <strong>{{ ci.amount|default:"-" }}</strong></td>
+      </tr>
+      <tr>
+        <td>Q37b. Tuir Espetativa?</td>
+        <td>: {{ ci.satisfied|yesno:"Sin,Lae,-" }}</td>
+      </tr>
+      <tr>
+        <td>Q38. Hakarak Kreditu Futuru?</td>
+        <td>: {{ ci.wants_more|yesno:"Sin,Lae,-" }}</td>
+      </tr>
+      <tr>
+        <td>Q38b. Institusaun Preferida</td>
+        <td>: {{ ci.preferred_institution|default:"-" }}</td>
+      </tr>
+      <tr>
+        <td>Razaun Preferensia</td>
+        <td>: {{ ci.reason_preference|default:"-" }}</td>
+      </tr>
+      <tr>
+        <td>Q39. Situasaun Pagamentu</td>
+        <td>:
+          {% if ci.repayment_status == "OnTime" %}
+            <span class="badge badge-success">{{ ci.get_repayment_status_display }}</span>
+          {% elif ci.repayment_status == "Late" %}
+            <span class="badge badge-warning">{{ ci.get_repayment_status_display }}</span>
+          {% elif ci.repayment_status == "Stuck" %}
+            <span class="badge badge-danger">{{ ci.get_repayment_status_display }}</span>
+          {% elif ci.repayment_status == "Done" %}
+            <span class="badge badge-info">{{ ci.get_repayment_status_display }}</span>
+          {% else %}
+            {{ ci.get_repayment_status_display|default:"-" }}
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td>Nota Pagamentu</td>
+        <td>: {{ ci.repayment_notes|default:"-" }}</td>
+      </tr>
+      <tr>
+        <td>Rekomendasaun</td>
+        <td>: {{ ci.recommendation|default:"-" }}</td>
+      </tr>
+      <tr>
+        <td>Kolateral ($)</td>
+        <td>: {{ ci.collateral_amount|default:"-" }}</td>
+      </tr>
+      <tr>
+        <td>Aprovasaun Banku</td>
+        <td>: {{ ci.approved_by_bank|default:"-" }}</td>
+      </tr>
+      <tr>
+        <td>Problema Selu Fila?</td>
+        <td>: {{ ci.has_repayment_problem|yesno:"Sin,Lae,-" }}</td>
+      </tr>
+      <tr>
+        <td>Programa Kontinua?</td>
+        <td>: {{ ci.program_continuation|yesno:"Sin,Lae,-" }}</td>
+      </tr>
+    {% endwith %}
+  {% else %}
+    <tr>
+      <td colspan="2" class="text-muted text-center">La iha dadus</td>
+    </tr>
+  {% endif %}
+
+</table>
+
+{% endif %}

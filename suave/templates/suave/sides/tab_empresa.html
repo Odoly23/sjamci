@@ -1,0 +1,78 @@
+<!-- INFORMASAUN JERAL EMPREZA -->
+<div class="alert alert-secondary py-1 px-2 mb-1">
+  <i class="fa fa-building"></i> <strong>I. INFORMASAUN JERAL EMPREZA</strong>
+</div>
+
+<!-- EKIPA MEMBRU -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-dark text-white">
+    <th colspan="4">
+      <i class="fa fa-users"></i> Ekipa Membru
+      <a href="{% url 'ks-ekipa-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+    </th>
+  </tr>
+  <tr class="bg-light">
+    <th style="width:30%">Naran</th>
+    <th style="width:25%">Funsaun</th>
+    <th style="width:25%">Kontakto</th>
+    <th style="width:20%" class="text-center">Aksaun</th>
+  </tr>
+  {% if monitoring %}
+    {% for m in monitoring.membro %}
+    <tr>
+      <td>{{ m.name }}</td>
+      <td>
+        {% if m.role == "Xefi" %}
+          <span class="badge badge-primary">{{ m.get_role_display }}</span>
+        {% else %}
+          <span class="badge badge-secondary">{{ m.get_role_display }}</span>
+        {% endif %}
+      </td>
+      <td>{{ m.phone|default:"-" }}</td>
+      <td class="text-center">
+        <a href="{% url 'ks-ekipa-edit' benef.hashed m.pk %}" class="btn btn-xs btn-info" title="Edit">
+          <i class="fa fa-pencil"></i>
+        </a>
+        <a href="{% url 'ks-ekipa-delete' benef.hashed m.pk %}" class="btn btn-xs btn-danger" title="Hamoos">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4" class="text-muted text-center">La iha dadus</td>
+   </tr>
+    {% endfor %}
+  {% else %}
+    <tr><td colspan="4" class="text-muted text-center">La iha dadus</td>
+   </tr>
+  {% endif %}
+</table>
+
+<!-- AKTIVIDADE NEGOSIU -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-dark text-white">
+    <th colspan="3">
+      <i class="fa fa-briefcase"></i> Aktividade Negosiu
+      <a href="{% url 'ks-business-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+    </th>
+  </tr>
+  <tr class="bg-light">
+    <th style="width:40%">Naran Negosiu</th>
+    <th style="width:35%">Seitor</th>
+    <th style="width:25%">Kategoria</th>
+   </tr>
+  {% for b in businesses %}
+  <tr>
+    <td>{{ b.name }}</td>
+    <td>{{ b.sector|default:"-" }}</td>
+    <td>{{ b.category|default:"-" }}</td>
+   </tr>
+  {% empty %}
+  <tr><td colspan="3" class="text-muted text-center">La iha dadus</td>
+   </tr>
+  {% endfor %}
+</table>

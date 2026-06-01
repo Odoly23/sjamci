@@ -30,22 +30,89 @@
         </div>
       </div>
 
-      <!-- MAIN CARD -->
+      <!-- MAIN CARD WITH TABS -->
       <div class="card shadow-lg border-primary rounded">
         <div class="card-header bg-steel">
           {{ legend|upper }}
         </div>
         <div class="card-body">
-          <div class="row">
-            <!-- KOLOM KIRI -->
-            <div class="col-sm-6">
-              {% include 'mssides_D/col_left.html' %}
+
+          <!-- TAB NAVIGATION -->
+          <ul class="nav nav-tabs mb-3" id="mpmsDetailTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="pessoal-tab" data-toggle="tab" href="#pessoal" role="tab">
+                <i class="fa fa-user"></i> Pessoal
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="negosiu-tab" data-toggle="tab" href="#negosiu" role="tab">
+                <i class="fa fa-building"></i> Negosiu
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="programa-tab" data-toggle="tab" href="#programa" role="tab">
+                <i class="fa fa-calendar"></i> Programa
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="finansas-tab" data-toggle="tab" href="#finansas" role="tab">
+                <i class="fa fa-dollar"></i> Finansas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="legal-tab" data-toggle="tab" href="#legal" role="tab">
+                <i class="fa fa-gavel"></i> Legal
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="empresa-tab" data-toggle="tab" href="#empresa" role="tab">
+                <i class="fa fa-industry"></i> Empresa
+              </a>
+            </li>
+          </ul>
+
+          <!-- TAB CONTENT -->
+          <div class="tab-content">
+
+            <!-- ========== TAB 1: PESSOAL ========== -->
+            <div class="tab-pane fade show active" id="pessoal" role="tabpanel">
+              <div class="row">
+                <div class="col-md-6">
+                  {% include 'mssides_D/tab_pessoal_left.html' %}
+                </div>
+                <div class="col-md-6">
+                  {% include 'mssides_D/tab_pessoal_right.html' %}
+                </div>
+              </div>
             </div>
-            <!-- KOLOM KANAN -->
-            <div class="col-sm-6">
-              {% include 'mssides_D/col_right.html' %}
+
+            <!-- ========== TAB 2: NEGOSIU ========== -->
+            <div class="tab-pane fade" id="negosiu" role="tabpanel">
+              {% include 'mssides_D/tab_negosiu.html' %}
             </div>
+
+            <!-- ========== TAB 3: PROGRAMA ========== -->
+            <div class="tab-pane fade" id="programa" role="tabpanel">
+              {% include 'mssides_D/tab_programa.html' %}
+            </div>
+
+            <!-- ========== TAB 4: FINANSAS ========== -->
+            <div class="tab-pane fade" id="finansas" role="tabpanel">
+              {% include 'mssides_D/tab_finansas.html' %}
+            </div>
+
+            <!-- ========== TAB 5: LEGAL ========== -->
+            <div class="tab-pane fade" id="legal" role="tabpanel">
+              {% include 'mssides_D/tab_legal.html' %}
+            </div>
+
+            <!-- ========== TAB 6: EMPRESA ========== -->
+            <div class="tab-pane fade" id="empresa" role="tabpanel">
+              {% include 'mssides_D/tab_empresa.html' %}
+            </div>
+
           </div>
+
         </div>
       </div>
 

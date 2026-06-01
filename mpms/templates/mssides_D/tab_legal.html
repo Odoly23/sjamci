@@ -1,0 +1,20 @@
+<!-- LISENSAMENTU -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="2">
+      LISENSAMENTU
+      {% if group == 'mpms' and empresa %}
+        <a href="{% url 'mpms-lisensamentu-add' empresa.hashed %}" class="btn btn-xs btn-{% if lisensamentu %}warning{% else %}success{% endif %} ml-1">
+          <i class="fa fa-{% if lisensamentu %}edit{% else %}plus{% endif %}"></i>
+        </a>
+      {% endif %}
+    </th>
+  </tr>
+  {% if lisensamentu %}
+    <tr><th>Lisensamentu</th>           <td>: {{ lisensamentu.get_lisensamentu_display }}</td></tr>
+    <tr><th>Status Lisensamentu</th>    <td>: {{ lisensamentu.get_lisensamentu_status_display }}</td></tr>
+    <tr><th>Tipo Rai</th>               <td>: {{ lisensamentu.get_tipo_rai_display }}</td></tr>
+  {% else %}
+    <tr><td colspan="2" class="text-muted">La iha dadus</td></tr>
+  {% endif %}
+</table>

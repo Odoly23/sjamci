@@ -5,13 +5,13 @@
   <div class="container-fluid">
 
     <!-- HEADER CARD -->
-    <div class="card border-0 rounded-4 shadow-sm mb-3">
-      <div class="card-body d-flex align-items-center gap-3 flex-wrap">
-        <!-- Foto -->
+    <div class="card border-0 rounded shadow-sm mb-3">
+      <div class="card-body d-flex align-items-center flex-wrap" style="gap:1rem;">
         <div>
           {% if photo and photo.image %}
             <img src="{{ photo.image.url }}" width="72" height="72"
-                 class="rounded-circle object-fit-cover border border-2 border-primary">
+                 class="rounded-circle border border-primary"
+                 style="object-fit:cover;">
           {% else %}
             <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
                  style="width:72px;height:72px;">
@@ -19,16 +19,16 @@
             </div>
           {% endif %}
         </div>
-        <!-- Info singkat -->
         <div class="flex-grow-1">
-          <h5 class="mb-0 fw-bold">{{ benef.name }}</h5>
-          <small class="text-muted">{{ benef.phone }} &bull; {{ benef.email_website }}</small><br>
-          <span class="badge bg-{% if benef.status.name == 'Ativu' %}success{% else %}secondary{% endif %}">
+          <h5 class="mb-0 font-weight-bold">{{ benef.name }}</h5>
+          <small class="text-muted">{{ benef.phone }}
+            {% if benef.email_website %}&bull; {{ benef.email_website }}{% endif %}
+          </small><br>
+          <span class="badge badge-{% if benef.status.name == 'Ativu' %}success{% else %}danger{% endif %} rounded-pill px-3" >
             {{ benef.status }}
           </span>
         </div>
-        <!-- Tombol edit profil -->
-        <div class="d-flex gap-2 flex-wrap">
+        <div class="d-flex flex-wrap" style="gap:0.5rem;">
           <a href="{% url 'cliente-perfil' %}" class="btn btn-sm btn-outline-primary">
             <i class="fa fa-edit"></i> Edit Perfil
           </a>
@@ -42,78 +42,119 @@
       </div>
     </div>
 
-    <!-- TABS -->
-    <ul class="nav nav-tabs nav-fill flex-wrap mb-3" id="clienteTab" role="tablist">
-      <li class="nav-item">
-        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-perfil">
-          <i class="fa fa-user"></i> <span class="d-none d-sm-inline">Perfil</span>
-        </button>
+    <!-- ══ TABS NAV — Bootstrap 4 pakai data-toggle ══ -->
+    <ul class="nav nav-tabs nav-fill flex-wrap mb-0" id="clienteTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active"
+           id="tab-perfil-btn"
+           data-toggle="tab"
+           href="#tab-perfil"
+           role="tab"
+           aria-controls="tab-perfil"
+           aria-selected="true">
+          <i class="fa fa-user"></i>
+          <span class="d-none d-sm-inline ml-1">Perfil</span>
+        </a>
       </li>
-      <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-programa">
-          <i class="fa fa-folder"></i> <span class="d-none d-sm-inline">Programa</span>
-        </button>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link"
+           id="tab-programa-btn"
+           data-toggle="tab"
+           href="#tab-programa"
+           role="tab"
+           aria-controls="tab-programa"
+           aria-selected="false">
+          <i class="fa fa-folder"></i>
+          <span class="d-none d-sm-inline ml-1">Programa</span>
+        </a>
       </li>
-      <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-negosiu">
-          <i class="fa fa-briefcase"></i> <span class="d-none d-sm-inline">Negosiu</span>
-        </button>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link"
+           id="tab-negosiu-btn"
+           data-toggle="tab"
+           href="#tab-negosiu"
+           role="tab"
+           aria-controls="tab-negosiu"
+           aria-selected="false">
+          <i class="fa fa-briefcase"></i>
+          <span class="d-none d-sm-inline ml-1">Negosiu</span>
+        </a>
       </li>
-      <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-mpms">
-          <i class="fa fa-building"></i> <span class="d-none d-sm-inline">MPMS</span>
-        </button>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link"
+           id="tab-mpms-btn"
+           data-toggle="tab"
+           href="#tab-mpms"
+           role="tab"
+           aria-controls="tab-mpms"
+           aria-selected="false">
+          <i class="fa fa-building"></i>
+          <span class="d-none d-sm-inline ml-1">MPMS</span>
+        </a>
       </li>
-      <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-pedidu">
-          <i class="fa fa-envelope"></i> <span class="d-none d-sm-inline">Pedidu</span>
-        </button>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link"
+           id="tab-pedidu-btn"
+           data-toggle="tab"
+           href="#tab-pedidu"
+           role="tab"
+           aria-controls="tab-pedidu"
+           aria-selected="false">
+          <i class="fa fa-envelope"></i>
+          <span class="d-none d-sm-inline ml-1">Pedidu</span>
+          {% if pedidus %}
+            <span class="badge badge-danger ml-1">{{ pedidus|length }}</span>
+          {% endif %}
+        </a>
       </li>
     </ul>
 
-    <div class="tab-content" id="clienteTabContent">
+    <!-- ══ TABS CONTENT ══ -->
+    <div class="tab-content border border-top-0 rounded-bottom bg-white p-3 shadow-sm"
+         id="clienteTabContent">
 
-      <!-- ══ TAB PERFIL ══════════════════════════════════ -->
-      <div class="tab-pane fade show active" id="tab-perfil">
-        <div class="row g-3">
-          <!-- Informasaun Pesoal -->
-          <div class="col-12 col-md-6">
-            <div class="card border-0 rounded-4 shadow-sm h-100">
-              <div class="card-header bg-primary text-white rounded-top-4">
+      <!-- ── TAB PERFIL ──────────────────────────────── -->
+      <div class="tab-pane fade show active"
+           id="tab-perfil"
+           role="tabpanel"
+           aria-labelledby="tab-perfil-btn">
+        <div class="row">
+          <div class="col-12 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header bg-primary text-white">
                 <i class="fa fa-user"></i> Informasaun Pesoal
               </div>
               <div class="card-body p-0">
                 <table class="table table-sm mb-0">
-                  <tr><td class="text-muted">Naran</td>       <td>{{ benef.name }}</td></tr>
-                  <tr><td class="text-muted">Sexu</td>        <td>{{ benef.sex }}</td></tr>
-                  <tr><td class="text-muted">Data Moris</td>  <td>{{ benef.dob }}</td></tr>
-                  <tr><td class="text-muted">Idade</td>       <td>{{ benef.age }} anos</td></tr>
-                  <tr><td class="text-muted">Estado Civil</td><td>{{ benef.marital }}</td></tr>
-                  <tr><td class="text-muted">Edukasaun</td>   <td>{{ benef.get_nivel_edukasaun_display }}</td></tr>
-                  <tr><td class="text-muted">Telefone</td>    <td>{{ benef.phone }}</td></tr>
-                  <tr><td class="text-muted">Email/Web</td>   <td>{{ benef.email_website }}</td></tr>
+                  <tr><td class="text-muted pl-3">Naran</td>        <td>{{ benef.name }}</td></tr>
+                  <tr><td class="text-muted pl-3">Sexu</td>         <td>{{ benef.sex }}</td></tr>
+                  <tr><td class="text-muted pl-3">Data Moris</td>   <td>{{ benef.dob }}</td></tr>
+                  <tr><td class="text-muted pl-3">Idade</td>        <td>{{ benef.age }} anos</td></tr>
+                  <tr><td class="text-muted pl-3">Estado Civil</td> <td>{{ benef.marital }}</td></tr>
+                  <tr><td class="text-muted pl-3">Edukasaun</td>    <td>{{ benef.get_nivel_edukasaun_display }}</td></tr>
+                  <tr><td class="text-muted pl-3">Telefone</td>     <td>{{ benef.phone }}</td></tr>
+                  <tr><td class="text-muted pl-3">Email/Web</td>    <td>{{ benef.email_website }}</td></tr>
                 </table>
               </div>
             </div>
           </div>
-          <!-- Enderesu -->
-          <div class="col-12 col-md-6">
-            <div class="card border-0 rounded-4 shadow-sm h-100">
-              <div class="card-header bg-info text-white rounded-top-4">
-                <i class="fa fa-map-marker"></i> Enderesu
-                <a href="{% url 'cliente-address' %}" class="btn btn-xs btn-light float-end">
+          <div class="col-12 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <span><i class="fa fa-map-marker"></i> Enderesu</span>
+                <a href="{% url 'cliente-address' %}" class="btn btn-xs btn-light">
                   <i class="fa fa-edit"></i>
                 </a>
               </div>
               <div class="card-body p-0">
                 <table class="table table-sm mb-0">
                   {% if addtl %}
-                    <tr><td class="text-muted">Municipiu</td><td>{{ addtl.municipality }}</td></tr>
-                    <tr><td class="text-muted">Postu</td>    <td>{{ addtl.administrativepost }}</td></tr>
-                    <tr><td class="text-muted">Suku</td>     <td>{{ addtl.village }}</td></tr>
-                    <tr><td class="text-muted">Aldeia</td>   <td>{{ addtl.aldeia }}</td></tr>
+                    <tr><td class="text-muted pl-3">Municipiu</td><td>{{ addtl.municipality }}</td></tr>
+                    <tr><td class="text-muted pl-3">Postu</td>    <td>{{ addtl.administrativepost }}</td></tr>
+                    <tr><td class="text-muted pl-3">Suku</td>     <td>{{ addtl.village }}</td></tr>
+                    <tr><td class="text-muted pl-3">Aldeia</td>   <td>{{ addtl.aldeia }}</td></tr>
                   {% else %}
-                    <tr><td colspan="2" class="text-muted p-3">La iha dadus enderesu</td></tr>
+                    <tr><td colspan="2" class="text-muted text-center p-3">La iha dadus enderesu</td></tr>
                   {% endif %}
                 </table>
               </div>
@@ -122,60 +163,63 @@
         </div>
       </div>
 
-      <!-- ══ TAB PROGRAMA ════════════════════════════════ -->
-      <div class="tab-pane fade" id="tab-programa">
-        <div class="card border-0 rounded-4 shadow-sm">
-          <div class="card-header bg-success text-white rounded-top-4">
+      <!-- ── TAB PROGRAMA ────────────────────────────── -->
+      <div class="tab-pane fade"
+           id="tab-programa"
+           role="tabpanel"
+           aria-labelledby="tab-programa-btn">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-success text-white">
             <i class="fa fa-folder"></i> Minha Programa
           </div>
-          <div class="card-body p-0">
-            <div class="table-responsive">
-              <table class="table table-sm table-hover mb-0">
-                <thead class="table-light">
-                  <tr><th>Tipu</th><th>Tinan</th><th>Faze</th><th>Montante</th><th>Status</th></tr>
-                </thead>
-                <tbody>
-                  {% for p in programs %}
-                    <tr>
-                      <td>{{ p.program_type }}</td>
-                      <td>{{ p.year }}</td>
-                      <td>{{ p.faze }}</td>
-                      <td>${{ p.amount }}</td>
-                      <td>
-                        <span class="badge bg-{% if p.status.name == 'Ativu' %}success{% else %}secondary{% endif %}">
-                          {{ p.status }}
-                        </span>
-                      </td>
-                    </tr>
-                  {% empty %}
-                    <tr><td colspan="5" class="text-muted text-center p-3">La iha programa</td></tr>
-                  {% endfor %}
-                </tbody>
-                <tfoot class="table-light fw-bold">
+          <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0">
+              <thead class="thead-light">
+                <tr><th>Tipu</th><th>Tinan</th><th>Faze</th><th>Montante</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                {% for p in programs %}
                   <tr>
-                    <td colspan="3" class="text-end">TOTAL</td>
-                    <td colspan="2">${{ total_program }}</td>
+                    <td>{{ p.program_type }}</td>
+                    <td>{{ p.year }}</td>
+                    <td>{{ p.faze }}</td>
+                    <td>${{ p.amount }}</td>
+                    <td>
+                      <span class="badge badge-{% if p.status.name == 'Ativu' %}success{% else %}secondary{% endif %}">
+                        {{ p.status }}
+                      </span>
+                    </td>
                   </tr>
-                </tfoot>
-              </table>
-            </div>
+                {% empty %}
+                  <tr><td colspan="5" class="text-muted text-center p-3">La iha programa</td></tr>
+                {% endfor %}
+              </tbody>
+              <tfoot class="thead-light">
+                <tr>
+                  <td colspan="3" class="text-right font-weight-bold">TOTAL</td>
+                  <td colspan="2" class="font-weight-bold">${{ total_program }}</td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
         </div>
       </div>
 
-      <!-- ══ TAB NEGOSIU ════════════════════════════════ -->
-      <div class="tab-pane fade" id="tab-negosiu">
-        <div class="row g-3">
-          <!-- Business -->
-          <div class="col-12">
-            <div class="card border-0 rounded-4 shadow-sm">
-              <div class="card-header bg-warning rounded-top-4">
+      <!-- ── TAB NEGOSIU ─────────────────────────────── -->
+      <div class="tab-pane fade"
+           id="tab-negosiu"
+           role="tabpanel"
+           aria-labelledby="tab-negosiu-btn">
+        <div class="row">
+          <div class="col-12 mb-3">
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-warning">
                 <i class="fa fa-briefcase"></i> Negosiu
               </div>
               <div class="table-responsive">
                 <table class="table table-sm mb-0">
-                  <thead class="table-light">
-                    <tr><th>Naran</th><th>Seitor</th><th>Kategoriu</th></tr>
+                  <thead class="thead-light">
+                    <tr><th>Naran</th><th>Seitor</th><th>Kategoriu</th><th>Tamañu</th></tr>
                   </thead>
                   <tbody>
                     {% for b in businesses %}
@@ -183,24 +227,24 @@
                         <td>{{ b.name }}</td>
                         <td>{{ b.sector }}</td>
                         <td>{{ b.category }}</td>
+                        <td>{{ b.size }}</td>
                       </tr>
                     {% empty %}
-                      <tr><td colspan="3" class="text-muted text-center p-3">La iha negosiu</td></tr>
+                      <tr><td colspan="4" class="text-muted text-center p-3">La iha negosiu</td></tr>
                     {% endfor %}
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
-          <!-- Trabalhadores -->
-          <div class="col-12 col-md-6">
-            <div class="card border-0 rounded-4 shadow-sm">
-              <div class="card-header bg-light rounded-top-4">
+          <div class="col-12 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-light">
                 <i class="fa fa-users"></i> Trabalhadores
               </div>
               <div class="table-responsive">
                 <table class="table table-sm mb-0">
-                  <thead class="table-light">
+                  <thead class="thead-light">
                     <tr><th>Negosiu</th><th>Mane</th><th>Feto</th><th>Total</th></tr>
                   </thead>
                   <tbody>
@@ -219,15 +263,14 @@
               </div>
             </div>
           </div>
-          <!-- Finansiamento -->
-          <div class="col-12 col-md-6">
-            <div class="card border-0 rounded-4 shadow-sm">
-              <div class="card-header bg-light rounded-top-4">
+          <div class="col-12 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-light">
                 <i class="fa fa-money"></i> Finansiamento
               </div>
               <div class="table-responsive">
                 <table class="table table-sm mb-0">
-                  <thead class="table-light">
+                  <thead class="thead-light">
                     <tr><th>Negosiu</th><th>Budget</th></tr>
                   </thead>
                   <tbody>
@@ -244,91 +287,91 @@
         </div>
       </div>
 
-      <!-- ══ TAB MPMS ════════════════════════════════════ -->
-      <div class="tab-pane fade" id="tab-mpms">
+      <!-- ── TAB MPMS ────────────────────────────────── -->
+      <div class="tab-pane fade"
+           id="tab-mpms"
+           role="tabpanel"
+           aria-labelledby="tab-mpms-btn">
         {% if empresa %}
-        <div class="row g-3">
-          <!-- Empresa -->
-          <div class="col-12 col-md-6">
-            <div class="card border-0 rounded-4 shadow-sm h-100">
-              <div class="card-header bg-primary text-white rounded-top-4">
+        <div class="row">
+          <div class="col-12 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header bg-primary text-white">
                 <i class="fa fa-building"></i> Empresa MPMS
               </div>
               <div class="card-body p-0">
                 <table class="table table-sm mb-0">
-                  <tr><td class="text-muted">Naran Kompania</td><td>{{ empresa.company_name }}</td></tr>
-                  <tr><td class="text-muted">Tipo Atividade</td><td>{{ empresa.tipo_atividade }}</td></tr>
-                  <tr><td class="text-muted">Tinan Hari</td>    <td>{{ empresa.tinan_hari }}</td></tr>
+                  <tr><td class="text-muted pl-3">Naran Kompania</td><td>{{ empresa.company_name }}</td></tr>
+                  <tr><td class="text-muted pl-3">Tipo Atividade</td><td>{{ empresa.tipo_atividade }}</td></tr>
+                  <tr><td class="text-muted pl-3">Tinan Hari</td>    <td>{{ empresa.tinan_hari }}</td></tr>
                 </table>
               </div>
             </div>
           </div>
-          <!-- Kapital -->
-          <div class="col-12 col-md-6">
-            <div class="card border-0 rounded-4 shadow-sm h-100">
-              <div class="card-header bg-success text-white rounded-top-4">
+          <div class="col-12 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header bg-success text-white">
                 <i class="fa fa-dollar"></i> Kapital
               </div>
               <div class="card-body p-0">
                 {% if kapital %}
                 <table class="table table-sm mb-0">
-                  <tr><td class="text-muted">Investimento</td>    <td>{{ kapital.get_kapital_investimento_display }}</td></tr>
-                  <tr><td class="text-muted">Tipu Fundus</td>     <td>{{ kapital.get_tipu_fundus_display }}</td></tr>
-                  <tr><td class="text-muted">Lukru Brutu/Mes</td> <td>${{ kapital.lukru_brutu_mes }}</td></tr>
-                  <tr><td class="text-muted">Lukru Likidu/Mes</td><td>${{ kapital.lukru_likidu_mes }}</td></tr>
+                  <tr><td class="text-muted pl-3">Investimento</td>     <td>{{ kapital.get_kapital_investimento_display }}</td></tr>
+                  <tr><td class="text-muted pl-3">Tipu Fundus</td>      <td>{{ kapital.get_tipu_fundus_display }}</td></tr>
+                  <tr><td class="text-muted pl-3">Lukru Brutu/Mes</td>  <td>${{ kapital.lukru_brutu_mes }}</td></tr>
+                  <tr><td class="text-muted pl-3">Lukru Likidu/Mes</td> <td>${{ kapital.lukru_likidu_mes }}</td></tr>
                 </table>
                 {% else %}
-                  <p class="text-muted p-3">La iha dadus kapital</p>
+                  <p class="text-muted p-3 mb-0">La iha dadus kapital</p>
                 {% endif %}
               </div>
             </div>
           </div>
-          <!-- Empregador -->
-          <div class="col-12 col-md-6">
-            <div class="card border-0 rounded-4 shadow-sm">
-              <div class="card-header bg-light rounded-top-4">
+          <div class="col-12 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-light">
                 <i class="fa fa-users"></i> Empregador MPMS
               </div>
               {% if empregador %}
               <div class="table-responsive">
                 <table class="table table-sm mb-0">
-                  <thead class="table-light">
+                  <thead class="thead-light">
                     <tr><th></th><th>Mane</th><th>Feto</th><th>Total</th></tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Nasionál</td>
+                      <td class="pl-3">Nasionál</td>
                       <td>{{ empregador.nasional_mane }}</td>
                       <td>{{ empregador.nasional_feto }}</td>
                       <td>{{ empregador.total_nasional }}</td>
                     </tr>
                     <tr>
-                      <td>Internasionál</td>
+                      <td class="pl-3">Internasionál</td>
                       <td>{{ empregador.internasional_mane }}</td>
                       <td>{{ empregador.internasional_feto }}</td>
                       <td>{{ empregador.total_internasional }}</td>
                     </tr>
-                    <tr class="fw-bold table-light">
-                      <td>TOTAL</td><td colspan="2"></td>
+                    <tr class="font-weight-bold thead-light">
+                      <td class="pl-3">TOTAL</td>
+                      <td colspan="2"></td>
                       <td>{{ empregador.total_empregador }}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               {% else %}
-                <p class="text-muted p-3">La iha dadus empregador</p>
+                <p class="text-muted p-3 mb-0">La iha dadus empregador</p>
               {% endif %}
             </div>
           </div>
-          <!-- Atividade -->
-          <div class="col-12 col-md-6">
-            <div class="card border-0 rounded-4 shadow-sm">
-              <div class="card-header bg-light rounded-top-4">
+          <div class="col-12 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-light">
                 <i class="fa fa-list"></i> Atividade MPMS
               </div>
               <div class="table-responsive">
                 <table class="table table-sm mb-0">
-                  <thead class="table-light">
+                  <thead class="thead-light">
                     <tr><th>Tipu Apoio</th><th>Tinan</th><th>Montante</th></tr>
                   </thead>
                   <tbody>
@@ -348,16 +391,19 @@
           </div>
         </div>
         {% else %}
-          <div class="alert alert-info rounded-4">
+          <div class="alert alert-info">
             <i class="fa fa-info-circle"></i> La iha dadus MPMS registadu.
           </div>
         {% endif %}
       </div>
 
-      <!-- ══ TAB PEDIDU ══════════════════════════════════ -->
-      <div class="tab-pane fade" id="tab-pedidu">
-        <div class="card border-0 rounded-4 shadow-sm">
-          <div class="card-header bg-dark text-white rounded-top-4 d-flex justify-content-between align-items-center">
+      <!-- ── TAB PEDIDU ──────────────────────────────── -->
+      <div class="tab-pane fade"
+           id="tab-pedidu"
+           role="tabpanel"
+           aria-labelledby="tab-pedidu-btn">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
             <span><i class="fa fa-envelope"></i> Pedidu / Keluhan</span>
             <a href="{% url 'cliente-pedidu' %}" class="btn btn-sm btn-success">
               <i class="fa fa-plus"></i> Foun
@@ -365,8 +411,8 @@
           </div>
           <div class="table-responsive">
             <table class="table table-sm table-hover mb-0">
-              <thead class="table-light">
-                <tr><th>Tipo</th><th>Assuntu</th><th>Status</th><th>Data</th></tr>
+              <thead class="thead-light">
+                <tr><th>Tipo</th><th>Assuntu</th><th>Status</th><th>Resposta</th><th>Data</th></tr>
               </thead>
               <tbody>
                 {% for pd in pedidus %}
@@ -374,14 +420,21 @@
                     <td>{{ pd.get_tipo_display }}</td>
                     <td>{{ pd.assuntu }}</td>
                     <td>
-                      <span class="badge bg-{% if pd.status == 'resolvidu' %}success{% elif pd.status == 'prosesu' %}warning{% elif pd.status == 'rejeita' %}danger{% else %}secondary{% endif %}">
+                      <span class="badge badge-{% if pd.status == 'resolvidu' %}success{% elif pd.status == 'prosesu' %}warning{% elif pd.status == 'rejeita' %}danger{% else %}secondary{% endif %}">
                         {{ pd.get_status_display }}
                       </span>
+                    </td>
+                    <td>
+                      {% if pd.resposta %}
+                        <span class="text-success"><i class="fa fa-check"></i> Iha</span>
+                      {% else %}
+                        <span class="text-muted">—</span>
+                      {% endif %}
                     </td>
                     <td>{{ pd.created_at|date:"d/m/Y" }}</td>
                   </tr>
                 {% empty %}
-                  <tr><td colspan="4" class="text-muted text-center p-3">La iha pedidu</td></tr>
+                  <tr><td colspan="5" class="text-muted text-center p-3">La iha pedidu</td></tr>
                 {% endfor %}
               </tbody>
             </table>

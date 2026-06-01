@@ -1,0 +1,75 @@
+{% load static %}
+
+<!-- INFORMASAUN PESOAL -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="3">
+      INFORMASAUN PESOAL
+      {% if group == 'mpms' %}
+        <a href="{% url 'edit-benef-mpms' benef.hashed %}" class="btn btn-xs btn-warning ml-1">
+          <i class="fa fa-edit"></i>
+        </a>
+      {% endif %}
+    </th>
+  </tr>
+  <tr>
+    <td>Naran</th>
+    <td>: {{ benef.name }}</th>
+    <td rowspan="7" class="text-center align-middle">
+      {% if photo and photo.image %}
+        <img src="{{ photo.image.url }}" width="100" class="rounded">
+      {% else %}
+        <img src="{% static 'img/default.png' %}" width="100" class="rounded">
+      {% endif %}
+    </td>
+  </tr>
+  <tr><th>Sexu</th>         <td>: {{ benef.sex }}</td></tr>
+  <tr><th>Fatin Moris</th>  <td>: {{ benef.pob }}</td></tr>
+  <tr><th>Data Moris</th>   <td>: {{ benef.dob }}</td></tr>
+  <tr><th>Idade</th>        <td>: {{ benef.age }}</td></tr>
+  <tr><th>Estado Civil</th> <td>: {{ benef.marital }}</td></tr>
+  <tr><th>Telefone</th>     <td>: {{ benef.phone }}</td></tr>
+  <tr><th>Status</th>       <td colspan="2">: {{ benef.status }}</td></tr>
+</table>
+
+<!-- LOKALIZASAUN MORIS -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="2">
+      LOKALIZASAUN MORIS
+      {% if group == 'mpms' %}
+        <a href="{% url 'address-mpms' benef.hashed %}" class="btn btn-xs btn-warning ml-1">
+          <i class="fa fa-edit"></i>
+        </a>
+      {% endif %}
+    </th>
+  </tr>
+  {% if addtl %}
+    <tr><th>Municipiu</th>   <td>: {{ addtl.municipality }}</td></tr>
+    <tr><th>Postu</th>       <td>: {{ addtl.administrativepost }}</td></tr>
+    <tr><th>Suku</th>        <td>: {{ addtl.village }}</td></tr>
+    <tr><th>Aldeia</th>      <td>: {{ addtl.aldeia }}</td></tr>
+  {% else %}
+    <tr><td colspan="2" class="text-muted">La iha dadus</td></tr>
+  {% endif %}
+</table>
+
+<!-- ENDERESU ORIGEN -->
+<table class="table table-sm">
+  <tr class="bg-light">
+    <th colspan="2">
+      ENDERESU ORIGEN
+      {% if group == 'mpms' %}
+        <a href="{% url 'address-origin-mpms' benef.hashed %}" class="btn btn-xs btn-warning ml-1">
+          <i class="fa fa-edit"></i>
+        </a>
+      {% endif %}
+    </th>
+  </table>
+  {% if address_origin %}
+    <tr><th>Cidade</th>     <td>: {{ address_origin.city }}</td></tr>
+    <tr><th>Enderesu</th>   <td>: {{ address_origin.address }}</td></tr>
+  {% else %}
+    <tr><td colspan="2" class="text-muted">La iha dadus</td></tr>
+  {% endif %}
+</table>

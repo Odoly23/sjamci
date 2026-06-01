@@ -1,0 +1,72 @@
+{% if monitoring %}
+
+<div class="alert alert-secondary py-1 px-2 mb-1">
+  <i class="fa fa-calculator"></i> <strong>III. AVALIASAUN FINANSEIRU</strong>
+</div>
+
+<!-- AVALIASAUN FINANSEIRU -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-success text-white">
+    <th colspan="2">
+      <i class="fa fa-bar-chart"></i> Avaliasaun Finanseiru (Q28–Q34)
+      {% if monitoring.financial %}
+      <a href="{% url 'ks-financial-edit' benef.hashed monitoring.financial.pk %}" class="btn btn-xs btn-warning float-right ml-1" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      {% else %}
+      <a href="{% url 'ks-financial-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+      {% endif %}
+    </th>
+   </tr>
+  {% if monitoring.financial %}
+  <tr><td style="width:50%">Q28. Livru Kontabilidade</td><td>{{ monitoring.financial.get_accounting_book_display|default:"-" }}</td></tr>
+  <tr><td>Q29. Metodu Inventariu</td>   <td>{{ monitoring.financial.get_inventory_method_display|default:"-" }}</td></tr>
+  <tr><td>Q30. Rendimento/Fulan ($)</td><td><strong>{{ monitoring.financial.monthly_revenue|default:"-" }}</strong></td></tr>
+  <tr><td>Q31. Rendimento/Tinan ($)</td><td><strong>{{ monitoring.financial.annual_revenue|default:"-" }}</strong></td></tr>
+  <tr><td>Q32. Projeta Tinan Oin ($)</td><td>{{ monitoring.financial.projected_revenue|default:"-" }}</td></tr>
+  <tr><td>Q33. Selu Impostu?</td>       <td>{{ monitoring.financial.pays_tax|yesno:"Sin,Lae,-" }}</td></tr>
+  <tr><td>Q33b. Taxa/Fulan ($)</td>     <td>{{ monitoring.financial.monthly_tax|default:"-" }}</td></tr>
+  <tr><td>Q34. Total Assets ($)</td>    <td><strong>{{ monitoring.financial.total_assets|default:"-" }}</strong></td></tr>
+  {% else %}
+  <tr><td colspan="2" class="text-muted text-center">La iha dadus</td></tr>
+  {% endif %}
+</table>
+
+<!-- ASSET FIXU -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-success text-white">
+    <th colspan="3">
+      <i class="fa fa-archive"></i> Asset Fixu
+      {% if monitoring.financial %}
+      <a href="{% url 'ks-asset-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+      {% endif %}
+    </th>
+   </tr>
+  <tr class="bg-light">
+    <th>Naran Asset</th><th class="text-right">Valor ($)</th><th class="text-center">Aksaun</th>
+   </tr>
+  {% if monitoring.assets %}
+    {% for a in monitoring.assets %}
+    <tr>
+      <td>{{ a.name }}</td>
+      <td class="text-right">{{ a.value|default:"-" }}</td>
+      <td class="text-center">
+        <a href="{% url 'ks-asset-edit' benef.hashed a.pk %}" class="btn btn-xs btn-info" title="Edit">
+          <i class="fa fa-pencil"></i>
+        </a>
+        <a href="{% url 'ks-asset-delete' benef.hashed a.pk %}" class="btn btn-xs btn-danger" title="Hamoos">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+     </tr>
+    {% endfor %}
+  {% else %}
+  <tr><td colspan="3" class="text-muted text-center">La iha dadus</td></tr>
+  {% endif %}
+</table>
+
+{% endif %}

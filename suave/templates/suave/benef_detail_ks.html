@@ -6,31 +6,93 @@
     <div class="col-sm-12">
       <div class="card shadow-lg pt-1 border-primary rounded">
 
-        <!-- ── Header ──────────────────────────────────────── -->
-        <div class="card-header bg-steel">
-          {{ legend|upper }}
-          <i class="fa fa-long-arrow-right"></i>
+        <!-- HEADER -->
+        <div class="card-header bg-steel d-flex justify-content-between align-items-center">
+          <span>{{ legend|upper }}</span>
           <a href="{% url 'edit-benef-ks' benef.hashed %}" class="btn btn-sm btn-warning">
-            <i class="fa fa-edit"></i>
+            <i class="fa fa-edit"></i> Edit
           </a>
         </div>
 
         <div class="card-body">
-          <div class="row">
 
-            <!-- ── Kolom Kiri (sama dengan KNI) ──────────── -->
-            <div class="col-sm-6">
-              {% include 'kni/sides/col_left.html' %}
+          <!-- TAB NAVIGATION -->
+          <ul class="nav nav-tabs mb-3" id="ksDetailTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="pessoal-tab" data-toggle="tab" href="#pessoal" role="tab">
+                <i class="fa fa-user"></i> Pessoal
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="empresa-tab" data-toggle="tab" href="#empresa" role="tab">
+                <i class="fa fa-building"></i> Empresa
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="programa-tab" data-toggle="tab" href="#programa" role="tab">
+                <i class="fa fa-calendar"></i> Programa
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="produtu-tab" data-toggle="tab" href="#produtu" role="tab">
+                <i class="fa fa-cubes"></i> Produtu & Merkadu
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="finansas-tab" data-toggle="tab" href="#finansas" role="tab">
+                <i class="fa fa-dollar"></i> Finansas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="kreditu-tab" data-toggle="tab" href="#kreditu" role="tab">
+                <i class="fa fa-credit-card"></i> Kreditu
+              </a>
+            </li>
+          </ul>
+
+          <!-- TAB CONTENT -->
+          <div class="tab-content">
+
+            <!-- ========== TAB 1: PESSOAL ========== -->
+            <div class="tab-pane fade show active" id="pessoal" role="tabpanel">
+              <div class="row">
+                <div class="col-md-6">
+                  {% include 'suave/sides/tab_pessoal_left.html' %}
+                </div>
+                <div class="col-md-6">
+                  {% include 'suave/sides/tab_pessoal_right.html' %}
+                </div>
+              </div>
             </div>
 
-            <!-- ── Kolom Kanan (khusus KS + monitoring) ──── -->
-            <div class="col-sm-6">
-              {% include 'suave/sides/col_right_ks.html' %}
+            <!-- ========== TAB 2: EMPRESA ========== -->
+            <div class="tab-pane fade" id="empresa" role="tabpanel">
+              {% include 'suave/sides/tab_empresa.html' %}
+            </div>
+
+            <!-- ========== TAB 3: PROGRAMA ========== -->
+            <div class="tab-pane fade" id="programa" role="tabpanel">
+              {% include 'suave/sides/tab_programa.html' %}
+            </div>
+
+            <!-- ========== TAB 4: PRODUTU & MERKADU ========== -->
+            <div class="tab-pane fade" id="produtu" role="tabpanel">
+              {% include 'suave/sides/tab_produtu_merkadu.html' %}
+            </div>
+
+            <!-- ========== TAB 5: FINANSAS ========== -->
+            <div class="tab-pane fade" id="finansas" role="tabpanel">
+              {% include 'suave/sides/tab_finansas.html' %}
+            </div>
+
+            <!-- ========== TAB 6: KREDITU ========== -->
+            <div class="tab-pane fade" id="kreditu" role="tabpanel">
+              {% include 'suave/sides/tab_kreditu.html' %}
             </div>
 
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   </div>
@@ -38,5 +100,5 @@
 {% endblock content %}
 
 {% block scripts %}
-  {% include 'kni/sides/map_script.html' %}
+  {% include 'suave/sides/map_script.html' %}
 {% endblock scripts %}

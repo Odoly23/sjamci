@@ -236,7 +236,6 @@ def Business_Add_mpms(request, hashid):
             mpmsEmpresa.objects.get_or_create(
                 benefisiariu=emp,
                 business=business,
-                tipo_atividade = business.name,
                 defaults={
                     'company_name': business.name or emp.name,
                 }

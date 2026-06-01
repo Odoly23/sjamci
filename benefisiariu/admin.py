@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import   Benefisiariu,  AddressTL,   AddressOrigin,  Photo,  BeneficiariuEvaluation
+from .models import   Benefisiariu,  AddressTL,   AddressOrigin,  Photo,  BeneficiariuEvaluation, BenefisiariuUser, Pedidu
 
 # =========================
 # Base Admin
@@ -164,3 +164,15 @@ class PhotoAdmin(BaseAdmin):
     search_fields = (
         'benefisiariu__name',
     )
+
+@admin.register(BenefisiariuUser)
+class BenefisiariuUserAdmin(admin.ModelAdmin): 
+    list_display = ('id', 'benefisiariu', 'user')
+    search_fields = ('benefisiariu__name', 'user__username')
+    
+@admin.register(Pedidu)
+class PediduAdmin(BaseAdmin):
+    list_display = ('id', 'benefisiariu', 'tipo', 'assuntu', 'status', 'created_at')
+    list_filter = ('tipo', 'status', 'created_at')
+    search_fields = ('benefisiariu__name', 'assuntu')
+    readonly_fields = BaseAdmin.readonly_fields + ('hashed',)

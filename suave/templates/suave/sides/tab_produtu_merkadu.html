@@ -1,0 +1,142 @@
+{% if monitoring %}
+
+<div class="alert alert-secondary py-1 px-2 mb-1">
+  <i class="fa fa-line-chart"></i> <strong>II. AVALIASAUN PRODUTO, KLIENTE & MERKADU</strong>
+</div>
+
+<!-- PRODUTO / SERVISU -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-primary text-white">
+    <th colspan="6">
+      <i class="fa fa-cubes"></i> Produto / Servisu Prinsipal
+      <a href="{% url 'ks-product-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+    </th>
+   </tr>
+  <tr class="bg-light">
+    <th>Produtu</th>
+    <th class="text-center">Vol. Produsaun</th>
+    <th class="text-center">Frek. Prod.</th>
+    <th class="text-center">Vol. Vendas</th>
+    <th class="text-right">Montante ($)</th>
+    <th class="text-center">Aksaun</th>
+   </tr>
+  {% for p in monitoring.products %}
+  <tr>
+    <td>{{ p.name }}</td>
+    <td class="text-center">{{ p.production_volume|default:"-" }}</td>
+    <td class="text-center">{{ p.production_frequency|default:"-" }}</td>
+    <td class="text-center">{{ p.sales_volume|default:"-" }}</td>
+    <td class="text-right">{{ p.sales_amount|default:"-" }}</td>
+    <td class="text-center">
+      <a href="{% url 'ks-product-edit' benef.hashed p.pk %}" class="btn btn-xs btn-info" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      <a href="{% url 'ks-product-delete' benef.hashed p.pk %}" class="btn btn-xs btn-danger" title="Hamoos">
+        <i class="fa fa-trash"></i>
+      </a>
+    </td>
+   </tr>
+  {% empty %}
+  <tr><td colspan="6" class="text-muted text-center">La iha dadus</td>
+   </tr>
+  {% endfor %}
+<table>
+
+<!-- KLIENTE PRINSIPAL -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-primary text-white">
+    <th colspan="4">
+      <i class="fa fa-handshake-o"></i> Kliente Prinsipal Sira
+      <a href="{% url 'ks-customer-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+    </th>
+   </tr>
+  <tr class="bg-light">
+    <th>Kliente</th><th class="text-center">Vol. Demanda</th>
+    <th class="text-center">Frekuensia</th><th class="text-center">Aksaun</th>
+   </tr>
+  {% for c in monitoring.customers %}
+  <tr>
+    <td>{{ c.name }}</td>
+    <td class="text-center">{{ c.demand_volume|default:"-" }}</td>
+    <td class="text-center">{{ c.frequency|default:"-" }}</td>
+    <td class="text-center">
+      <a href="{% url 'ks-customer-edit' benef.hashed c.pk %}" class="btn btn-xs btn-info" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      <a href="{% url 'ks-customer-delete' benef.hashed c.pk %}" class="btn btn-xs btn-danger" title="Hamoos">
+        <i class="fa fa-trash"></i>
+      </a>
+    </td>
+   </tr>
+  {% empty %}
+  <tr><td colspan="4" class="text-muted text-center">La iha dadus</td>
+   </tr>
+  {% endfor %}
+</table>
+
+<!-- KOMPETITOR -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-primary text-white">
+    <th colspan="4">
+      <i class="fa fa-flag"></i> Kompetitor Sira
+      <a href="{% url 'ks-competitor-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+    </th>
+   </tr>
+  <tr class="bg-light">
+    <th>Kompetitor</th><th class="text-center">Vol. Demanda</th>
+    <th class="text-center">Frekuensia</th><th class="text-center">Aksaun</th>
+   </tr>
+  {% for k in monitoring.competitors %}
+  <tr>
+    <td>{{ k.name }}</td>
+    <td class="text-center">{{ k.demand_volume|default:"-" }}</td>
+    <td class="text-center">{{ k.frequency|default:"-" }}</td>
+    <td class="text-center">
+      <a href="{% url 'ks-competitor-edit' benef.hashed k.pk %}" class="btn btn-xs btn-info" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      <a href="{% url 'ks-competitor-delete' benef.hashed k.pk %}" class="btn btn-xs btn-danger" title="Hamoos">
+        <i class="fa fa-trash"></i>
+      </a>
+    </td>
+   </tr>
+  {% empty %}
+  <tr><td colspan="4" class="text-muted text-center">La iha dadus</td>
+   </tr>
+  {% endfor %}
+</table>
+
+<!-- AVALIASAUN MERKADU -->
+<table class="table table-sm table-bordered mb-2">
+  <tr class="bg-primary text-white">
+    <th colspan="2">
+      <i class="fa fa-search"></i> Avaliasaun Merkadu (Q23–Q27)
+      {% if monitoring.market %}
+      <a href="{% url 'ks-market-edit' benef.hashed monitoring.market.pk %}" class="btn btn-xs btn-warning float-right ml-1" title="Edit">
+        <i class="fa fa-pencil"></i>
+      </a>
+      {% else %}
+      <a href="{% url 'ks-market-add' benef.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Aumenta">
+        <i class="fa fa-plus"></i>
+      </a>
+      {% endif %}
+    </th>
+   </tr>
+  {% if monitoring.market %}
+  <tr><td style="width:40%">Q23. Estratejia Promosaun</td><td>{{ monitoring.market.promotion_strategy|default:"-" }}</td></tr>
+  <tr><td>Q24. Difikuldade Atual</td>    <td>{{ monitoring.market.current_challenges|default:"-" }}</td></tr>
+  <tr><td>Q25. Dezafio Longu Prazu</td>  <td>{{ monitoring.market.long_term_challenges|default:"-" }}</td></tr>
+  <tr><td>Q26. Prioridade</td>           <td>{{ monitoring.market.get_priority_display|default:"-" }}</td></tr>
+  <tr><td>Q27. Estratejia Resposta</td>  <td>{{ monitoring.market.response_strategy|default:"-" }}</td></tr>
+  {% else %}
+  <tr><td colspan="2" class="text-muted text-center">La iha dadus</td></tr>
+  {% endif %}
+</table>
+
+{% endif %}
