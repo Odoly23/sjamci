@@ -244,6 +244,88 @@
       </div>
 
     </div>
+    <!-- ROW 3: Trabalhador + Jeneru -->
+    <div class="row mt-3">
+
+      <!-- TABEL 3: Rekapitulasaun Trabalhador per Munisipiu -->
+      <div class="col-md-7">
+        <div class="card border-0 shadow-sm justify-content-center">
+          <div class="card-header">
+            <i class="fa fa-users"></i> Rekapitulasaun Trabalhador MPMS
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered" width="100%">
+                <thead>
+                  <tr>
+                    <th rowspan="2" class="text-center align-middle">Nu</th>
+                    <th rowspan="2" class="text-center align-middle">Munisipiu</th>
+                    <th colspan="2" class="text-center">Nasionál (Lokal)</th>
+                    <th colspan="2" class="text-center">Internasionál (Estranjeiru)</th>
+                    <th rowspan="2" class="text-center align-middle">Total</th>
+                  </tr>
+                  <tr>
+                    <th class="text-center">Mane</th>
+                    <th class="text-center">Feto</th>
+                    <th class="text-center">Mane</th>
+                    <th class="text-center">Feto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for obj in objects3 %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ obj.0.name }}</td>
+                    <td class="text-center">{{ obj.1 }}</td>
+                    <td class="text-center">{{ obj.2 }}</td>
+                    <td class="text-center">{{ obj.3 }}</td>
+                    <td class="text-center">{{ obj.4 }}</td>
+                    <td class="text-center"><strong>{{ obj.5 }}</strong></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABEL 4: Rekapitulasaun Empresariu tuir Jeneru -->
+      <div class="col-md-5">
+        <div class="card border-0 shadow-sm justify-content-center">
+          <div class="card-header">
+            <i class="fa fa-male"></i> Rekapitulasaun Empresariu Tuir Jeneru
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered" width="100%">
+                <thead>
+                  <tr>
+                    <th class="text-center">Nu</th>
+                    <th class="text-center">Munisipiu</th>
+                    <th class="text-center">Mane</th>
+                    <th class="text-center">Feto</th>
+                    <th class="text-center">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for obj in objects4 %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ obj.0.name }}</td>
+                    <td class="text-center">{{ obj.1 }}</td>
+                    <td class="text-center">{{ obj.2 }}</td>
+                    <td class="text-center"><strong>{{ obj.3 }}</strong></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 {% endblock content %}

@@ -144,3 +144,4 @@ class Pedidu(BaseModel):
         if is_new and not self.hashed:
             self.hashed = hashlib.blake2b(str(self.id).encode()).hexdigest()
             Pedidu.objects.filter(pk=self.pk).update(hashed=self.hashed)
+

@@ -1,0 +1,137 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+<section class="content mb-5">
+  <div class="container-fluid">
+
+    <!-- ROW 1 — Empresa per Munisipiu + Jeneru -->
+    <div class="row">
+
+      <!-- JENERU EMPRESARIU -->
+      <div class="col-md-3 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-warning">
+            <h5 class="text-center text-white mb-0">Empresariu Tuir Jeneru</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="jeneruChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMPRESA PER MUNISIPIU -->
+      <div class="col-md-9 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-primary">
+            <h5 class="text-center text-white mb-0">Total Empresa Tuir Munisípiu</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="munChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROW 2 — Ukuran Usaha Stacked per Munisipiu -->
+    <div class="row">
+      <div class="col-md-12 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-success">
+            <h5 class="text-center text-white mb-0">Ukuran Usaha (H.I / Mikro / Pequena / Media) Tuir Munisípiu</h5>
+          </div>
+          <div class="card-body" style="min-height:320px;">
+            <canvas id="tipuFundusChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3 — Lisensamentu + Kapital + Tipo Atividade -->
+    <div class="row">
+
+      <!-- LISENSAMENTU -->
+      <div class="col-md-3 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-danger">
+            <h5 class="text-center text-white mb-0">Lisensamentu</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="lisensamentuChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- KAPITAL INVESTIMENTO -->
+      <div class="col-md-3 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-info">
+            <h5 class="text-center text-white mb-0">Kapital Investimento</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="kapitalChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIPO ATIVIDADE -->
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-secondary">
+            <h5 class="text-center text-white mb-0">Tipo Atividade Negósiu</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="tipoAtividadeChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROW 4 — Empregador Stacked + Materia Prima -->
+    <div class="row">
+
+      <!-- EMPREGADOR -->
+      <div class="col-md-8 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header bg-dark">
+            <h5 class="text-center text-white mb-0">Empregador Nasionál / Internasionál Tuir Munisípiu</h5>
+          </div>
+          <div class="card-body" style="min-height:320px;">
+            <canvas id="empregadorChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- MATERIA PRIMA -->
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-header" style="background:#8e44ad;">
+            <h5 class="text-center text-white mb-0">Materia Prima — Origem</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="materiaChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/chart/chart.umd.min.js' %}"></script>
+<script>
+  {% include 'chart/mpms/jeneru.js' %}
+  {% include 'chart/mpms/mun.js' %}
+  {% include 'chart/mpms/tipu_fundus.js' %}
+  {% include 'chart/mpms/lisensamentu.js' %}
+  {% include 'chart/mpms/kapital.js' %}
+  {% include 'chart/mpms/tipo_atividade.js' %}
+  {% include 'chart/mpms/empregador.js' %}
+  {% include 'chart/mpms/materia.js' %}
+</script>
+{% endblock scripts %}

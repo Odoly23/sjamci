@@ -1,0 +1,195 @@
+{% extends "main/layout.html" %}
+{% block content %}
+
+<div class="container-fluid mt-3">
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fa fa-filter"></i>
+            FILTRO
+        </div>
+
+        <div class="card-body">
+
+            <form method="GET">
+
+                {% for key,value in request.GET.items %}
+                    {% if key != 'filter_year' and key != 'filter_mun' %}
+                        <input type="hidden"
+                               name="{{ key }}"
+                               value="{{ value }}">
+                    {% endif %}
+                {% endfor %}
+
+                <div class="row">
+
+                    <div class="col-md-3">
+
+                        <label>Tinan</label>
+
+                        <select name="filter_year"
+                                class="form-control">
+
+                            <option value="">Hotu</option>
+
+                            {% for y in years %}
+                            <option value="{{ y.year }}"
+                                {% if filter_year == y.year|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ y.year }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label>Munisipiu</label>
+
+                        <select name="filter_mun"
+                                class="form-control">
+
+                            <option value="">Hotu</option>
+
+                            {% for m in municipios %}
+                            <option value="{{ m.name }}"
+                                {% if filter_mun == m.name %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ m.name }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3 d-flex align-items-end">
+
+                        <button class="btn btn-primary">
+
+                            <i class="fa fa-search"></i>
+                            Buka
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <i class="fa fa-list"></i>
+
+            {{ legend }}
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover table-sm">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+                            <th>Naran Manufatura</th>
+                            <th>Lider</th>
+                            <th>Telefone</th>
+                            <th>Munisipiu</th>
+                            <th>Postu</th>
+                            <th>Industria</th>
+                            <th>Apoio</th>
+                            <th>Tinan</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for x in data %}
+
+                        <tr>
+
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>{{ x.name }}</td>
+
+                            <td>{{ x.leader_name }}</td>
+
+                            <td>{{ x.phone }}</td>
+
+                            <td>
+                                {{ x.lokalidade.municipality }}
+                            </td>
+
+                            <td>
+                                {{ x.lokalidade.administrativepost }}
+                            </td>
+
+                            <td>
+                                {% for a in x.atividades.all %}
+                                    {{ a.industry_type }}<br>
+                                {% endfor %}
+                            </td>
+
+                            <td>
+                                {% for a in x.atividades.all %}
+                                    {{ a.support_type }}<br>
+                                {% endfor %}
+                            </td>
+
+                            <td>
+                                {% for a in x.atividades.all %}
+                                    {{ a.year }}<br>
+                                {% endfor %}
+                            </td>
+
+                            <td>{{ x.status }}</td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="10"
+                                class="text-center">
+
+                                La iha dadus
+
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

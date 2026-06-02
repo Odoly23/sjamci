@@ -32,4 +32,10 @@ urlpatterns = [
     path('mpms/atividade/add/<str:hashid>/',       views.mpms_atividade_create,       name='mpms-atividade-add'),
     # Avaliasaun
     path('mpms/avaliasaun/',                       views.avaliasaun_mpms,             name='ava-mpms'),
+
+
+
+    path("export/",       views.export_page_mpms,  name="export-mpms"),
+    path("export/excel/", views.export_excel_mpms, name="export-excel-mpms"),
+    path("export/pdf/",   views.export_pdf_mpms,   name="export-pdf-mpms"),
 ]

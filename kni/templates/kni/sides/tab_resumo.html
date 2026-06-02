@@ -1,0 +1,57 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="card bg-primary text-white mb-3">
+      <div class="card-body text-center">
+        <h4>Total Programa</h4>
+        <h2>{{ programs|length }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card bg-success text-white mb-3">
+      <div class="card-body text-center">
+        <h4>Total Fundus</h4>
+        <h2>${{ total_amount|floatformat:2 }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card bg-info text-white mb-3">
+      <div class="card-body text-center">
+        <h4>Total Trabalhador</h4>
+        <h2>{{ employees|length }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card bg-warning text-dark mb-3">
+      <div class="card-body text-center">
+        <h4>Total Monitoring</h4>
+        <h2>{{ impact_monitorings|length }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<h5 class="text-primary">Lista Negosiu</h5>
+<ul>
+  {% for b in businesses %}
+    <li><strong>{{ b.name }}</strong> - {{ b.sector }}</li>
+  {% empty %}
+    <li class="text-muted">La iha dadus</li>
+  {% endfor %}
+</ul>
+
+<h5 class="text-primary mt-3">Lista Programa KNI</h5>
+<ul>
+  {% for p in programs %}
+    <li>{{ p.program_type }} - {{ p.year }} - ${{ p.amount }}</li>
+  {% empty %}
+    <li class="text-muted">La iha dadus</li>
+  {% endfor %}
+</ul>

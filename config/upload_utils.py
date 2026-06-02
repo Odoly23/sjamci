@@ -21,3 +21,14 @@ def upload_photo(instance, filename):
 	else:
 		filename = '{}.{}'.format(uuid4().hex, ext)
 	return os.path.join(upload_to, filename)
+
+def upload_financial_book(instance, filename):
+    business_id = instance.monitoring.business.id
+    upload_to = f'financial_books/{business_id}'
+    field = 'financial_book'
+    ext = filename.split('.')[-1]
+    if instance.pk:
+        filename = f'{field}_{instance.id}.{ext}'
+    else:
+        filename = f'{uuid4().hex}.{ext}'
+    return os.path.join(upload_to, filename)

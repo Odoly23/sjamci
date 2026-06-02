@@ -13,27 +13,14 @@ from manufatureira.models import Manufatur, Lokalizasaun, Membro, Aktividade
 @allowed_users(allowed_roles=['admin', 'dnim'])
 def tab_dnim(request):
     group = request.user.groups.all()[0].name
-    
-    # ========== KPI ==========
     total_grupu = Manufatur.objects.all().count()
     total_mane = Membro.objects.aggregate(total=Sum('male'))['total'] or 0
     total_feto = Membro.objects.aggregate(total=Sum('female'))['total'] or 0
     total_ativo = Manufatur.objects.filter(status='Ativo').count()
     total_parado = Manufatur.objects.filter(status='Parado').count()
-    
-    # ========== TABEL 1: Rekapitulasi per Municipiu & Tipu Industria ==========
-    # Ambil semua municipiu
     municipios = Municipality.objects.all().order_by('name')
-    
-    # Ambil semua Industry Type (Tipu Industria) dari model IndustryType
-    # yang terhubung melalui Aktividade.industry_type
-    tipu_industria_list = IndustryType.objects.filter(
-        aktividade__isnull=False
-    ).distinct().order_by('name')
-    
-    # Jika tidak ada data dari Aktividade, ambil dari Manufatur (fallback)
+    tipu_industria_list = IndustryType.objects.filter(aktividade__isnull=False).distinct().order_by('name')
     if not tipu_industria_list:
-        # Fallback: gunakan list manual dari Excel
         tipu_industria_list = [
             'Carpintaria', 'Alfaiate', 'Soru Tais', 'Oficina', 
             'Arte Kultura', 'Bambu', 'Homan', 'Mina Nu\'u', 'Rotan'
@@ -42,12 +29,9 @@ def tab_dnim(request):
     objects1 = []
     for m in municipios:
         row_data = []
-        total_all = 0
-        
+        total_all = 0        
         for tipu in tipu_industria_list:
-            # Cari Manufatur yang punya aktividade dengan industry_type tertentu
-            # dan berlokasi di municipiu tersebut
-            if hasattr(tipu, 'id'):  # Jika tipu adalah object IndustryType
+            if hasattr(tipu, 'id'):     
                 jumlah = Manufatur.objects.filter(
                     lokalidade__municipality=m,
                     atividades__industry_type=tipu
@@ -135,3 +119,115 @@ def tab_dnim(request):
     }
     
     return render(request, 'Dash_R/DNIM/tab_dnim.html', context)
+
+
+@login_required
+@allowed_users(allowed_roles=['admin', 'dnim'])
+def manufatura_detail_dnim(request):
+
+    group = request.user.groups.all()[0].name
+
+    tipo = request.GET.get('tipo')
+    municipio = request.GET.get('municipio')
+    industria = request.GET.get('industria')
+    apoio = request.GET.get('apoio')
+    year = request.GET.get('year')
+
+    data = Manufatur.objects.select_related(
+        'lokalidade'
+    ).prefetch_related(
+        'atividades'
+    ).distinct()
+
+    title = "Dadus Detallu"
+
+    # =========================
+    # KPI
+    # =========================
+
+    if tipo == "grupu":
+        title = "Lista Grupu Manufatura"
+
+    elif tipo == "ativo":
+        title = "Lista Manufatura Ativu"
+        data = data.filter(status='Ativo')
+
+    elif tipo == "parado":
+        title = "Lista Manufatura Parado"
+        data = data.filter(status='Parado')
+
+    elif tipo == "mane":
+        title = "Lista Dadus Mane"
+        data = data.filter(members_data__male__gt=0)
+
+    elif tipo == "feto":
+        title = "Lista Dadus Feto"
+        data = data.filter(members_data__female__gt=0)
+
+    # =========================
+    # MUNICIPIO + INDUSTRIA
+    # =========================
+
+    elif tipo == "municipio_industria":
+
+        title = f"{municipio} - {industria}"
+
+        data = data.filter(
+            lokalidade__municipality__name=municipio,
+            atividades__industry_type__name=industria
+        )
+
+    # =========================
+    # YEAR + APOIO
+    # =========================
+
+    elif tipo == "apoio_year":
+
+        title = f"{apoio} - {year}"
+
+        data = data.filter(
+            atividades__support_type__name=apoio,
+            atividades__year__year=year
+        )
+
+    # =========================
+    # FILTER
+    # =========================
+
+    years = Year.objects.all().order_by('-year')
+    municipios = Municipality.objects.all().order_by('name')
+    industrias = IndustryType.objects.all().order_by('name')
+    apoios = Tipu_Apoio.objects.all().order_by('name')
+
+    filtro_year = request.GET.get('filter_year')
+    filtro_mun = request.GET.get('filter_mun')
+
+    if filtro_year:
+        data = data.filter(
+            atividades__year__year=filtro_year
+        )
+
+    if filtro_mun:
+        data = data.filter(
+            lokalidade__municipality__name=filtro_mun
+        )
+
+    context = {
+        'group': group,
+        'legend': title,
+        'data': data.distinct(),
+
+        'years': years,
+        'municipios': municipios,
+        'industrias': industrias,
+        'apoios': apoios,
+
+        'filter_year': filtro_year,
+        'filter_mun': filtro_mun,
+    }
+
+    return render(
+        request,
+        'Dash_R/DNIM/detail_dnim.html',
+        context
+    )

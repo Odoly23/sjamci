@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'notif',
     'report',
     'users',
-    'mpms'
+    'mpms',
+    'monitoring'
 ]
 
 MIDDLEWARE = [

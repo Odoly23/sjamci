@@ -1,0 +1,211 @@
+{% extends "main/layout.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<div class="container-fluid px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h5 class="mb-0 fw-bold">{{ legend }}</h5>
+      <small class="text-muted">Hili filter, depois download Excel ka PDF</small>
+    </div>
+  </div>
+
+  <div class="row g-3">
+
+    {# ── PANEL FILTER ── #}
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white py-2">
+          <i class="fa fa-filter me-2"></i>Filter Dadus
+        </div>
+        <div class="card-body">
+          <form method="GET" id="filterForm">
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Munisipiu</label>
+              <select name="mun" class="form-select form-select-sm">
+                <option value="">– Hotu –</option>
+                {% for m in mun_list %}
+                  <option value="{{ m.name }}" {% if sel_mun == m.name %}selected{% endif %}>
+                    {{ m.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Tinan Hari Kompania</label>
+              <select name="tinan" class="form-select form-select-sm">
+                <option value="">– Hotu –</option>
+                {% for t in tinan_list %}
+                  <option value="{{ t }}" {% if sel_tinan == t %}selected{% endif %}>{{ t }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Tipo Atividade</label>
+              <select name="tipo" class="form-select form-select-sm">
+                <option value="">– Hotu –</option>
+                {% for t in tipo_list %}
+                  <option value="{{ t.name }}" {% if sel_tipo == t.name %}selected{% endif %}>
+                    {{ t.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Sexo Diretor</label>
+              <select name="sexo" class="form-select form-select-sm">
+                <option value="">– Hotu –</option>
+                <option value="Mane"  {% if sel_sexo == 'Mane' %}selected{% endif %}>Mane</option>
+                <option value="Feto"  {% if sel_sexo == 'Feto' %}selected{% endif %}>Feto</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Lisensamentu</label>
+              <select name="lisensamentu" class="form-select form-select-sm">
+                <option value="">– Hotu –</option>
+                <option value="iha"             {% if sel_lisensamentu == 'iha' %}selected{% endif %}>Iha</option>
+                <option value="laiha"           {% if sel_lisensamentu == 'laiha' %}selected{% endif %}>Laiha</option>
+                <option value="sei_iha_prosesu" {% if sel_lisensamentu == 'sei_iha_prosesu' %}selected{% endif %}>Sei iha Prosesu</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Tipu Fundus Kapital</label>
+              <select name="tipu_fundus" class="form-select form-select-sm">
+                <option value="">– Hotu –</option>
+                <option value="home_industria__caseiras" {% if sel_tipu_fundus == 'home_industria__caseiras' %}selected{% endif %}>Home Industria</option>
+                <option value="mikro"    {% if sel_tipu_fundus == 'mikro' %}selected{% endif %}>Mikro</option>
+                <option value="pequenas" {% if sel_tipu_fundus == 'pequenas' %}selected{% endif %}>Pequenas</option>
+                <option value="medias"   {% if sel_tipu_fundus == 'medias' %}selected{% endif %}>Médias</option>
+                <option value="grandes"  {% if sel_tipu_fundus == 'grandes' %}selected{% endif %}>Grandes</option>
+              </select>
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+              <button type="submit" class="btn btn-sm btn-primary flex-grow-1">
+                <i class="fa fa-search me-1"></i>Aplika Filter
+              </button>
+              <a href="{% url 'export-mpms' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="fa fa-rotate-left"></i>
+              </a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    {# ── PANEL HASIL & DOWNLOAD ── #}
+    <div class="col-md-8">
+
+      {# Rekord yang cocok #}
+      <div class="card shadow-sm mb-3">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="fs-1 fw-bold text-primary">{{ total }}</div>
+            <div>
+              <div class="fw-semibold">Rekord Hetan</div>
+              <small class="text-muted">{{ label }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# Tombol download #}
+      <div class="card shadow-sm">
+        <div class="card-header py-2 bg-light">
+          <i class="fa fa-download me-2"></i>Download
+        </div>
+        <div class="card-body">
+
+          {% if total == 0 %}
+            <div class="alert alert-warning py-2 mb-0">
+              <i class="fa fa-triangle-exclamation me-1"></i>
+              Dadus la hetan ho filter ne'e. Muda filter atu hetan rekord.
+            </div>
+          {% else %}
+
+            <p class="text-muted small mb-3">
+              Download akan menyertakan <strong>{{ total }} rekord</strong>
+              dengan filter: <em>{{ label }}</em>
+            </p>
+
+            <div class="row g-3">
+
+              {# Excel #}
+              <div class="col-md-6">
+                <div class="border rounded p-3 text-center">
+                  <i class="fa fa-file-excel fa-3x text-success mb-2"></i>
+                  <div class="fw-semibold mb-1">Microsoft Excel</div>
+                  <small class="text-muted d-block mb-3">
+                    Format .xlsx — kolom lengkap, bisa diedit, ada auto-filter
+                  </small>
+                  <a href="{% url 'export-excel-mpms' %}?{{ params }}"
+                     class="btn btn-success btn-sm w-100">
+                    <i class="fa fa-download me-1"></i>Download Excel
+                  </a>
+                </div>
+              </div>
+
+              {# PDF #}
+              <div class="col-md-6">
+                <div class="border rounded p-3 text-center">
+                  <i class="fa fa-file-pdf fa-3x text-danger mb-2"></i>
+                  <div class="fw-semibold mb-1">PDF Landscape A3</div>
+                  <small class="text-muted d-block mb-3">
+                    Format .pdf — siap cetak, kolom ringkas, ada header & footer
+                  </small>
+                  <a href="{% url 'export-pdf-mpms' %}?{{ params }}"
+                     class="btn btn-danger btn-sm w-100">
+                    <i class="fa fa-download me-1"></i>Download PDF
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+
+      {# Info kolom yang diekspor #}
+      <div class="card shadow-sm mt-3">
+        <div class="card-header py-2 bg-light">
+          <i class="fa fa-table me-2"></i>Kolom ne'ebé hetan export
+        </div>
+        <div class="card-body">
+          <div class="row g-2">
+            <div class="col-md-6">
+              <p class="fw-semibold small mb-1 text-primary">Excel (.xlsx) — Kolom Kompletu</p>
+              <ul class="small text-muted mb-0 ps-3">
+                <li>No, Tipo Atividade, Naran Diretor, Naran Kompania</li>
+                <li>Sexo, Nivel Edukasaun, Munisipiu, Postu, Suku, Aldeia</li>
+                <li>Tinan Hari, Lisensamentu, Status, Tipo Rai</li>
+                <li>Kapital, Tipu Fundus, Total Fundus</li>
+                <li>Lukru Brutu/Mes, Lukru Brutu/Ano, Lukru Likidu/Mes, Lukru Likidu/Ano</li>
+                <li>Empregador (Nas. Mane/Feto, Int. Mane/Feto, Total)</li>
+                <li>Kustu Materia Prima, Origem Materia Prima</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <p class="fw-semibold small mb-1 text-danger">PDF Landscape A3 — Kolom Ringkas</p>
+              <ul class="small text-muted mb-0 ps-3">
+                <li>No, Tipo Atividade, Naran Diretor, Naran Kompania</li>
+                <li>Sexo, Munisipiu, Postu Administrativu</li>
+                <li>Tinan Hari, Lisensamentu, Tipu Fundus</li>
+                <li>Lukru Brutu/Ano, Total Empregador, Origem Materia</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

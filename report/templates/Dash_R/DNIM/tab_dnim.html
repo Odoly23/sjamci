@@ -26,7 +26,7 @@
                   <div class="card-body">
                     <h6 class="mb-1 font-weight-bold">TOTAL GRUPU</h6>
                     <h3 class="mb-0">
-                      <a href="#" class="text-white text-decoration-none">
+                      <a href="{% url 'manufatura_detail_dnim' %}?tipo=grupu" class="text-white text-decoration-none">
                         {{ total_grupu }}
                       </a>
                     </h3>
@@ -39,7 +39,7 @@
                   <div class="card-body">
                     <h6 class="mb-1 font-weight-bold">TOTAL MANE</h6>
                     <h3 class="mb-0">
-                      <a href="#" class="text-white text-decoration-none">
+                      <a href="{% url 'manufatura_detail_dnim' %}?tipo=mane" class="text-white text-decoration-none">
                         {{ total_mane }}
                       </a>
                     </h3>
@@ -52,7 +52,7 @@
                   <div class="card-body">
                     <h6 class="mb-1 font-weight-bold">TOTAL FETO</h6>
                     <h3 class="mb-0">
-                      <a href="#" class="text-dark text-decoration-none">
+                      <a href="% url 'manufatura_detail_dnim' %}?tipo=feto" class="text-dark text-decoration-none">
                         {{ total_feto }}
                       </a>
                     </h3>
@@ -68,7 +68,7 @@
                   <div class="card-body">
                     <h6 class="mb-1 font-weight-bold">TOTAL ATIVU</h6>
                     <h3 class="mb-0">
-                      <a href="#" class="text-white text-decoration-none">
+                      <a href="{% url 'manufatura_detail_dnim' %}?tipo=ativo" class="text-white text-decoration-none">
                         {{ total_ativo }}
                       </a>
                     </h3>
@@ -81,7 +81,7 @@
                   <div class="card-body">
                     <h6 class="mb-1 font-weight-bold">TOTAL PARADO</h6>
                     <h3 class="mb-0">
-                      <a href="#" class="text-white text-decoration-none">
+                      <a href="{% url 'manufatura_detail_dnim' %}?tipo=parado" class="text-white text-decoration-none">
                         {{ total_parado }}
                       </a>
                     </h3>
@@ -130,7 +130,7 @@
                 <td><strong>{{ obj.municipio.name }}</strong></td>
                 {% for item in obj.data %}
                   <td class="text-center">
-                    <a href="#" class="text-decoration-none">
+                    <a href="{% url 'manufatura_detail_dnim' %}?tipo=municipio_industria&municipio={{ obj.municipio.name }}&industria={{ item.tipu }}" class="text-decoration-none">
                       {{ item.jumlah }}
                     </a>
                   </td>
@@ -191,7 +191,7 @@
                       <td><strong>{{ obj.year.year }}</strong></td>
                       {% for item in obj.data %}
                         <td class="text-right">
-                          <a href="#" class="text-decoration-none">
+                          <a href="{% url 'manufatura_detail_dnim' %}?tipo=apoio_year&apoio={{ item.apoio }}&year={{ obj.year.year }}" class="text-decoration-none">
                             ${{ item.amount|floatformat:2 }}
                           </a>
                         </td>

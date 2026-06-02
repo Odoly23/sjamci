@@ -2,7 +2,7 @@ from django.urls import path
 from . import views_kni
 from . import views_ks
 from . import views_manuf
-
+from . import api_mpms
 urlpatterns = [
 
     path('grafiku/sexu/', views_kni.APISexu.as_view()),
@@ -50,4 +50,15 @@ urlpatterns = [
     path('api/dnim/top-municipiu/', views_manuf.APITopMunicipiu.as_view(), name='api-dnim-top-municipiu'),
     path('api/dnim/kpi/', views_manuf.APIKPIDnim.as_view(), name='api-dnim-kpi'),
 
+
+
+    #mpms
+    path('munisipiu/',    api_mpms.APIMpmsPerMunisipiu.as_view(),  name='api-mpms-mun'),
+    path('tipu-fundus/',  api_mpms.APIMpmsTipuFundus.as_view(),    name='api-mpms-tipu-fundus'),
+    path('jeneru/',       api_mpms.APIMpmsJeneru.as_view(),        name='api-mpms-jeneru'),
+    path('tipo-atividade/', api_mpms.APIMpmsTipoAtividade.as_view(), name='api-mpms-tipo-atividade'),
+    path('lisensamentu/', api_mpms.APIMpmsLisensamentu.as_view(),  name='api-mpms-lisensamentu'),
+    path('kapital/',      api_mpms.APIMpmsKapital.as_view(),       name='api-mpms-kapital'),
+    path('empregador/',   api_mpms.APIMpmsEmpregador.as_view(),    name='api-mpms-empregador'),
+    path('materia/',      api_mpms.APIMpmsMateria.as_view(),       name='api-mpms-materia'),
 ]
