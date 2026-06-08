@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
-
+  <meta name="csrf-token" content="{{ csrf_token }}">
   <title>
     {% if title %}SJK-MCI - {{ title|upper }}{% else %}SJK-MCI{% endif %}
   </title>
@@ -148,6 +148,10 @@
   <script src="{% static 'main/js/front.js' %}"></script>
 
   <!-- ── DataTables Init ────────────────────────────────────── -->
+  {% if request.user.groups.all.0.name == 'KNI' %}
+    <script src="{% static 'main/notif/badge.js' %}"></script>
+    <script src="{% static 'main/notif/list.js' %}"></script>
+  {% endif %}
   <script>
     $(function () {
       // Table 1 — with export buttons

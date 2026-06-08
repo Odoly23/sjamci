@@ -61,4 +61,8 @@ urlpatterns = [
 
     path('import/excel/', views.import_kreditu_suave_excel, name='import_ks_excel'),
     path('export/excel/', views.export_kreditu_suave_excel, name='export_ks_excel'),
+
+    path("export/",       views.export_page_ks,  name="export-ks"),
+    path("export/excel/", views.export_excel_ks, name="export-excel-ks"),
+    path("export/pdf/",   views.export_pdf_ks,   name="export-pdf-ks"),
 ]

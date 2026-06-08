@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+  <h4>📚 Lista Livru Kontabilidade</h4>
+
+  <table class="table table-bordered table-sm">
+    <thead>
+      <tr>
+        <th>Business</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>File</th>
+        <th>Aksaun</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for b in books %}
+      <tr>
+        <td>{{ b.monitoring.business }}</td>
+        <td>{{ b.title }}</td>
+        <td>{{ b.description }}</td>
+        <td>
+          <a href="{{ b.file.url }}" target="_blank">Download</a>
+        </td>
+        <td>
+          <a href="{% url 'financial-book-detail' b.id %}" class="btn btn-sm btn-info">
+            Detail
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+
+{% endblock %}

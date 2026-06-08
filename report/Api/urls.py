@@ -14,6 +14,8 @@ urlpatterns = [
     path('grafiku/trabalhador/', views_kni.APIEmployee.as_view()),
     path('grafiku/credit/',  views_kni.APICreditRepayment.as_view()),
     path('grafiku/kpi/',   views_kni.APIKPI.as_view()),
+
+    path('grafiku/mapa/', views_kni.APIMun.as_view()),
 # suave/api/urls.py
     # =====================================================
     # KPI

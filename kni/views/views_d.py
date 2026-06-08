@@ -127,41 +127,6 @@ def geral_kni(request):
 
 @login_required
 @allowed_users(allowed_roles=['admin', 'staff', 'KNI'])
-def benef_detail_kni2(request, hashid):
-    group = request.user.groups.all()[0].name
-    benef = get_object_or_404(Benefisiariu, hashed=hashid)
-    addtl  = getattr(benef, 'addresstl',     None)
-    addori = getattr(benef, 'addressorigin', None)
-    photo  = getattr(benef, 'photo',         None)
-    businesses = Business.active_objects.filter(benefisiariu=benef)
-    programs   = Program.active_objects.filter(benefisiariu=benef, program_type__name='KNI')
-    total_amount = programs.aggregate(total=Sum('amount'))['total'] or 0
-    local = LocBussiness.active_objects.filter(benefisiariu=benef).first()
-    employees = Employee.active_objects.filter(business__in=businesses)
-    finances  = Finance.active_objects.filter(business__in=businesses)
-    context = {
-        'group':      group,
-        'benef':      benef,
-        'addtl':      addtl,
-        'addori':     addori,
-        'photo':      photo,
-        'businesses': businesses,
-        'programs':   programs,
-        'employees':  employees,
-        'finances':   finances,
-        'total_amount': total_amount,
-        'local':local,
-        'title':      'Detalha Benefisiariu KNI',
-        'legend':     'Detalha Benefisiariu — Kompetisaun Negósiu Inovativu',
-        'MAPBOX_TOKEN': settings.MAPBOX_TOKEN,
-        'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-        ],
-    }
-    return render(request, 'kni/benef_detail_kni.html', context)
-
-@login_required
-@allowed_users(allowed_roles=['admin', 'staff', 'KNI'])
 def benef_detail_kni(request, hashid):
     group = request.user.groups.all()[0].name
     benef = get_object_or_404(Benefisiariu, hashed=hashid)
@@ -174,20 +139,24 @@ def benef_detail_kni(request, hashid):
     local = LocBussiness.active_objects.filter(benefisiariu=benef).first()
     employees = Employee.active_objects.filter(business__in=businesses)
     finances  = Finance.active_objects.filter(business__in=businesses)
-    
-    # ========== TAMBAHAN UNTUK IMPACT MONITORING ==========
-    # Ambil semua impact monitoring untuk setiap business
     impact_monitorings = []
     for business in businesses:
         monitorings = BusinessImpactMonitoring.active_objects.filter(business=business)
         for mon in monitorings:
+            cashflows = mon.cashflows.all()
+            total_cash_in = sum(cf.amount for cf in cashflows if cf.transaction_type == 'IN')
+            total_cash_out = sum(cf.amount for cf in cashflows if cf.transaction_type == 'OUT')
+            fund_balance = (mon.fund_received or 0) - (mon.fund_used or 0)
             impact_monitorings.append({
                 'monitoring': mon,
                 'business': business,
                 'fund_usages': mon.fund_usages.all(),
                 'assets': mon.assets.all(),
-                'cashflows': mon.cashflows.all(),
+                'cashflows': cashflows,
                 'financial_books': mon.financial_books.all(),
+                'total_cash_in': total_cash_in,
+                'total_cash_out': total_cash_out,
+                'fund_balance': fund_balance, 
             })
     # ======================================================
     
@@ -203,7 +172,7 @@ def benef_detail_kni(request, hashid):
         'finances':   finances,
         'total_amount': total_amount,
         'local':      local,
-        'impact_monitorings': impact_monitorings,  # <-- TAMBAHAN
+        'impact_monitorings': impact_monitorings,
         'title':      'Detalha Benefisiariu KNI',
         'legend':     'Detalha Benefisiariu — Kompetisaun Negósiu Inovativu',
         'MAPBOX_TOKEN': settings.MAPBOX_TOKEN,

@@ -1,99 +1,150 @@
-<!-- AKTIVIDADE NEGOSIU -->
-<table class="table table-sm">
-  <tr class="bg-light">
-    <th colspan="2">
-      AKTIVIDADE NEGOSIU
-      {% if group == 'KNI' %}
-        <a href="{% url 'kni-business-add' benef.hashed %}"><i class="fa fa-edit"></i></a>
-      {% endif %}
-    </th>
-  </tr>
-  <tr class="bg-light"><th>NEGOSIU</th><th>SEITOR</th></tr>
-  {% for b in businesses %}
-    <tr><td>{{ b.name }}</td><td>{{ b.sector }}</td></tr>
-  {% empty %}
-    <tr><td colspan="2" class="text-muted">La iha dadus</td></tr>
-  {% endfor %}
-</table>
-
-<hr>
-
-<!-- PROGRAMA KNI -->
-<table class="table table-sm">
-  <tr class="bg-light">
-    <th colspan="4">
-      PROGRAMA KNI
-      {% if group == "KNI" %}
-        {% for b in businesses %}
-          <a href="{% url 'kni-program-add' benef.hashed %}"><i class="fa fa-edit"></i></a>
-        {% endfor %}
-      {% endif %}
-    </th>
-  </tr>
-  <tr class="bg-light">
-    <th>PROGRAMA</th><th>TINAN</th><th>FAZE</th><th>FUNDUS APOIU</th>
-  </tr>
-  {% for p in programs %}
-    <tr>
-      <td>{{ p.program_type }}</td>
-      <td>{{ p.year }}</td>
-      <td>{{ p.faze }}</td>
-      <td>${{ p.amount }}</td>
-    </tr>
-  {% empty %}
-    <tr><td colspan="4" class="text-muted">La iha dadus</td></tr>
-  {% endfor %}
-  <tr class="font-weight-bold bg-light">
-    <td colspan="3" class="text-center">TOTAL</td>
-    <td>${{ total_amount }}</td>
-  </tr>
-</table>
-
-<hr>
-
-<!-- TRABALHADORES -->
-<table class="table table-sm">
-  <tr class="bg-light">
-    <th colspan="4">
-      TRABALHADORES
-      {% if businesses %}
-        {% if group == "KNI" %}
-          <a href="{% url 'kni-employee-add' benef.hashed %}"><i class="fa fa-edit"></i></a>
+<div class="row">
+  
+  <!-- KOLOM KIRI: AKTIVIDADE NEGOSIU + TRABALHADORES -->
+  <div class="col-md-6">
+    
+    <!-- AKTIVIDADE NEGOSIU -->
+    <div class="card mb-3 border-0 shadow-sm">
+      <div class="card-header bg-light">
+        <strong>
+          <i class="fa fa-building"></i> AKTIVIDADE NEGOSIU
+        </strong>
+        {% if group == 'KNI' %}
+          <a href="{% url 'kni-business-add' benef.hashed %}" class="btn btn-xs btn-warning float-right">
+            <i class="fa fa-edit"></i>
+          </a>
         {% endif %}
-      {% endif %}
-    </th>
-  </tr>
-  <tr class="bg-light"><th>EMPREZA</th><th>MANE</th><th>FETO</th><th>TOTAL</th></tr>
-  {% for k in employees %}
-    <tr>
-      <td>{{ k.business }}</td>
-      <td>{{ k.male }}</td>
-      <td>{{ k.female }}</td>
-      <td>{{ k.total }}</td>
-    </tr>
-  {% empty %}
-    <tr><td colspan="4" class="text-muted">La iha dadus</td></tr>
-  {% endfor %}
-</table>
-
-<hr>
-
-<!-- FINANCIAMENTO -->
-<table class="table table-sm">
-  <tr class="bg-light">
-    <th colspan="2">
-      FINANCIAMENTO
-      {% if group == "KNI" %}
-        {% for b in businesses %}
-          <a href=""><i class="fa fa-edit"></i></a>
-        {% endfor %}
-      {% endif %}
-    </th>
-  </tr>
-  <tr class="bg-light"><th>EMPREZA</th><th>TOTAL FINANSAS</th></tr>
-  {% for k in finances %}
-    <td><td>{{ k.business }}</td><td>${{ k.budget }}</td></tr>
-  {% empty %}
-    <tr><td colspan="2" class="text-muted">La iha dadus</td></tr>
-  {% endfor %}
-</table>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered mb-0">
+            <thead class="bg-light">
+              <tr><th>NEGOSIU</th><th>SEITOR</th></tr>
+            </thead>
+            <tbody>
+              {% for b in businesses %}
+                <tr><td>{{ b.name }}</td><td>{{ b.sector }}</td></tr>
+              {% empty %}
+                <tr><td colspan="2" class="text-muted text-center">La iha dadus</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <!-- TRABALHADORES -->
+    <div class="card mb-3 border-0 shadow-sm">
+      <div class="card-header bg-light">
+        <strong>
+          <i class="fa fa-users"></i> TRABALHADORES
+        </strong>
+        {% if businesses and group == "KNI" %}
+          <a href="{% url 'kni-employee-add' benef.hashed %}" class="btn btn-xs btn-warning float-right">
+            <i class="fa fa-edit"></i>
+          </a>
+        {% endif %}
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered mb-0">
+            <thead class="bg-light">
+              <tr><th>EMPREZA</th><th class="text-center">MANE</th><th class="text-center">FETO</th><th class="text-center">TOTAL</th></tr>
+            </thead>
+            <tbody>
+              {% for k in employees %}
+                <tr>
+                  <td>{{ k.business }}</td>
+                  <td class="text-center">{{ k.male }}</td>
+                  <td class="text-center">{{ k.female }}</td>
+                  <td class="text-center"><strong>{{ k.total }}</strong></td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="4" class="text-muted text-center">La iha dadus</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  
+  <!-- KOLOM KANAN: PROGRAMA KNI + FINANCIAMENTO -->
+  <div class="col-md-6">
+    
+    <!-- PROGRAMA KNI -->
+    <div class="card mb-3 border-0 shadow-sm">
+      <div class="card-header bg-light">
+        <strong>
+          <i class="fa fa-money"></i> PROGRAMA KNI
+        </strong>
+        {% if group == "KNI" %}
+          <a href="{% url 'kni-program-add' benef.hashed %}" class="btn btn-xs btn-warning float-right">
+            <i class="fa fa-edit"></i>
+          </a>
+        {% endif %}
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered mb-0">
+            <thead class="bg-light">
+              <tr><th>PROGRAMA</th><th>TINAN</th><th>FAZE</th><th class="text-right">FUNDUS APOIU</th></tr>
+            </thead>
+            <tbody>
+              {% for p in programs %}
+                <tr>
+                  <td>{{ p.program_type }}</td>
+                  <td>{{ p.year }}</td>
+                  <td>{{ p.faze }}</td>
+                  <td class="text-right">${{ p.amount }}</td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="4" class="text-muted text-center">La iha dadus</td></tr>
+              {% endfor %}
+              <tr class="bg-light font-weight-bold">
+                <td colspan="3" class="text-center">TOTAL</td>
+                <td class="text-right">${{ total_amount }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <!-- FINANCIAMENTO -->
+    <div class="card mb-3 border-0 shadow-sm">
+      <div class="card-header bg-light">
+        <strong>
+          <i class="fa fa-dollar"></i> FINANCIAMENTO
+        </strong>
+        {% if group == "KNI" %}
+          <a href="#" class="btn btn-xs btn-warning float-right">
+            <i class="fa fa-edit"></i>
+          </a>
+        {% endif %}
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered mb-0">
+            <thead class="bg-light">
+              <tr><th>EMPREZA</th><th class="text-right">TOTAL FINANSAS</th></tr>
+            </thead>
+            <tbody>
+              {% for k in finances %}
+                <tr>
+                  <td>{{ k.business }}</td>
+                  <td class="text-right">${{ k.budget }}</td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="2" class="text-muted text-center">La iha dadus</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  
+</div>

@@ -1,22 +1,17 @@
-import uuid
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q, Sum
-from kni.models import  Business, LocBussiness, Program, Employee, Finance
-from benefisiariu.models import  Benefisiariu, AddressTL, AddressOrigin, Photo
-from suave.models import  EkipaMember, ProductService, MainCustomer, Competitor, MarketAssessment, FinancialAssessment, FixedAsset, CreditInfo
-from benefisiariu.forms import BenefisiariuForm, AddressTLForm, AddressOriginForm, PhotoUploadForm
-from suave.forms import BusinessKSForm, LocBusinessKSForm, ProgramKSForm, EmployeeKSForm, FinanceKSForm,\
-                        EkipaMemberForm, ProductServiceForm, MainCustomerForm, CompetitorForm, MarketAssessmentForm,\
-                        FinancialAssessmentForm, FixedAssetForm, CreditInfoForm
-from custom.models import TIpu_Programa, Status
-from config.decorators import allowed_users
 from django.http import JsonResponse
-from django.views.decorators.cache import never_cache
-
-#create your views here
+from kni.models import Business, LocBussiness, Program, Employee, Finance
+from benefisiariu.models import Benefisiariu, AddressTL, AddressOrigin
+from suave.models import EkipaMember, ProductService, MainCustomer, Competitor, MarketAssessment, FinancialAssessment, FixedAsset, CreditInfo
+from benefisiariu.forms import BenefisiariuForm, AddressTLForm, AddressOriginForm
+from suave.forms import BusinessKSForm, LocBusinessKSForm, ProgramKSForm, EmployeeKSForm, FinanceKSForm,  EkipaMemberForm,  ProductServiceForm,\
+    MainCustomerForm,  CompetitorForm, MarketAssessmentForm, FinancialAssessmentForm, FixedAssetForm, CreditInfoForm
+from custom.models import Status
+from config.decorators import allowed_users
 
 # ══════════════════════════════════════════════════════════════
 #  1. MAPA KREDITU SUAVE
@@ -121,33 +116,6 @@ def edit_benef_ks(request, hashid):
 # ══════════════════════════════════════════════════════════════
 #  3. ENDERESU TL
 # ══════════════════════════════════════════════════════════════
-@login_required
-@allowed_users(allowed_roles=['KS'])
-def AddressTLUpdate_kss(request, hashid):
-    emp     = get_object_or_404(Benefisiariu, hashed=hashid)
-    objects = AddressTL.objects.filter(benefisiariu=emp).first()
-    if request.method == 'POST':
-        form = AddressTLForm(request.POST, instance=objects)
-        if form.is_valid():
-            instance = form.save(commit=False)
-            instance.benefisiariu = emp
-            if hasattr(instance, 'user'):
-                instance.user = request.user
-            instance.save()
-            messages.success(request, "Enderesu atualiza ona.")
-            return redirect('benef-detail-ks', hashid=hashid)
-    else:
-        form = AddressTLForm(instance=objects)
-
-    context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Altera Enderesu',
-        'legend':     'Altera Enderesu',
-    }
-    return render(request, 'Dash/Forms/form_addressBnf.html', context)
-
 @login_required
 @allowed_users(allowed_roles=['KS']) 
 def AddressTLUpdate_ks(request, hashid):
@@ -274,26 +242,29 @@ def Program_Add_ks(request, hashid):
     if request.method == 'POST':
         form = ProgramKSForm(request.POST)
         if form.is_valid():
-            obj              = form.save(commit=False)
+            obj = form.save(commit=False)
             obj.benefisiariu = emp
-            obj.status       = Status.objects.get(pk=1)
+            obj.status = Status.objects.get(pk=1)
             obj.save()
-            total = Program.objects.filter( benefisiariu=emp, program_type__name='KREDITU SUAVE').aggregate(total=Sum('amount'))['total'] or 0
-            for b in Business.objects.filter(benefisiariu=emp):
-                Finance.objects.update_or_create(business=b, defaults={'budget': total})
-            messages.success(request, "Programa Kreditu Suave rai ho susesu.")
-            return redirect('benef-detail-ks', hashid=hashid)
+            total = Program.objects.filter(benefisiariu=emp, program_type__name='KREDITU SUAVE').aggregate(total=Sum('amount'))['total'] or 0
+            businesses = Business.objects.filter(benefisiariu=emp)
+            for business in businesses:
+                finance, created = Finance.objects.get_or_create(business=business)
+                finance.budget = total
+                finance.save()
+            messages.success(request, "Programa Kreditu Suave rai ho Susesu.")
+            return redirect('benef-detail-ks',   hashid=hashid)
     else:
         form = ProgramKSForm()
-
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Rejistu Programa KS',
-        'legend':     'Programa Kreditu Suave Foun',
+        'hashid': hashid,
+        'form': form,
+        'emp': emp,
+        'title': 'Rejistu Programa KS',
+        'legend': 'Programa Kreditu Suave Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+
+    return render(request,  'Dash/Forms/form.html',    context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -304,25 +275,37 @@ def Program_Add_ks(request, hashid):
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def Employee_Add_ks(request, hashid):
-    emp        = get_object_or_404(Benefisiariu, hashed=hashid)
+    emp = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
+
     if request.method == 'POST':
         form = EmployeeKSForm(request.POST)
+        form.fields['business'].queryset = businesses
+
         if form.is_valid():
-            form.save()
-            messages.success(request, "Trabalhadores rai ho sukses.")
+            obj = form.save(commit=False)
+
+            if obj.business not in businesses:
+                messages.error(request, "Business la validu.")
+                return redirect('benef-detail-ks', hashid=hashid)
+
+            obj.save()
+
+            messages.success(request, "Trabalhadores rai ho susesu.")
             return redirect('benef-detail-ks', hashid=hashid)
+
     else:
         form = EmployeeKSForm()
         form.fields['business'].queryset = businesses
 
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Rejistu Trabalhadores',
-        'legend':     'Trabalhadores Foun',
+        'hashid': hashid,
+        'form': form,
+        'emp': emp,
+        'title': 'Rejistu Trabalhadores',
+        'legend': 'Trabalhadores Foun',
     }
+
     return render(request, 'Dash/Forms/form.html', context)
 
 
@@ -334,25 +317,37 @@ def Employee_Add_ks(request, hashid):
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def Finance_Add_ks(request, hashid):
-    emp        = get_object_or_404(Benefisiariu, hashed=hashid)
+    emp = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
+
     if request.method == 'POST':
         form = FinanceKSForm(request.POST)
+        form.fields['business'].queryset = businesses
+
         if form.is_valid():
-            form.save()
-            messages.success(request, "Finansiamento rai ho sukses.")
+            obj = form.save(commit=False)
+
+            if obj.business not in businesses:
+                messages.error(request, "Business la validu.")
+                return redirect('benef-detail-ks', hashid=hashid)
+
+            obj.save()
+
+            messages.success(request, "Finansiamento rai ho susesu.")
             return redirect('benef-detail-ks', hashid=hashid)
+
     else:
         form = FinanceKSForm()
         form.fields['business'].queryset = businesses
 
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Rejistu Finansiamento',
-        'legend':     'Finansiamento Foun',
+        'hashid': hashid,
+        'form': form,
+        'emp': emp,
+        'title': 'Rejistu Finansiamento',
+        'legend': 'Finansiamento Foun',
     }
+
     return render(request, 'Dash/Forms/form.html', context)
 
 
@@ -365,7 +360,6 @@ def Finance_Add_ks(request, hashid):
 @transaction.atomic
 def EkipaMember_Add(request, hashid):
     emp = get_object_or_404(Benefisiariu, hashed=hashid)
-    TOKEN_KEY = 'ks_token_ekipa'
     if request.method == 'POST':
         form = EkipaMemberForm(request.POST)
         if form.is_valid():
@@ -395,24 +389,35 @@ def EkipaMember_Add(request, hashid):
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def ProductService_Add(request, hashid):
-    emp        = get_object_or_404(Benefisiariu, hashed=hashid)
+    emp = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
+
     if request.method == 'POST':
         form = ProductServiceForm(request.POST)
+        form.fields['business'].queryset = businesses
+
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+
+            if obj.business not in businesses:
+                messages.error(request, "Business la validu.")
+                return redirect('benef-detail-ks', hashid=hashid)
+
+            obj.save()
+
             messages.success(request, "Produto/Servisu rai ho sukses.")
             return redirect('benef-detail-ks', hashid=hashid)
+
     else:
         form = ProductServiceForm()
         form.fields['business'].queryset = businesses
 
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Rejistu Produto/Servisu',
-        'legend':     'Produto/Servisu Foun',
+        'hashid': hashid,
+        'form': form,
+        'emp': emp,
+        'title': 'Rejistu Produto/Servisu',
+        'legend': 'Produto/Servisu Foun',
     }
     return render(request, 'Dash/Forms/form.html', context)
 
@@ -425,25 +430,35 @@ def ProductService_Add(request, hashid):
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def MainCustomer_Add(request, hashid):
-    emp        = get_object_or_404(Benefisiariu, hashed=hashid)
+    emp = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
 
     if request.method == 'POST':
         form = MainCustomerForm(request.POST)
+        form.fields['business'].queryset = businesses
+
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+
+            if obj.business not in businesses:
+                messages.error(request, "Business la validu.")
+                return redirect('benef-detail-ks', hashid=hashid)
+
+            obj.save()
+
             messages.success(request, "Kliente Prinsipal rai ho sukses.")
             return redirect('benef-detail-ks', hashid=hashid)
+
     else:
         form = MainCustomerForm()
         form.fields['business'].queryset = businesses
 
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Rejistu Kliente Prinsipal',
-        'legend':     'Kliente Prinsipal Foun',
+        'hashid': hashid,
+        'form': form,
+        'emp': emp,
+        'title': 'Rejistu Kliente Prinsipal',
+        'legend': 'Kliente Prinsipal Foun',
     }
     return render(request, 'Dash/Forms/form.html', context)
 
@@ -456,25 +471,35 @@ def MainCustomer_Add(request, hashid):
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def Competitor_Add(request, hashid):
-    emp        = get_object_or_404(Benefisiariu, hashed=hashid)
+    emp = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
 
     if request.method == 'POST':
         form = CompetitorForm(request.POST)
+        form.fields['business'].queryset = businesses
+
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+
+            if obj.business not in businesses:
+                messages.error(request, "Business la validu.")
+                return redirect('benef-detail-ks', hashid=hashid)
+
+            obj.save()
+
             messages.success(request, "Kompetitor rai ho sukses.")
             return redirect('benef-detail-ks', hashid=hashid)
+
     else:
         form = CompetitorForm()
         form.fields['business'].queryset = businesses
 
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Rejistu Kompetitor',
-        'legend':     'Kompetitor Foun',
+        'hashid': hashid,
+        'form': form,
+        'emp': emp,
+        'title': 'Rejistu Kompetitor',
+        'legend': 'Kompetitor Foun',
     }
     return render(request, 'Dash/Forms/form.html', context)
 
@@ -486,25 +511,42 @@ def Competitor_Add(request, hashid):
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def MarketAssessment_Add(request, hashid):
-    emp        = get_object_or_404(Benefisiariu, hashed=hashid)
+    emp = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
 
     if request.method == 'POST':
         form = MarketAssessmentForm(request.POST)
+        form.fields['business'].queryset = businesses
+
         if form.is_valid():
-            form.save()
-            messages.success(request, "Avaliasaun Merkadu rai ho sukses.")
+            obj = form.save(commit=False)
+
+            if MarketAssessment.objects.filter(
+                business=obj.business
+            ).exists():
+                messages.warning(
+                    request,
+                    "Avaliasaun Merkadu ba negosiu ida ne'e iha ona."
+                )
+                return redirect('benef-detail-ks', hashid=hashid)
+
+            obj.save()
+
+            messages.success(
+                request,
+                "Avaliasaun Merkadu rai ho sukses."
+            )
             return redirect('benef-detail-ks', hashid=hashid)
+
     else:
         form = MarketAssessmentForm()
         form.fields['business'].queryset = businesses
-
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Avaliasaun Merkadu',
-        'legend':     'Avaliasaun Merkadu Foun',
+        'hashid': hashid,
+        'form': form,
+        'emp': emp,
+        'title': 'Avaliasaun Merkadu',
+        'legend': 'Avaliasaun Merkadu Foun',
     }
     return render(request, 'Dash/Forms/form.html', context)
 
@@ -516,28 +558,44 @@ def MarketAssessment_Add(request, hashid):
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def FinancialAssessment_Add(request, hashid):
-    emp        = get_object_or_404(Benefisiariu, hashed=hashid)
+    emp = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
 
     if request.method == 'POST':
         form = FinancialAssessmentForm(request.POST)
+        form.fields['business'].queryset = businesses
+
         if form.is_valid():
-            form.save()
-            messages.success(request, "Avaliasaun Finanseiru rai ho sukses.")
+            obj = form.save(commit=False)
+
+            if FinancialAssessment.objects.filter(
+                business=obj.business
+            ).exists():
+                messages.warning(
+                    request,
+                    "Avaliasaun Finanseiru ba negosiu ida ne'e iha ona."
+                )
+                return redirect('benef-detail-ks', hashid=hashid)
+
+            obj.save()
+
+            messages.success(
+                request,
+                "Avaliasaun Finanseiru rai ho sukses."
+            )
             return redirect('benef-detail-ks', hashid=hashid)
+
     else:
         form = FinancialAssessmentForm()
         form.fields['business'].queryset = businesses
-
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Avaliasaun Finanseiru',
-        'legend':     'Avaliasaun Finanseiru Foun',
+        'hashid': hashid,
+        'form': form,
+        'emp': emp,
+        'title': 'Avaliasaun Finanseiru',
+        'legend': 'Avaliasaun Finanseiru Foun',
     }
     return render(request, 'Dash/Forms/form.html', context)
-
 
 # ══════════════════════════════════════════════════════════════
 #  17. ASSET FIXU
@@ -547,28 +605,58 @@ def FinancialAssessment_Add(request, hashid):
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def FixedAsset_Add(request, hashid):
-    emp        = get_object_or_404(Benefisiariu, hashed=hashid)
-    businesses = Business.objects.filter(benefisiariu=emp)
-    financials = FinancialAssessment.objects.filter(business__in=businesses)
+    emp = get_object_or_404(Benefisiariu, hashed=hashid)
+
+    businesses = Business.objects.filter(
+        benefisiariu=emp
+    )
+
+    financials = FinancialAssessment.objects.filter(
+        business__in=businesses
+    )
 
     if request.method == 'POST':
         form = FixedAssetForm(request.POST)
+        form.fields['financial'].queryset = financials
+
         if form.is_valid():
-            form.save()
-            messages.success(request, "Asset Fixu rai ho sukses.")
-            return redirect('benef-detail-ks', hashid=hashid)
+            obj = form.save(commit=False)
+
+            if obj.financial not in financials:
+                messages.error(
+                    request,
+                    "Financial Assessment la validu."
+                )
+                return redirect(
+                    'benef-detail-ks',
+                    hashid=hashid
+                )
+
+            obj.save()
+
+            messages.success(
+                request,
+                "Asset Fixu rai ho susesu."
+            )
+
+            return redirect(
+                'benef-detail-ks',
+                hashid=hashid
+            )
+
     else:
         form = FixedAssetForm()
         form.fields['financial'].queryset = financials
 
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Rejistu Asset Fixu',
-        'legend':     'Asset Fixu Foun',
+        'hashid': hashid,
+        'form': form,
+        'emp': emp,
+        'title': 'Rejistu Asset Fixu',
+        'legend': 'Asset Fixu Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+
+    return render(request,  'Dash/Forms/form.html',   context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -579,23 +667,41 @@ def FixedAsset_Add(request, hashid):
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def CreditInfo_Add(request, hashid):
-    emp        = get_object_or_404(Benefisiariu, hashed=hashid)
+    emp = get_object_or_404(Benefisiariu, hashed=hashid)
     businesses = Business.objects.filter(benefisiariu=emp)
+
     if request.method == 'POST':
         form = CreditInfoForm(request.POST)
+        form.fields['business'].queryset = businesses
+
         if form.is_valid():
-            form.save()
-            messages.success(request, "Informasaun Kreditu rai ho sukses.")
+            obj = form.save(commit=False)
+
+            if CreditInfo.objects.filter(
+                business=obj.business
+            ).exists():
+                messages.warning(
+                    request,
+                    "Informasaun Kreditu ba negosiu ida ne'e iha ona."
+                )
+                return redirect('benef-detail-ks', hashid=hashid)
+
+            obj.save()
+
+            messages.success(
+                request,
+                "Informasaun Kreditu rai ho sukses."
+            )
             return redirect('benef-detail-ks', hashid=hashid)
+
     else:
         form = CreditInfoForm()
         form.fields['business'].queryset = businesses
-
     context = {
-        'hashid':     hashid,
-        'form':       form,
-        'emp':        emp,
-        'title':      'Informasaun Kreditu',
-        'legend':     'Informasaun Kreditu Foun',
+        'hashid': hashid,
+        'form': form,
+        'emp': emp,
+        'title': 'Informasaun Kreditu',
+        'legend': 'Informasaun Kreditu Foun',
     }
     return render(request, 'Dash/Forms/form.html', context)

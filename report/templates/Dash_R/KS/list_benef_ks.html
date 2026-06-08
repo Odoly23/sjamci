@@ -1,0 +1,54 @@
+{% extends "main/layout.html" %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card shadow-sm border-0">
+        <!-- HEADER -->
+        <div class="card-header  text-dark d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fa fa-users"></i>
+                {{ legend|upper }}
+            </h5>
+
+            <span class="badge badge-light">
+                
+            </span>
+        </div>
+        <!-- BODY -->
+        <div class="card-body">
+        <table class="table table-bordered table-hover table-striped table-sm" width="100%" id="example1">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Naran</th>
+                    <th>Sexu</th>
+                    <th>Telefone</th>
+                    <th>Status</th>
+                    <th>Aksaun</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in page_obj %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ obj.name }}</td>
+                    <td>{{ obj.sex }}</td>
+                    <td>{{ obj.phone }}</td>
+                    <td>{{ obj.status }}</td>
+                    <td><a href="{% url 'benef-detail-ks' obj.hashed %}" class="btn btn-sm btn-primary"> <i class="fa fa-eye">  </i></a></td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

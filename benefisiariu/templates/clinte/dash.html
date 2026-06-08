@@ -24,7 +24,7 @@
           <small class="text-muted">{{ benef.phone }}
             {% if benef.email_website %}&bull; {{ benef.email_website }}{% endif %}
           </small><br>
-          <span class="badge badge-{% if benef.status.name == 'Ativu' %}success{% else %}danger{% endif %} rounded-pill px-3" >
+          <span class="badge badge-{% if benef.status.name == 'Ativu' %}success{% else %}danger{% endif %} rounded-pill px-3">
             {{ benef.status }}
           </span>
         </div>
@@ -42,64 +42,34 @@
       </div>
     </div>
 
-    <!-- ══ TABS NAV — Bootstrap 4 pakai data-toggle ══ -->
+    <!-- TABS NAV -->
     <ul class="nav nav-tabs nav-fill flex-wrap mb-0" id="clienteTab" role="tablist">
       <li class="nav-item" role="presentation">
-        <a class="nav-link active"
-           id="tab-perfil-btn"
-           data-toggle="tab"
-           href="#tab-perfil"
-           role="tab"
-           aria-controls="tab-perfil"
-           aria-selected="true">
+        <a class="nav-link active" id="tab-perfil-btn" data-toggle="tab" href="#tab-perfil" role="tab">
           <i class="fa fa-user"></i>
           <span class="d-none d-sm-inline ml-1">Perfil</span>
         </a>
       </li>
       <li class="nav-item" role="presentation">
-        <a class="nav-link"
-           id="tab-programa-btn"
-           data-toggle="tab"
-           href="#tab-programa"
-           role="tab"
-           aria-controls="tab-programa"
-           aria-selected="false">
+        <a class="nav-link" id="tab-programa-btn" data-toggle="tab" href="#tab-programa" role="tab">
           <i class="fa fa-folder"></i>
           <span class="d-none d-sm-inline ml-1">Programa</span>
         </a>
       </li>
       <li class="nav-item" role="presentation">
-        <a class="nav-link"
-           id="tab-negosiu-btn"
-           data-toggle="tab"
-           href="#tab-negosiu"
-           role="tab"
-           aria-controls="tab-negosiu"
-           aria-selected="false">
+        <a class="nav-link" id="tab-negosiu-btn" data-toggle="tab" href="#tab-negosiu" role="tab">
           <i class="fa fa-briefcase"></i>
           <span class="d-none d-sm-inline ml-1">Negosiu</span>
         </a>
       </li>
       <li class="nav-item" role="presentation">
-        <a class="nav-link"
-           id="tab-mpms-btn"
-           data-toggle="tab"
-           href="#tab-mpms"
-           role="tab"
-           aria-controls="tab-mpms"
-           aria-selected="false">
-          <i class="fa fa-building"></i>
-          <span class="d-none d-sm-inline ml-1">MPMS</span>
+        <a class="nav-link" id="tab-monitoring-btn" data-toggle="tab" href="#tab-monitoring" role="tab">
+          <i class="fa fa-bar-chart"></i>
+          <span class="d-none d-sm-inline ml-1">Monitorizasaun</span>
         </a>
       </li>
       <li class="nav-item" role="presentation">
-        <a class="nav-link"
-           id="tab-pedidu-btn"
-           data-toggle="tab"
-           href="#tab-pedidu"
-           role="tab"
-           aria-controls="tab-pedidu"
-           aria-selected="false">
+        <a class="nav-link" id="tab-pedidu-btn" data-toggle="tab" href="#tab-pedidu" role="tab">
           <i class="fa fa-envelope"></i>
           <span class="d-none d-sm-inline ml-1">Pedidu</span>
           {% if pedidus %}
@@ -109,15 +79,11 @@
       </li>
     </ul>
 
-    <!-- ══ TABS CONTENT ══ -->
-    <div class="tab-content border border-top-0 rounded-bottom bg-white p-3 shadow-sm"
-         id="clienteTabContent">
+    <!-- TABS CONTENT -->
+    <div class="tab-content border border-top-0 rounded-bottom bg-white p-3 shadow-sm" id="clienteTabContent">
 
-      <!-- ── TAB PERFIL ──────────────────────────────── -->
-      <div class="tab-pane fade show active"
-           id="tab-perfil"
-           role="tabpanel"
-           aria-labelledby="tab-perfil-btn">
+      <!-- TAB PERFIL (sama seperti sebelumnya) -->
+      <div class="tab-pane fade show active" id="tab-perfil" role="tabpanel">
         <div class="row">
           <div class="col-12 col-md-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
@@ -126,14 +92,14 @@
               </div>
               <div class="card-body p-0">
                 <table class="table table-sm mb-0">
-                  <tr><td class="text-muted pl-3">Naran</td>        <td>{{ benef.name }}</td></tr>
-                  <tr><td class="text-muted pl-3">Sexu</td>         <td>{{ benef.sex }}</td></tr>
-                  <tr><td class="text-muted pl-3">Data Moris</td>   <td>{{ benef.dob }}</td></tr>
-                  <tr><td class="text-muted pl-3">Idade</td>        <td>{{ benef.age }} anos</td></tr>
-                  <tr><td class="text-muted pl-3">Estado Civil</td> <td>{{ benef.marital }}</td></tr>
-                  <tr><td class="text-muted pl-3">Edukasaun</td>    <td>{{ benef.get_nivel_edukasaun_display }}</td></tr>
-                  <tr><td class="text-muted pl-3">Telefone</td>     <td>{{ benef.phone }}</td></tr>
-                  <tr><td class="text-muted pl-3">Email/Web</td>    <td>{{ benef.email_website }}</td></tr>
+                  <tr><td class="text-muted pl-3">Naran</td><td>{{ benef.name }}</td></tr>
+                  <tr><td class="text-muted pl-3">Sexu</td><td>{{ benef.sex }}</td></tr>
+                  <tr><td class="text-muted pl-3">Data Moris</td><td>{{ benef.dob }}</td></tr>
+                  <tr><td class="text-muted pl-3">Idade</td><td>{{ benef.age }} anos</td></tr>
+                  <tr><td class="text-muted pl-3">Estado Civil</td><td>{{ benef.marital }}</td></tr>
+                  <tr><td class="text-muted pl-3">Edukasaun</td><td>{{ benef.get_nivel_edukasaun_display }}</td></tr>
+                  <tr><td class="text-muted pl-3">Telefone</td><td>{{ benef.phone }}</td><tr>
+                  <tr><td class="text-muted pl-3">Email/Web</td><td>{{ benef.email_website }}</td></tr>
                 </table>
               </div>
             </div>
@@ -150,9 +116,9 @@
                 <table class="table table-sm mb-0">
                   {% if addtl %}
                     <tr><td class="text-muted pl-3">Municipiu</td><td>{{ addtl.municipality }}</td></tr>
-                    <tr><td class="text-muted pl-3">Postu</td>    <td>{{ addtl.administrativepost }}</td></tr>
-                    <tr><td class="text-muted pl-3">Suku</td>     <td>{{ addtl.village }}</td></tr>
-                    <tr><td class="text-muted pl-3">Aldeia</td>   <td>{{ addtl.aldeia }}</td></tr>
+                    <tr><td class="text-muted pl-3">Postu</td><td>{{ addtl.administrativepost }}</td></tr>
+                    <tr><td class="text-muted pl-3">Suku</td><td>{{ addtl.village }}</td></tr>
+                    <tr><td class="text-muted pl-3">Aldeia</td><td>{{ addtl.aldeia }}</td></tr>
                   {% else %}
                     <tr><td colspan="2" class="text-muted text-center p-3">La iha dadus enderesu</td></tr>
                   {% endif %}
@@ -163,11 +129,8 @@
         </div>
       </div>
 
-      <!-- ── TAB PROGRAMA ────────────────────────────── -->
-      <div class="tab-pane fade"
-           id="tab-programa"
-           role="tabpanel"
-           aria-labelledby="tab-programa-btn">
+      <!-- TAB PROGRAMA (sama seperti sebelumnya) -->
+      <div class="tab-pane fade" id="tab-programa" role="tabpanel">
         <div class="card border-0 shadow-sm">
           <div class="card-header bg-success text-white">
             <i class="fa fa-folder"></i> Minha Programa
@@ -205,11 +168,8 @@
         </div>
       </div>
 
-      <!-- ── TAB NEGOSIU ─────────────────────────────── -->
-      <div class="tab-pane fade"
-           id="tab-negosiu"
-           role="tabpanel"
-           aria-labelledby="tab-negosiu-btn">
+      <!-- TAB NEGOSIU (sama seperti sebelumnya) -->
+      <div class="tab-pane fade" id="tab-negosiu" role="tabpanel">
         <div class="row">
           <div class="col-12 mb-3">
             <div class="card border-0 shadow-sm">
@@ -256,7 +216,7 @@
                         <td>{{ e.total }}</td>
                       </tr>
                     {% empty %}
-                      <tr><td colspan="4" class="text-muted text-center p-3">La iha dadus</td></tr>
+                      <td><td colspan="4" class="text-muted text-center p-3">La iha dadus</td></tr>
                     {% endfor %}
                   </tbody>
                 </table>
@@ -287,121 +247,234 @@
         </div>
       </div>
 
-      <!-- ── TAB MPMS ────────────────────────────────── -->
-      <div class="tab-pane fade"
-           id="tab-mpms"
-           role="tabpanel"
-           aria-labelledby="tab-mpms-btn">
-        {% if empresa %}
-        <div class="row">
-          <div class="col-12 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-              <div class="card-header bg-primary text-white">
-                <i class="fa fa-building"></i> Empresa MPMS
-              </div>
-              <div class="card-body p-0">
-                <table class="table table-sm mb-0">
-                  <tr><td class="text-muted pl-3">Naran Kompania</td><td>{{ empresa.company_name }}</td></tr>
-                  <tr><td class="text-muted pl-3">Tipo Atividade</td><td>{{ empresa.tipo_atividade }}</td></tr>
-                  <tr><td class="text-muted pl-3">Tinan Hari</td>    <td>{{ empresa.tinan_hari }}</td></tr>
-                </table>
-              </div>
-            </div>
+      <!-- ==================== TAB MONITORIZASAUN IMPAKTU ==================== -->
+      <div class="tab-pane fade" id="tab-monitoring" role="tabpanel">
+
+        <!-- Loop untuk setiap business -->
+        {% for business in businesses %}
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-header bg-info text-white">
+            <i class="fa fa-bar-chart"></i> Monitorizasaun Impaktu - {{ business.name|default:business.idea }}
           </div>
-          <div class="col-12 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-              <div class="card-header bg-success text-white">
-                <i class="fa fa-dollar"></i> Kapital
-              </div>
-              <div class="card-body p-0">
-                {% if kapital %}
-                <table class="table table-sm mb-0">
-                  <tr><td class="text-muted pl-3">Investimento</td>     <td>{{ kapital.get_kapital_investimento_display }}</td></tr>
-                  <tr><td class="text-muted pl-3">Tipu Fundus</td>      <td>{{ kapital.get_tipu_fundus_display }}</td></tr>
-                  <tr><td class="text-muted pl-3">Lukru Brutu/Mes</td>  <td>${{ kapital.lukru_brutu_mes }}</td></tr>
-                  <tr><td class="text-muted pl-3">Lukru Likidu/Mes</td> <td>${{ kapital.lukru_likidu_mes }}</td></tr>
-                </table>
-                {% else %}
-                  <p class="text-muted p-3 mb-0">La iha dadus kapital</p>
-                {% endif %}
-              </div>
+          <div class="card-body">
+
+            <!-- ========== SECTION 1: BUSINESS IMPACT MONITORING (READ ONLY) ========== -->
+            <h6 class="text-primary mb-2"><i class="fa fa-database"></i> Dadus Monitorizasaun (Staff KNI)</h6>
+            <div class="table-responsive mb-4">
+              <table class="table table-sm table-bordered">
+                <thead class="thead-light">
+                  <tr>
+                    <th>Data</th>
+                    <th>Status Verifikasaun</th>
+                    <th>Fundus Simu</th>
+                    <th>Fundus Uza</th>
+                    <th>Saldo</th>
+                    <th>Rendimentu</th>
+                    <th>Despeza</th>
+                    <th>Lukru</th>
+                    <th>Total Trabalhador</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for m in business.impact_monitorings.all %}
+                  <tr>
+                    <td>{{ m.monitoring_date }}</td>
+                    <td>
+                      <span class="badge badge-{% if m.verification_status == 'Verified' %}success{% elif m.verification_status == 'Rejected' %}danger{% else %}warning{% endif %}">
+                        {{ m.get_verification_status_display }}
+                      </span>
+                    </td>
+                    <td>${{ m.fund_received|floatformat:2 }}</td>
+                    <td>${{ m.fund_used|floatformat:2 }}</td>
+                    <td class="{% if m.fund_balance < 0 %}text-danger{% else %}text-success{% endif %}">
+                      ${{ m.fund_balance|floatformat:2 }}
+                    </td>
+                    <td>${{ m.monthly_income|floatformat:2 }}</td>
+                    <td>${{ m.monthly_expense|floatformat:2 }}</td>
+                    <td class="{% if m.monthly_profit < 0 %}text-danger{% else %}text-success{% endif %}">
+                      ${{ m.monthly_profit|floatformat:2 }}
+                    </td>
+                    <td>{{ m.total_employee }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="9" class="text-muted text-center">La iha dadus monitorizasaun. Staff KNI sei rejistu ona.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
-          </div>
-          <div class="col-12 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm">
-              <div class="card-header bg-light">
-                <i class="fa fa-users"></i> Empregador MPMS
-              </div>
-              {% if empregador %}
-              <div class="table-responsive">
-                <table class="table table-sm mb-0">
-                  <thead class="thead-light">
-                    <tr><th></th><th>Mane</th><th>Feto</th><th>Total</th></tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="pl-3">Nasionál</td>
-                      <td>{{ empregador.nasional_mane }}</td>
-                      <td>{{ empregador.nasional_feto }}</td>
-                      <td>{{ empregador.total_nasional }}</td>
-                    </tr>
-                    <tr>
-                      <td class="pl-3">Internasionál</td>
-                      <td>{{ empregador.internasional_mane }}</td>
-                      <td>{{ empregador.internasional_feto }}</td>
-                      <td>{{ empregador.total_internasional }}</td>
-                    </tr>
-                    <tr class="font-weight-bold thead-light">
-                      <td class="pl-3">TOTAL</td>
-                      <td colspan="2"></td>
-                      <td>{{ empregador.total_empregador }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              {% else %}
-                <p class="text-muted p-3 mb-0">La iha dadus empregador</p>
-              {% endif %}
-            </div>
-          </div>
-          <div class="col-12 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm">
-              <div class="card-header bg-light">
-                <i class="fa fa-list"></i> Atividade MPMS
+
+            <!-- ========== SECTION 2: FORM INPUT UNTUK CLIENT ========== -->
+            <!-- 2.1 FUND USAGE (Utilizasaun Fundus) -->
+            <div class="card border-0 shadow-sm mb-3">
+              <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <span><i class="fa fa-list"></i> Utilizasaun Fundus</span>
               </div>
               <div class="table-responsive">
                 <table class="table table-sm mb-0">
                   <thead class="thead-light">
-                    <tr><th>Tipu Apoio</th><th>Tinan</th><th>Montante</th></tr>
+                    <tr><th>Item</th><th>Amount ($)</th><th>Deskrisaun</th><th>Aksaun</th></tr>
                   </thead>
                   <tbody>
-                    {% for a in atividades %}
+                    {% for fu in business.impact_monitorings.all %}
+                      {% for item in fu.fund_usages.all %}
                       <tr>
-                        <td>{{ a.get_tipu_apoio_display }}</td>
-                        <td>{{ a.year }}</td>
-                        <td>${{ a.amount }}</td>
+                        <td>{{ item.item_name }}</td>
+                        <td>${{ item.amount|floatformat:2 }}</td>
+                        <td>{{ item.description|default:"-" }}</td>
+                        <td>
+                          <a href="{% url 'cliente-fundusage-edit' item.id %}" class="btn btn-sm btn-warning">Edita</a>
+                          <a href="{% url 'cliente-fundusage-delete' item.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Hamoos dadus ne\'e?')">Hamoos</a>
+                        </td>
                       </tr>
+                      {% empty %}
+                      <tr><td colspan="4" class="text-muted text-center">La iha dadus</td></tr>
+                      {% endfor %}
                     {% empty %}
-                      <tr><td colspan="3" class="text-muted text-center p-3">La iha atividade</td></tr>
+                    <tr><td colspan="4" class="text-muted text-center">La iha dadus</td></tr>
                     {% endfor %}
                   </tbody>
                 </table>
               </div>
             </div>
+
+            <!-- 2.2 BUSINESS ASSET -->
+            <div class="card border-0 shadow-sm mb-3">
+              <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <span><i class="fa fa-cubes"></i> Assets</span>
+                <a href="{% url 'cliente-asset-add' business.id %}" class="btn btn-sm btn-success">
+                  <i class="fa fa-plus"></i> Adiciona
+                </a>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                  <thead class="thead-light">
+                    <tr><th>Naran Asset</th><th>Quantidade</th><th>Valor ($)</th><th>Kondisaun</th><th>Aksaun</th></tr>
+                  </thead>
+                  <tbody>
+                    {% for fu in business.impact_monitorings.all %}
+                      {% for item in fu.assets.all %}
+                      <tr>
+                        <td>{{ item.asset_name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ item.value|floatformat:2 }}</td>
+                        <td>{{ item.condition }}</td>
+                        <td>
+                          <a href="{% url 'cliente-asset-edit' item.id %}" class="btn btn-sm btn-warning">Edita</a>
+                          <a href="{% url 'cliente-asset-delete' item.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Hamoos dadus ne\'e?')">Hamoos</a>
+                        </td>
+                      </tr>
+                      {% empty %}
+                      <tr><td colspan="5" class="text-muted text-center">La iha dadus</td></tr>
+                      {% endfor %}
+                    {% empty %}
+                    <tr><td colspan="5" class="text-muted text-center">La iha dadus</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- 2.3 CASH FLOW (Fluxu Osan) -->
+            <div class="card border-0 shadow-sm mb-3">
+              <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <span><i class="fa fa-exchange"></i> Fluxu Osan</span>
+              {% with monitoring=business.impact_monitorings.first %}
+                  {% if monitoring and monitoring.fund_balance > 0 %}
+                      <a href="{% url 'cliente-cashflow-add' business.id %}"
+                         class="btn btn-sm btn-success">
+                          <i class="fa fa-plus"></i> Adiciona
+                      </a>
+                  {% else %}
+                      <button class="btn btn-sm btn-secondary" disabled>
+                          <i class="fa fa-lock"></i> Fundus Hotu Ona
+                      </button>
+                  {% endif %}
+              {% endwith %}
+              </div>
+              <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                  <thead class="thead-light">
+                    <tr><th>Data</th><th>Tipu</th><th>Deskrisaun</th><th>Amount ($)</th><th>Aksaun</th></tr>
+                  </thead>
+                  <tbody>
+                    {% for fu in business.impact_monitorings.all %}
+                      {% for item in fu.cashflows.all %}
+                      <tr>
+                        <td>{{ item.transaction_date }}</td>
+                        <td>{% if item.transaction_type == 'IN' %}<span class="text-success">Osan Tama</span>{% else %}<span class="text-danger">Osan Sai</span>{% endif %}</td>
+                        <td>{{ item.description }}</td>
+                        <td>${{ item.amount|floatformat:2 }}</td>
+                        <td>
+                          <a href="{% url 'cliente-cashflow-edit' item.id %}" class="btn btn-sm btn-warning">Edita</a>
+                          <a href="{% url 'cliente-cashflow-delete' item.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Hamoos dadus ne\'e?')">Hamoos</a>
+                        </td>
+                      </tr>
+                      {% empty %}
+                      <tr><td colspan="5" class="text-muted text-center">La iha dadus</td></tr>
+                      {% endfor %}
+                    {% empty %}
+                    <tr><td colspan="5" class="text-muted text-center">La iha dadus</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- 2.4 FINANCIAL BOOK (Livru Kontabilidade) -->
+            <div class="card border-0 shadow-sm mb-3">
+              <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <span><i class="fa fa-book"></i> Livru Kontabilidade</span>
+                <a href="{% url 'cliente-financialbook-add' business.id %}" class="btn btn-sm btn-success">
+                  <i class="fa fa-plus"></i> Adiciona
+                </a>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                  <thead class="thead-light">
+                    <tr><th>Títulu</th><th>Deskrisaun</th><th>File</th><th>Aksaun</th></tr>
+                  </thead>
+                  <tbody>
+                    {% for fu in business.impact_monitorings.all %}
+                      {% for item in fu.financial_books.all %}
+                      <tr>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.description|default:"-" }}</td>
+                        <td>
+                          {% if item.file %}
+                            <a href="{{ item.file.url }}" target="_blank" class="btn btn-sm btn-primary">Haree</a>
+                          {% else %}
+                            <span class="text-muted">La iha file</span>
+                          {% endif %}
+                        </td>
+                        <td>
+                          <a href="{% url 'cliente-financialbook-delete' item.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Hamoos dadus ne\'e?')">Hamoos</a>
+                        </td>
+                      </tr>
+                      {% empty %}
+                      <tr><td colspan="4" class="text-muted text-center">La iha dadus</td></tr>
+                      {% endfor %}
+                    {% empty %}
+                    <tr><td colspan="4" class="text-muted text-center">La iha dadus</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
         </div>
-        {% else %}
-          <div class="alert alert-info">
-            <i class="fa fa-info-circle"></i> La iha dadus MPMS registadu.
-          </div>
-        {% endif %}
+        {% empty %}
+        <div class="alert alert-warning">
+          <i class="fa fa-warning"></i> La iha negosiu registadu. Kontaktu Staff KNI atu rejistu negosiu.
+        </div>
+        {% endfor %}
+
       </div>
 
-      <!-- ── TAB PEDIDU ──────────────────────────────── -->
-      <div class="tab-pane fade"
-           id="tab-pedidu"
-           role="tabpanel"
-           aria-labelledby="tab-pedidu-btn">
+      <!-- TAB PEDIDU (sama seperti sebelumnya) -->
+      <div class="tab-pane fade" id="tab-pedidu" role="tabpanel">
         <div class="card border-0 shadow-sm">
           <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
             <span><i class="fa fa-envelope"></i> Pedidu / Keluhan</span>
@@ -416,25 +489,25 @@
               </thead>
               <tbody>
                 {% for pd in pedidus %}
-                  <tr>
-                    <td>{{ pd.get_tipo_display }}</td>
-                    <td>{{ pd.assuntu }}</td>
-                    <td>
-                      <span class="badge badge-{% if pd.status == 'resolvidu' %}success{% elif pd.status == 'prosesu' %}warning{% elif pd.status == 'rejeita' %}danger{% else %}secondary{% endif %}">
-                        {{ pd.get_status_display }}
-                      </span>
-                    </td>
-                    <td>
-                      {% if pd.resposta %}
-                        <span class="text-success"><i class="fa fa-check"></i> Iha</span>
-                      {% else %}
-                        <span class="text-muted">—</span>
-                      {% endif %}
-                    </td>
-                    <td>{{ pd.created_at|date:"d/m/Y" }}</td>
-                  </tr>
+                <tr>
+                  <td>{{ pd.get_tipo_display }}</td>
+                  <td>{{ pd.assuntu }}</td>
+                  <td>
+                    <span class="badge badge-{% if pd.status == 'resolvidu' %}success{% elif pd.status == 'prosesu' %}warning{% elif pd.status == 'rejeita' %}danger{% else %}secondary{% endif %}">
+                      {{ pd.get_status_display }}
+                    </span>
+                  </td>
+                  <td>
+                    {% if pd.resposta %}
+                      <span class="text-success"><i class="fa fa-check"></i> Iha</span>
+                    {% else %}
+                      <span class="text-muted">—</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ pd.created_at|date:"d/m/Y" }}</td>
+                </tr>
                 {% empty %}
-                  <tr><td colspan="5" class="text-muted text-center p-3">La iha pedidu</td></tr>
+                <tr><td colspan="5" class="text-muted text-center p-3">La iha pedidu</td></tr>
                 {% endfor %}
               </tbody>
             </table>

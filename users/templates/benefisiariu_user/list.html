@@ -1,0 +1,73 @@
+{% extends "main/layout.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<section class="content mb-5">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-sm-12">
+        <div class="card border-0 rounded-4 p-4">
+          <table class="table table-bordered table-hover table-striped table-sm" width="100%" id="example1">
+          <thead>
+            <tr>
+                <th>#</th>
+                <th>Benefisiariu</th>
+                <th>Username(Grupu)</th>
+                <th>Email</th>
+                <th>Asaun</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in data %}
+            <tr>
+
+                <td class="text-center">
+                    {{ forloop.counter }}
+                </td>
+
+                <td>
+                    {{ item.benefisiariu.name }}
+                </td>
+
+                <td>
+                    {{ item.user.username }} ({{item.user.groups.first}})
+                </td>
+
+                <td>
+                    {{ item.user.email }}
+                </td>
+
+                <td class="text-center">
+
+                    <a href="{% url 'benefisiariu-user-edit' item.id %}"
+                       class="btn btn-info btn-sm">
+                        <i class="fa fa-edit"></i>
+                    </a>
+
+                    <a href="{% url 'benefisiariu-user-delete' item.id %}"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Ita hakarak hamoos dadus ida ne'e?')">
+                        <i class="fa fa-trash"></i>
+                    </a>
+
+                </td>
+
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">
+                    Laiha Dadus
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+{% block scripts %}
+{% endblock scripts %}

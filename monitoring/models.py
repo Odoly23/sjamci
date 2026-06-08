@@ -112,6 +112,13 @@ class CashFlow(BaseModel):
         ('IN', 'Osan Tama'),
         ('OUT', 'Osan Sai'),
     )
+    QUARTER_CHOICES = (
+        ('Q1', 'Q1 (Janeiru - Marsu)'),
+        ('Q2', 'Q2 (Abril - Juñu)'),
+        ('Q3', 'Q3 (Jullu - Setembru)'),
+        ('Q4', 'Q4 (Outubru - Dezembru)'),
+    )
+    quarter = models.CharField(max_length=2,   choices=QUARTER_CHOICES,   verbose_name="Trimestre", null=True, blank=True)
     monitoring = models.ForeignKey(BusinessImpactMonitoring, on_delete=models.CASCADE, related_name='cashflows', verbose_name="Monitorizasaun")
     transaction_date = models.DateField(verbose_name="Data Transasaun")
     transaction_type = models.CharField(max_length=10, choices=TYPE_CHOICES, verbose_name="Tipu Transasaun")

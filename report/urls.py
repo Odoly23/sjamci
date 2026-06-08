@@ -24,4 +24,9 @@ urlpatterns = [
     path('Sumario-Tabela-dnim/', views.tab_dnim, name='tab_dnim'),
     path('DNIM/manufatura/detail/', views.manufatura_detail_dnim, name='manufatura_detail_dnim'),
 
+
+
+    #filter Kreditu Suave
+    path('ks/list/<str:filter_type>/',  views.ks_benef_list,     name='ks-benef-list'),
+
 ]

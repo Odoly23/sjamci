@@ -1,0 +1,236 @@
+{% extends "main/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h5 class="mb-0 fw-bold">{{ legend }}</h5>
+      <small class="text-muted">Hili filter → preview rekord → download Excel ka PDF</small>
+    </div>
+  </div>
+  <div class="row g-3">
+    <div class="col-md-4 col-lg-3">
+      <div class="card shadow-sm">
+        <div class="card-header py-2 d-flex align-items-center gap-2"
+             style="background:#1A5276;color:#fff;">
+          <i class="fa fa-filter"></i>
+          <span class="fw-semibold">Filter Dadus</span>
+        </div>
+        <div class="card-body">
+          <form method="GET" id="filterForm">
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Munisipiu</label>
+              <select name="mun" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                {% for m in mun_list %}
+                  <option value="{{ m.name }}"
+                    {% if sel_mun == m.name %}selected{% endif %}>
+                    {{ m.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Tinan Programa</label>
+              <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                {% for y in year_list %}
+                  <option value="{{ y.year }}"
+                    {% if sel_year == y.year|stringformat:"s" %}selected{% endif %}>
+                    {{ y.year }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Setor Prinsipal</label>
+              <select name="sector" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                {% for s in sector_list %}
+                  <option value="{{ s.name }}"
+                    {% if sel_sector == s.name %}selected{% endif %}>
+                    {{ s.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Jeneru</label>
+              <select name="sexo" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                <option value="Mane" {% if sel_sexo == 'Mane' %}selected{% endif %}>Mane</option>
+                <option value="Feto" {% if sel_sexo == 'Feto' %}selected{% endif %}>Feto</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Status Atividade</label>
+              <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                <option value="Ativu"   {% if sel_status == 'Ativu' %}selected{% endif %}>Ativu</option>
+                <option value="Parado"  {% if sel_status == 'Parado' %}selected{% endif %}>Parado</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Status Pagamentu Kreditu</label>
+              <select name="repayment" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                {% for val, label in repayment_choices %}
+                  <option value="{{ val }}"
+                    {% if sel_repayment == val %}selected{% endif %}>
+                    {{ label }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-sm flex-grow-1 text-white"
+                      style="background:#1A5276;">
+                <i class="fa fa-search me-1"></i>Aplika
+              </button>
+              <a href="{% url 'export-ks' %}"
+                 class="btn btn-sm btn-outline-secondary" title="Reset">
+                <i class="fa fa-rotate-left"></i>
+              </a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8 col-lg-9">
+      <div class="card shadow-sm mb-3">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center gap-4">
+            <div class="text-center">
+              <div class="fs-1 fw-bold lh-1" style="color:#1A5276;">{{ total }}</div>
+              <small class="text-muted">Benefisiariu</small>
+            </div>
+            <div class="vr"></div>
+            <div>
+              <div class="fw-semibold">Rekord hetan ho filter:</div>
+              <small class="text-muted">{{ label }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% if total == 0 %}
+        <div class="alert alert-warning d-flex align-items-center gap-2 py-2">
+          <i class="fa fa-triangle-exclamation fa-lg"></i>
+          <span>Dadus la hetan. Muda filter atu hetan rekord.</span>
+        </div>
+      {% else %}
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+              <div class="card-header text-white py-2 d-flex align-items-center gap-2"
+                   style="background:#1A5276;">
+                <i class="fa fa-file-excel fa-lg"></i>
+                <span class="fw-semibold">Microsoft Excel (.xlsx)</span>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <p class="small text-muted mb-2">
+                  <strong>4 sheets</strong> dalam satu file:
+                </p>
+                <ul class="small text-muted mb-3 ps-3">
+                  <li><strong>Sheet 1 – Dados Kredit Suave</strong><br>
+                    Xefi Ekipa, Tekniko, Naran Emprezariu, Jeneru,
+                    Nivel Edukasaun, Atividade, Setor, Kategoria,
+                    Status, Lokalizasaun, Fundo Aprovadu,
+                    Trabalhador, Amount Kreditu, Pagamentu, Obs
+                  </li>
+                  <li class="mt-1"><strong>Sheet 2 – Informasaun FGKS</strong><br>
+                    Format kolom sesuai file FGKS: Amount Approved,
+                    Collateral, Annual Revenue, Total Assets,
+                    Business Size, Bookeeping, dll
+                  </li>
+                  <li class="mt-1"><strong>Sheet 3 – Avaliasaun Merkadu</strong><br>
+                    Estratejia promosaun, difikuldade, dezafio,
+                    kliente prinsipal, kompetitor
+                  </li>
+                  <li class="mt-1"><strong>Sheet 4 – Avaliasaun Finanseiru</strong><br>
+                    Rendimentu fulan/tinan, assets, taxa,
+                    info kredit lengkap, rekomendasaun
+                  </li>
+                </ul>
+                <a href="{% url 'export-excel-ks' %}?{{ params }}"
+                   class="btn btn-sm text-white w-100 mt-auto"
+                   style="background:#1A5276;">
+                  <i class="fa fa-download me-1"></i>Download Excel ({{ total }} rekord)
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-danger text-white py-2 d-flex align-items-center gap-2">
+                <i class="fa fa-file-pdf fa-lg"></i>
+                <span class="fw-semibold">PDF Landscape A3</span>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <p class="small text-muted mb-2">
+                  <strong>1 halaman ringkas</strong>, siap cetak:
+                </p>
+                <ul class="small text-muted mb-3 ps-3">
+                  <li>No, Naran Emprezariu, Jeneru</li>
+                  <li>Naran Empreza, Setor, Atividade</li>
+                  <li>Mane / Feto / Total Trabalhador</li>
+                  <li>Municipio, Posto Administrativo</li>
+                  <li>Tinan, Status, Fundo Aprovadu ($)</li>
+                  <li>Status Pagamentu Kreditu</li>
+                  <li>Footer: Total rekord, Trabalhador, Fundo</li>
+                </ul>
+                <a href="{% url 'export-pdf-ks' %}?{{ params }}"
+                   class="btn btn-danger btn-sm w-100 mt-auto">
+                  <i class="fa fa-download me-1"></i>Download PDF ({{ total }} rekord)
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      <div class="card shadow-sm mb-2">
+        <div class="card-header py-2 bg-light d-flex align-items-center gap-2">
+          <i class="fa fa-table" style="color:#1A5276;"></i>
+          <span class="fw-semibold small">Sheet 1 – Dados Kredit Suave (kolom)</span>
+        </div>
+        <div class="card-body py-2">
+          <div class="row g-1">
+            {% for col in excel_cols_sheet1 %}
+              <div class="col-6 col-md-4 col-lg-3">
+                <span class="badge bg-light text-dark border small w-100 text-start py-1 px-2">
+                  {{ forloop.counter }}. {{ col }}
+                </span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="card shadow-sm">
+        <div class="card-header py-2 bg-light d-flex align-items-center gap-2">
+          <i class="fa fa-table" style="color:#1F3864;"></i>
+          <span class="fw-semibold small">Sheet 2 – Informasaun FGKS (kolom)</span>
+        </div>
+        <div class="card-body py-2">
+          <div class="row g-1">
+            {% for col in excel_cols_sheet2 %}
+              <div class="col-6 col-md-4 col-lg-3">
+                <span class="badge bg-light text-dark border small w-100 text-start py-1 px-2">
+                  {{ forloop.counter }}. {{ col }}
+                </span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

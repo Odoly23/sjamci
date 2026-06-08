@@ -1,0 +1,31 @@
+{% extends "main/layout.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<section class="content mb-5">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-sm-12">
+        <div class="card border-0 rounded-4 p-4">
+         {% csrf_token %}
+          {% crispy form %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+// Menyesuaikan target selector karena tag form sekarang dibuat oleh Crispy
+document.addEventListener("submit", function(e) {
+    const btn = e.target.querySelector('button[type="submit"]');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = "Prosesu dadus...";
+    }
+});
+</script>
+{% endblock scripts %}

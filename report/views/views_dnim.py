@@ -36,7 +36,7 @@ def tab_dnim(request):
                     lokalidade__municipality=m,
                     atividades__industry_type=tipu
                 ).distinct().count()
-            else:  # Jika tipu adalah string (fallback)
+            else:  
                 jumlah = 0
             
             total_all += jumlah
@@ -52,37 +52,24 @@ def tab_dnim(request):
                 'total': total_all
             })
     
-    # ========== TABEL 2: Rekapitulasi per Tahun & Tipu Apoio ==========
     years = Year.objects.all().order_by('-year')
     paginator = Paginator(years, 10)
     page = request.GET.get('page', 1)
     years_page = paginator.get_page(page)
-    
-    # Ambil semua Tipu Apoio dari model Tipu_Apoio
-    tipu_apoio_list = Tipu_Apoio.objects.filter(
-        aktividade__isnull=False
-    ).distinct().order_by('name')
-    
-    # Fallback jika tidak ada data
+    tipu_apoio_list = Tipu_Apoio.objects.filter(aktividade__isnull=False).distinct().order_by('name')
     if not tipu_apoio_list:
         tipu_apoio_list = [
             'Subvensões', 'Formasaun', 'Kopersaun', 'Subvensões Públicas', 'KNI'
         ]
-    
     objects2 = []
     for y in years_page:
         row_data = []
-        total_all = 0
-        
+        total_all = 0        
         for apoio in tipu_apoio_list:
-            if hasattr(apoio, 'id'):  # Jika apoio adalah object Tipu_Apoio
-                total_amount = Aktividade.objects.filter(
-                    year=y,
-                    support_type=apoio
-                ).aggregate(total=Sum('amount'))['total'] or 0
-            else:  # Fallback string
+            if hasattr(apoio, 'id'): 
+                total_amount = Aktividade.objects.filter(year=y, support_type=apoio).aggregate(total=Sum('amount'))['total'] or 0
+            else:
                 total_amount = 0
-            
             total_all += total_amount
             row_data.append({
                 'apoio': apoio.name if hasattr(apoio, 'name') else apoio,
@@ -100,19 +87,16 @@ def tab_dnim(request):
         'title': 'Painel Tabel DNIM - Manufatureira',
         'legend': 'PAINEL REKAPITULASAUN MANUFATUREIRA',
         
-        # KPI
         'total_grupu': total_grupu,
         'total_mane': total_mane,
         'total_feto': total_feto,
         'total_ativo': total_ativo,
         'total_parado': total_parado,
         
-        # Tabel per Municipiu
         'municipios': municipios,
         'tipu_industria_list': tipu_industria_list,
         'objects1': objects1,
         
-        # Tabel per Tahun
         'tipu_apoio_list': tipu_apoio_list,
         'objects2': objects2,
         'years_page': years_page,

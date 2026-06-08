@@ -1,0 +1,169 @@
+{% extends "main/layout.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<section class="content mb-5">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-sm-12">
+        <div class="card border-0 rounded-4 p-4">
+          <form method="POST" id="impact-monitoring-form" onsubmit="disableSubmitButton()">
+            {% csrf_token %}
+            {% crispy form %}
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+// Disable submit button to prevent double submission
+function disableSubmitButton() {
+    const form = document.getElementById('impact-monitoring-form');
+    const btn = form.querySelector('button[type="submit"]');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = "Prosesu dadus...";
+    }
+}
+
+// Dynamic hide/show and auto-calculate functions
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Get all fields
+    const hasIncomeCheckbox = document.querySelector('input[name="has_income"]');
+    const paidTaxCheckbox = document.querySelector('input[name="paid_tax"]');
+    const planCreditCheckbox = document.querySelector('input[name="plan_credit"]');
+    const planNewBusinessCheckbox = document.querySelector('input[name="plan_new_business"]');
+    
+    const monthlyIncomeField = document.querySelector('.income-field');
+    const monthlyExpenseField = document.querySelector('.expense-field');
+    const taxAmountField = document.querySelector('.tax-field');
+    const creditSourceField = document.querySelector('.credit-field');
+    const newBusinessIdeaField = document.querySelector('.newbusiness-field');
+    
+    const fundReceived = document.querySelector('input[name="fund_received"]');
+    const fundUsed = document.querySelector('input[name="fund_used"]');
+    const monthlyIncome = document.querySelector('input[name="monthly_income"]');
+    const monthlyExpense = document.querySelector('input[name="monthly_expense"]');
+    
+    const balanceDisplay = document.getElementById('balance-display');
+    const profitDisplay = document.getElementById('profit-display');
+    
+    // Function to show/hide conditional fields
+    function toggleConditionalFields() {
+        // Has Income: show/hide monthly_income and monthly_expense
+        if (hasIncomeCheckbox && hasIncomeCheckbox.checked) {
+            if (monthlyIncomeField) monthlyIncomeField.classList.remove('hidden');
+            if (monthlyExpenseField) monthlyExpenseField.classList.remove('hidden');
+            // Make fields required
+            if (monthlyIncome) monthlyIncome.required = true;
+            if (monthlyExpense) monthlyExpense.required = true;
+        } else {
+            if (monthlyIncomeField) monthlyIncomeField.classList.add('hidden');
+            if (monthlyExpenseField) monthlyExpenseField.classList.add('hidden');
+            if (monthlyIncome) monthlyIncome.required = false;
+            if (monthlyExpense) monthlyExpense.required = false;
+        }
+        
+        // Paid Tax: show/hide tax_amount
+        if (paidTaxCheckbox && paidTaxCheckbox.checked) {
+            if (taxAmountField) taxAmountField.classList.remove('hidden');
+        } else {
+            if (taxAmountField) taxAmountField.classList.add('hidden');
+        }
+        
+        // Plan Credit: show/hide credit_source
+        if (planCreditCheckbox && planCreditCheckbox.checked) {
+            if (creditSourceField) creditSourceField.classList.remove('hidden');
+        } else {
+            if (creditSourceField) creditSourceField.classList.add('hidden');
+        }
+        
+        // Plan New Business: show/hide new_business_idea
+        if (planNewBusinessCheckbox && planNewBusinessCheckbox.checked) {
+            if (newBusinessIdeaField) newBusinessIdeaField.classList.remove('hidden');
+        } else {
+            if (newBusinessIdeaField) newBusinessIdeaField.classList.add('hidden');
+        }
+    }
+    
+    // Function to calculate balance (fund_received - fund_used)
+    function calculateBalance() {
+        const received = parseFloat(fundReceived ? fundReceived.value : 0) || 0;
+        const used = parseFloat(fundUsed ? fundUsed.value : 0) || 0;
+        const balance = received - used;
+        if (balanceDisplay) {
+            balanceDisplay.textContent = balance.toFixed(2);
+        }
+    }
+    
+    // Function to calculate profit (monthly_income - monthly_expense)
+    function calculateProfit() {
+        const income = parseFloat(monthlyIncome ? monthlyIncome.value : 0) || 0;
+        const expense = parseFloat(monthlyExpense ? monthlyExpense.value : 0) || 0;
+        const profit = income - expense;
+        if (profitDisplay) {
+            profitDisplay.textContent = profit.toFixed(2);
+            // Change color based on profit
+            if (profit >= 0) {
+                profitDisplay.style.color = 'green';
+            } else {
+                profitDisplay.style.color = 'red';
+            }
+        }
+    }
+    
+    // Add event listeners
+    if (hasIncomeCheckbox) {
+        hasIncomeCheckbox.addEventListener('change', toggleConditionalFields);
+    }
+    if (paidTaxCheckbox) {
+        paidTaxCheckbox.addEventListener('change', toggleConditionalFields);
+    }
+    if (planCreditCheckbox) {
+        planCreditCheckbox.addEventListener('change', toggleConditionalFields);
+    }
+    if (planNewBusinessCheckbox) {
+        planNewBusinessCheckbox.addEventListener('change', toggleConditionalFields);
+    }
+    
+    if (fundReceived) {
+        fundReceived.addEventListener('input', calculateBalance);
+    }
+    if (fundUsed) {
+        fundUsed.addEventListener('input', calculateBalance);
+    }
+    if (monthlyIncome) {
+        monthlyIncome.addEventListener('input', calculateProfit);
+    }
+    if (monthlyExpense) {
+        monthlyExpense.addEventListener('input', calculateProfit);
+    }
+    
+    // Initialize: hide conditional fields based on current checkbox states
+    toggleConditionalFields();
+    
+    // Initialize calculations
+    calculateBalance();
+    calculateProfit();
+});
+</script>
+
+<style>
+    .conditional-field {
+        transition: all 0.3s ease;
+    }
+    .conditional-field.hidden {
+        display: none;
+    }
+    #balance-display, #profit-display {
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+</style>
+{% endblock scripts %}

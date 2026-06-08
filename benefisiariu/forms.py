@@ -1,7 +1,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, HTML, Field
-from benefisiariu.models import Benefisiariu, AddressTL, Photo, AddressOrigin, BeneficiariuEvaluation
+from benefisiariu.models import Benefisiariu, AddressTL, Photo, AddressOrigin, BeneficiariuEvaluation, BenefisiariuUser
 from custom.models import Municipality, AdministrativePost, Village
 from django_summernote.widgets import SummernoteWidget
 
@@ -182,3 +182,35 @@ class PhotoUploadForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
+
+class BenefisiariuUserForm(forms.ModelForm):
+    class Meta:
+        model = BenefisiariuUser
+        fields = ['benefisiariu', 'user']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            HTML("""
+                <div class="alert alert-info">
+                    Fo hatene katak kampu ho simbolu Asterik <strong>(*)</strong> obrigatóriu tenki prienxe!
+                </div>
+            """),
+            Row(
+                Column('benefisiariu', css_class='col-md-6'),
+                Column('user', css_class='col-md-6'),
+                css_class="form-row"
+            ),
+            HTML("""
+                <div class="mt-4 d-flex" style="gap: 0.5rem;">
+                    <button class="btn btn-sm btn-success" type="submit">
+                        <i class="fa fa-save"></i> Save
+                    </button>
+                    <button class="btn btn-sm btn-secondary" type="button" onclick="history.back()">
+                        <i class="fa fa-times"></i> Cancel
+                    </button>
+                </div>
+            """)
+        )

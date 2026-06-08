@@ -64,11 +64,7 @@
   <tr class="bg-light">
     <th colspan="2">
       ENDERESU ORIGEN
-      {% if group == "KNI" %}
-        <a href="{% url 'kni-addori-update' benef.hashed %}"><i class="fa fa-edit"></i></a>
-      {% elif group == 'KS' %}
-        <a href="{% url 'kni-addori-update' benef.hashed %}"><i class="fa fa-edit"></i></a>
-      {% endif %}
+        <a href="{% url 'ks-addori-update' benef.hashed %}"><i class="fa fa-edit"></i></a>
     </th>
   </tr>
   {% if addori %}

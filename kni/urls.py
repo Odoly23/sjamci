@@ -51,4 +51,24 @@ urlpatterns = [
     # LIST BASELINE
     path('Lista-Baseline/', views.baseline_list, name='baseline-list'),
     path('Lista-Monitoring/', views.monitoring_list, name='monitoring-list'),
+
+
+
+    path("export/",       views.export_page_kni,  name="export-kni"),
+    path("export/excel/", views.export_excel_kni, name="export-excel-kni"),
+    path("export/pdf/",   views.export_pdf_kni,   name="export-pdf-kni"),
+
+    #pedido
+    path('pedidu/', views.pedidu_list, name='pedidu-list'),
+    path('pedidu/<str:hashed>/', views.pedidu_detail, name='pedidu-detail'),
+    path('pedidu/<int:pk>/update/', views.pedidu_update_status, name='pedidu-update'),
+
+
+    #cash_Flow
+    path('cashflow/', views.cashflow_list, name='cashflow-list'),
+    path('cashflow/<int:pk>/', views.cashflow_detail, name='cashflow-detail'),
+
+    # finansial Book
+    path('financial-book/', views.financial_book_list, name='financial-book-list'),
+    path('financial-book/<int:pk>/', views.financial_book_detail, name='financial-book-detail'),
 ]

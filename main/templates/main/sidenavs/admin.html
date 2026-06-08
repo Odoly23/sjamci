@@ -1,16 +1,11 @@
 <div class="main-menu">
-
     <h5 class="sidenav-heading">Main</h5>
-
     <ul class="side-menu list-unstyled">
-
-        <!-- DASHBOARD -->
         <li>
             <a href="{% url 'home' %}">
                 <i class="icon-home"></i> Dashboard
             </a>
         </li>
-        <!-- PROGRAMA -->
         <li>
             <a href="#programaMenu"
                data-toggle="collapse"
@@ -28,7 +23,8 @@
                 <li><a href="{% url 'dash-ks' %}">Kreditu Suave</a></li>
 
                 <li><a href="{% url 'dash-man' %}">Manufatura</a></li>
-
+                
+                <li><a href="{% url 'dash-mpms' %}">MPMS</a></li>
             </ul>
         </li>
         <li>
@@ -76,13 +72,7 @@
         <li>
             <a href="{% url 'UserProfile' %}">
                 <i class="icon-user"></i>
-                Perfil
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <i class="icon-settings"></i>
-                Konta
+                konta
             </a>
         </li>
         <li>

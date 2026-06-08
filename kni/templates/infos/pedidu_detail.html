@@ -1,0 +1,39 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid mt-3">
+  <div class="card">
+      <div class="row">
+    <div class="col-sm-12">
+      <div class="card shadow-lg pt-1 border-primary rounded">
+
+        <!-- HEADER -->
+        <div class="card-header bg-steel d-flex justify-content-between align-items-center">
+          <span>{{ legend|upper}}</span>
+        </div>
+          <div class="card-body">
+            <p><b>Benefisiariu:</b> {{ pedidu.benefisiariu }}</p>
+            <p><b>Tipo:</b> {{ pedidu.tipo }}</p>
+            <p><b>Assuntu:</b> {{ pedidu.assuntu }}</p>
+            <p><b>Deskrisaun:</b> {{ pedidu.deskrisaun }}</p>
+
+            <p>
+              <b>Status:</b>
+              <span class="badge badge-success">{{ pedidu.status }}</span>
+            </p>
+
+            <p><b>Resposta:</b> {{ pedidu.resposta|default:"Belum ada resposta" }}</p>
+
+            <p><b>Resolvidu By:</b> {{ pedidu.resolvidu_by }}</p>
+
+            <a href="{% url 'pedidu-list' %}" class="btn btn-secondary btn-sm">Back</a>
+
+          </div>
+  </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

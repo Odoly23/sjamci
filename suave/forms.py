@@ -24,12 +24,15 @@ _ALERT = """
 """
 
 class BusinessKSForm(forms.ModelForm):
+    name = label='Naran Empreza2'
     class Meta:
         model  = Business
         fields = ['name', 'idea', 'sector', 'category','size']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['name'].label = 'Naran Empreza'
+        self.fields['idea'].label = 'Atividade Negosiu'
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.layout = Layout(

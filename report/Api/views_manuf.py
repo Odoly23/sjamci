@@ -76,9 +76,7 @@ class APIDistribusiTipuIndustria(APIView):
 
         # Jika tidak ada data dari Aktividade, fallback ke Manufatur
         if not labels:
-            results2 = Manufatur.objects.values('tipu_industria').annotate(
-                total=Count('id')
-            ).order_by('-total')
+            results2 = Manufatur.objects.prefetch_related('atividades__industry_type').annotate(total=Count('id')).order_by('-total')
             for item in results2:
                 if item['tipu_industria']:
                     labels.append(item['tipu_industria'])

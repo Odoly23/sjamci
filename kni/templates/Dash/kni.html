@@ -33,6 +33,10 @@
                 SUMARIO
                 <i class="fa fa-table"></i>
               </a>
+              <a href="{% url 'export-kni' %}?{{ request.GET.urlencode }}" 
+                 class="btn btn-sm btn-info mb-2 ml-2">
+                <i class="fa fa-download me-1"></i> Export
+              </a>
             </div>
             <hr/>
           </div>

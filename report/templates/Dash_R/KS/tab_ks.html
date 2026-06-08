@@ -9,46 +9,49 @@
         <div class="card border-0">
 
           <div class="row mb-4">
-            {% comment %} TOTAL POPULATION SUMMARY {% endcomment %}
-
             <div class="col-md-4 mb-5 text-center">
               <span class="text-muted">Total Benefisiariu</span>
-              <h3><a href="">{{ totalp }}</a></h3>
+              <h3><a href="{% url 'ks-benef-list' 'all' %}">{{ totalp }}</a></h3>
             </div>
-
             <div class="col-md-4 mb-5 text-center">
               <span class="text-muted">Total Mane</span>
-              <h3><a href="">{{ totm }}</a></h3>
+              <h3><a href="{% url 'ks-benef-list' 'male' %}?sex=Mane">{{ totm }}</a></h3>
             </div>
-
             <div class="col-md-4 mb-5 text-center">
               <span class="text-muted">Total Feto</span>
-              <h3><a href="">{{ totf }}</a></h3>
+              <h3><a href="{% url 'ks-benef-list' 'male' %}?sex=Feto">{{ totf }}</a></h3>
             </div>
-
             <div class="col-md-4 mb-5 text-center">
               <span class="text-muted">Total Xefe Grupu</span>
               <h3><a href="">{{ totek }}</a></h3>
             </div>
-
             <div class="col-md-4 mb-5 text-center">
               <span class="text-muted">Total Tekniko</span>
               <h3><a href="">{{ tottk }}</a></h3>
             </div>
-
             <div class="col-md-4 mb-5 text-center">
               <span class="text-muted">Total Membro</span>
               <h3><a href="">{{ totmk }}</a></h3>
             </div>
-
-            <div class="col-md-6 mb-5 text-center">
+            <div class="col-md-4 mb-5 text-center">
               <span class="text-muted">Total ATIVU</span>
-              <h3><a href="">{{ totativu }}</a></h3>
+              <h3><a href="{% url 'ks-benef-list' 'active' %}?status=Ativu">{{ totativu }}</a></h3>
             </div>
-
-            <div class="col-md-6 mb-5 text-center">
+            <div class="col-md-4 mb-5 text-center">
               <span class="text-muted">Total PARADO</span>
-              <h3><a href="">{{ totparado }}</a></h3>
+              <h3><a href="{% url 'ks-benef-list' 'active' %}?status=totparado">{{ totparado }}</a></h3>
+            </div>
+            <div class="col-md-4 mb-5 text-center">
+              <span class="text-muted">Total Montante Kreditu ($)</span>
+              <h3><a href="">{{ tot_amount }}</a></h3>
+            </div>
+            <div class="col-md-6 mb-5 text-center">
+              <span class="text-muted">Total Iha Problema Pagamentu</span>
+              <h3><a href="">{{ tot_problem }}</a></h3>
+            </div>
+            <div class="col-md-6 mb-5 text-center">
+              <span class="text-muted">Total Programa Kontinua</span>
+              <h3><a href="">{{ tot_cont }}</a></h3>
             </div>
           </div>
 
@@ -58,12 +61,8 @@
             <div class="col-md-6">
               <div class="card">
                 <div class="card-header">
-                  <h2 class="card-title">
-                    <i class="fa fa-table"></i>
-                    Total Dados Benefisiariu Baseadu Munisipiu
-                  </h2>
+                  <h2 class="card-title"><i class="fa fa-table"></i> Total Dados Benefisiariu Baseadu Munisipiu</h2>
                 </div>
-
                 <div class="card-body">
                   <div class="table-responsive">
                     <table class="table table-sm table-bordered" width="100%">
@@ -78,14 +77,13 @@
                           <th>Feto</th>
                         </tr>
                       </thead>
-
                       <tbody>
                         {% for obj in objects1 %}
                         <tr>
                           <td>{{ obj.0.name }}</td>
-                          <td><a href="" class="text-center">{{ obj.1 }}</a></td>
-                          <td><a href="" class="text-center">{{ obj.2 }}</a></td>
-                          <td><a href="" class="text-center">{{ obj.3 }}</a></td>
+                          <td class="text-center"><a href="{% url 'ks-benef-list' 'municipality' %}?municipality={{ obj.0.name }}&sex=Mane">{{ obj.1 }}</a></td>
+                          <td class="text-center"><a href="{% url 'ks-benef-list' 'municipality' %}?municipality={{ obj.0.name }}&sex=Feto">{{ obj.2 }}</a></td>
+                          <td class="text-center"><a href="{% url 'ks-benef-list' 'municipality' %}?municipality={{ obj.0.name }}">{{ obj.3 }}</a></td>
                         </tr>
                         {% endfor %}
                       </tbody>
@@ -99,130 +97,228 @@
             <div class="col-md-6">
               <div class="card">
                 <div class="card-header">
-                  <h2 class="card-title">
-                    <i class="fa fa-table"></i>
-                    Total Dados Benefisiariu Baseadu Tinan no Sektor
-                  </h2>
+                  <h2 class="card-title"><i class="fa fa-table"></i> Total Dados Benefisiariu Baseadu Tinan no Sektor</h2>
                 </div>
-
                 <div class="card-body">
                   <div class="table-responsive">
                     <table class="table table-sm table-bordered" width="100%">
                       <thead>
                         <tr class="text-center">
                           <th rowspan="2" class="align-middle">Ano</th>
-                          <th colspan="{{ totsec }}">Benefisiariu</th>
+                          <th colspan="{{ totsec }}">Setor</th>
                         </tr>
-
                         <tr class="text-center">
-                          {% for s in sec %}
-                          <th>{{ s.name }}</th>
-                          {% endfor %}
+                          {% for s in sec %}<th>{{ s.name }}</th>{% endfor %}
                         </tr>
                       </thead>
-
                       <tbody>
-                        {% for obj in objects2 %}
-                        <tr>
+                      {% for obj in objects2 %}
+                      <tr>
                           <td>{{ obj.0.year }}</td>
 
                           {% for obj1 in obj.1 %}
-                          <td class="text-center"><a href="">{{ obj1.1 }}</a></td>
+                          <td class="text-center">
+                              <a href="{% url 'ks-benef-list' 'sector-year' %}?year={{ obj.0.year }}&sector={{ obj1.0.name }}">
+                                  {{ obj1.1 }}
+                              </a>
+                          </td>
                           {% endfor %}
-                        </tr>
-                        {% endfor %}
+
+                      </tr>
+                      {% endfor %}
                       </tbody>
                     </table>
                   </div>
                 </div>
-
                 <div class="card-footer">
-                  <div class="mt-3">
-                    <nav>
-                      <ul class="pagination justify-content-center">
-
-                        {% if years_page.has_previous %}
-                        <li class="page-item">
-                          <a class="page-link" href="?page=1">Primeiro</a>
-                        </li>
-
-                        <li class="page-item">
-                          <a class="page-link" href="?page={{ years_page.previous_page_number }}">
-                            &laquo;
-                          </a>
-                        </li>
-                        {% endif %}
-
-                        <li class="page-item active">
-                          <span class="page-link">{{ years_page.number }}</span>
-                        </li>
-
-                        {% if years_page.has_next %}
-                        <li class="page-item">
-                          <a class="page-link" href="?page={{ years_page.next_page_number }}">
-                            &raquo;
-                          </a>
-                        </li>
-
-                        <li class="page-item">
-                          <a class="page-link" href="?page={{ years_page.paginator.num_pages }}">
-                            Ultimu
-                          </a>
-                        </li>
-                        {% endif %}
-
-                      </ul>
-                    </nav>
-                  </div>
+                  <nav>
+                    <ul class="pagination justify-content-center">
+                      {% if years_page.has_previous %}
+                      <li class="page-item"><a class="page-link" href="?page=1">Primeiro</a></li>
+                      <li class="page-item"><a class="page-link" href="?page={{ years_page.previous_page_number }}">&laquo;</a></li>
+                      {% endif %}
+                      <li class="page-item active"><span class="page-link">{{ years_page.number }}</span></li>
+                      {% if years_page.has_next %}
+                      <li class="page-item"><a class="page-link" href="?page={{ years_page.next_page_number }}">&raquo;</a></li>
+                      <li class="page-item"><a class="page-link" href="?page={{ years_page.paginator.num_pages }}">Ultimu</a></li>
+                      {% endif %}
+                    </ul>
+                  </nav>
                 </div>
               </div>
             </div>
 
             <!-- TABLE 3 -->
-            <div class="col-md-6">
+            <div class="col-md-12 mt-3">
               <div class="card">
                 <div class="card-header">
-                  <h2 class="card-title">
-                    <i class="fa fa-table"></i>
-                    Total Dados Benefisiariu Baseadu Munisipiu No Bussines Size
-                  </h2>
+                  <h2 class="card-title"><i class="fa fa-table"></i> Total Dados Benefisiariu Baseadu Munisipiu No Bussines Size</h2>
                 </div>
-
                 <div class="card-body">
                   <div class="table-responsive">
                     <table class="table table-sm table-bordered" width="100%">
                       <thead>
                         <tr class="text-center">
                           <th rowspan="3" class="align-middle">Munisipiu</th>
-                          <th colspan="6">Benefisiariu</th>
+                          <th colspan="{{ tot_size|add:tot_size }}">Benefisiariu</th>
                           <th rowspan="3" class="align-middle">Total</th>
                         </tr>
-
                         <tr>
-                          {% for s in size %}
-                          <th colspan="2" class="text-center">{{ s.name }}</th>
-                          {% endfor %}
+                          {% for s in size %}<th colspan="2" class="text-center">{{ s.name }}</th>{% endfor %}
                         </tr>
-
                         <tr class="text-center">
-                          {% for s in size %}
-                          <th class="text-center">Mane</th>
-                          <th class="text-center">Feto</th>
-                          {% endfor %}
+                          {% for s in size %}<th>Mane</th><th>Feto</th>{% endfor %}
                         </tr>
                       </thead>
-
                       <tbody>
-                        {% for obj in objects3 %}
-                        <tr>
+                      {% for obj in objects3 %}
+                      <tr>
+
                           <td>{{ obj.0.name }}</td>
 
                           {% for obj1 in obj.1 %}
-                          <td><a href="" class="text-center">{{ obj1.1 }}</a></td>
-                          <td><a href="" class="text-center">{{ obj1.2 }}</a></td>
+
+                              <td class="text-center">
+                                  <a href="{% url 'ks-benef-list' 'size' %}?municipality={{ obj.0.name }}&size={{ obj1.0.name }}&sex=Mane">
+                                      {{ obj1.1 }}
+                                  </a>
+                              </td>
+
+                              <td class="text-center">
+                                  <a href="{% url 'ks-benef-list' 'size' %}?municipality={{ obj.0.name }}&size={{ obj1.0.name }}&sex=Feto">
+                                      {{ obj1.2 }}
+                                  </a>
+                              </td>
+
                           {% endfor %}
 
-                          <td><a href="" class="text-center">{{ obj.2 }}</a></td>
+                          <td class="text-center">
+                              <a href="{% url 'ks-benef-list' 'size' %}?municipality={{ obj.0.name }}">
+                                  {{ obj.2 }}
+                              </a>
+                          </td>
+
+                      </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TABLE 4 -->
+            <div class="col-md-6 mt-3">
+              <div class="card">
+                <div class="card-header">
+                  <h2 class="card-title"><i class="fa fa-money"></i> Rekapitulasaun Kreditu per Munisipiu</h2>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered" width="100%">
+                      <thead>
+                        <tr class="text-center">
+                          <th class="align-middle">Munisipiu</th>
+                          <th>Total Benefisiariu</th>
+                          <th>Montante Kreditu ($)</th>
+                          <th>Kolateral ($)</th>
+                        </tr>
+                      </thead>
+                    <tbody>
+                          {% for obj in objects4 %}
+                          <tr>
+
+                              <td>{{ obj.0.name }}</td>
+
+                              <td class="text-center">
+                                  <a href="{% url 'ks-benef-list' 'municipality' %}?municipality={{ obj.0.name }}">
+                                      {{ obj.1 }}
+                                  </a>
+                              </td>
+
+                              <td class="text-center">
+                                  <a href="{% url 'ks-benef-list' 'municipality' %}?municipality={{ obj.0.name }}">
+                                      {{ obj.2 }}
+                                  </a>
+                              </td>
+
+                              <td class="text-center">
+                                  <a href="{% url 'ks-benef-list' 'municipality' %}?municipality={{ obj.0.name }}">
+                                      <strong>{{ obj.3 }}</strong>
+                                  </a>
+                              </td>
+
+                          </tr>
+                          {% endfor %}
+                    </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TABLE 5 -->
+            <div class="col-md-6 mt-3">
+              <div class="card">
+                <div class="card-header">
+                  <h2 class="card-title"><i class="fa fa-credit-card"></i> Situasaun Pagamentu Kreditu per Munisipiu</h2>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered" width="100%">
+                      <thead>
+                        <tr class="text-center">
+                          <th class="align-middle">Munisipiu</th>
+                          <th>Diak</th>
+                          <th>Tarde</th>
+                          <th>Macet</th>
+                          <th>Hotu</th>
+                          <th>Falla</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for obj in objects5 %}
+                        <tr>
+
+                        <td>{{ obj.0.name }}</td>
+
+                        <td class="text-center">
+                        <a href="{% url 'ks-benef-list' 'repayment' %}?municipality={{ obj.0.name }}&repayment_status=OnTime">
+                        {{ obj.1 }}
+                        </a>
+                        </td>
+
+                        <td class="text-center">
+                        <a href="{% url 'ks-benef-list' 'repayment' %}?municipality={{ obj.0.name }}&repayment_status=Late">
+                        {{ obj.2 }}
+                        </a>
+                        </td>
+
+                        <td class="text-center">
+                        <a href="{% url 'ks-benef-list' 'repayment' %}?municipality={{ obj.0.name }}&repayment_status=Stuck">
+                        {{ obj.3 }}
+                        </a>
+                        </td>
+
+                        <td class="text-center">
+                        <a href="{% url 'ks-benef-list' 'repayment' %}?municipality={{ obj.0.name }}&repayment_status=Done">
+                        {{ obj.4 }}
+                        </a>
+                        </td>
+
+                        <td class="text-center">
+                        <a href="{% url 'ks-benef-list' 'repayment' %}?municipality={{ obj.0.name }}&repayment_status=Failed">
+                        {{ obj.5 }}
+                        </a>
+                        </td>
+
+                        <td class="text-center">
+                        <a href="{% url 'ks-benef-list' 'repayment' %}?municipality={{ obj.0.name }}">
+                        <strong>{{ obj.6 }}</strong>
+                        </a>
+                        </td>
+
                         </tr>
                         {% endfor %}
                       </tbody>
@@ -232,7 +328,7 @@
               </div>
             </div>
 
-          </div> <!-- row -->
+          </div>
         </div>
       </div>
     </div>

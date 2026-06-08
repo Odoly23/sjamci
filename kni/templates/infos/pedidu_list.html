@@ -1,0 +1,62 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="card">
+      <div class="row">
+    <div class="col-sm-12">
+      <div class="card shadow-lg pt-1 border-primary rounded">
+
+        <!-- HEADER -->
+        <div class="card-header bg-steel d-flex justify-content-between align-items-center">
+          <span>{{ legend|upper }}</span>
+        </div>
+    <div class="card-body">
+          <!-- FILTER -->
+          <form method="GET" class="form-inline mb-3">
+            <select name="status" class="form-control mr-2">
+              <option value="">Hotu</option>
+              <option value="pending">Pending</option>
+              <option value="prosesu">Prosesu</option>
+              <option value="resolvidu">Resolvidu</option>
+              <option value="rejeita">Rejeita</option>
+            </select>
+            <button class="btn btn-primary btn-sm">Filter</button>
+          </form>
+
+          <table class="table table-bordered table-sm" id="example1">
+            <thead>
+              <tr>
+                <th>Benefisiariu</th>
+                <th>Tipo</th>
+                <th>Assuntu</th>
+                <th>Status</th>
+                <th>Aksaun</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for p in pedidus %}
+              <tr>
+                <td>{{ p.benefisiariu }}</td>
+                <td>{{ p.tipo }}</td>
+                <td>{{ p.assuntu }}</td>
+                <td>
+                  <span class="badge badge-info">{{ p.status }}</span>
+                </td>
+                <td>
+                  <a href="{% url 'pedidu-detail' p.hashed %}" class="btn btn-sm btn-info">Detail</a>
+                  <a href="{% url 'pedidu-update' p.id %}" class="btn btn-sm btn-warning">Update</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    </div>
+  </div>
+      </div>
+  </div>
+</div>
+
+{% endblock %}

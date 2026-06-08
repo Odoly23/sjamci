@@ -1,0 +1,218 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h5 class="mb-0 fw-bold">{{ legend }}</h5>
+      <small class="text-muted">Hili filter → preview → download Excel ka PDF</small>
+    </div>
+  </div>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-{{ msg.tags }} alert-dismissible fade show py-2">
+        {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="row g-3">
+    <div class="col-md-4 col-lg-3">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white py-2 d-flex align-items-center gap-2">
+          <i class="fa fa-filter"></i><span class="fw-semibold">Filter Dadus</span>
+        </div>
+        <div class="card-body">
+          <form method="GET" id="filterForm">
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Munisipiu</label>
+              <select name="mun" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                {% for m in mun_list %}
+                  <option value="{{ m.name }}" {% if sel_mun == m.name %}selected{% endif %}>
+                    {{ m.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Tinan Programa</label>
+              <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                {% for y in year_list %}
+                  <option value="{{ y.year }}" {% if sel_year == y.year|stringformat:"s" %}selected{% endif %}>
+                    {{ y.year }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Faze</label>
+              <select name="faze" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                {% for f in faze_list %}
+                  <option value="{{ f.name }}" {% if sel_faze == f.name %}selected{% endif %}>
+                    {{ f.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Setor Prinsipal</label>
+              <select name="sector" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                {% for s in sector_list %}
+                  <option value="{{ s.name }}" {% if sel_sector == s.name %}selected{% endif %}>
+                    {{ s.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Genero Diretor</label>
+              <select name="sexo" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                <option value="Mane" {% if sel_sexo == 'Mane' %}selected{% endif %}>Mane</option>
+                <option value="Feto" {% if sel_sexo == 'Feto' %}selected{% endif %}>Feto</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Status Programa</label>
+              <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">– Hotu –</option>
+                <option value="Ativu"    {% if sel_status == 'Ativu' %}selected{% endif %}>Ativu</option>
+                <option value="Parado"   {% if sel_status == 'Parado' %}selected{% endif %}>Parado</option>
+                <option value="Pendente" {% if sel_status == 'Pendente' %}selected{% endif %}>Pendente</option>
+              </select>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary btn-sm flex-grow-1">
+                <i class="fa fa-search me-1"></i>Aplika
+              </button>
+              <a href="{% url 'export-kni' %}" class="btn btn-outline-secondary btn-sm" title="Reset filter">
+                <i class="fa fa-rotate-left"></i>
+              </a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8 col-lg-9">
+
+      {# ── Rekord hetan ── #}
+      <div class="card shadow-sm mb-3">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center gap-4">
+            <div class="text-center">
+              <div class="fs-1 fw-bold text-primary lh-1">{{ total }}</div>
+              <small class="text-muted">Negosiu</small>
+            </div>
+            <div class="vr"></div>
+            <div>
+              <div class="fw-semibold">Rekord hetan ho filter:</div>
+              <small class="text-muted">{{ label }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ── Tombol download ── #}
+      {% if total == 0 %}
+        <div class="alert alert-warning d-flex align-items-center gap-2 py-2">
+          <i class="fa fa-triangle-exclamation fa-lg"></i>
+          <span>Dadus la hetan ho filter ne'e. Muda filter atu hetan rekord.</span>
+        </div>
+      {% else %}
+        <div class="row g-3 mb-3">
+
+          {# Excel #}
+          <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-success text-white py-2 d-flex align-items-center gap-2">
+                <i class="fa fa-file-excel fa-lg"></i>
+                <span class="fw-semibold">Microsoft Excel (.xlsx)</span>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <p class="small text-muted mb-2"><strong>3 sheets</strong> dalam satu file:</p>
+                <ul class="small text-muted mb-3 ps-3">
+                  <li><strong>Sheet 1 – Dados KNI</strong><br>
+                    Naran, Genero, Tlp, Nivel Edukasaun, Negosiu, Ideia,
+                    Seitor, Kategoria, Mane/Feto/Total, Munisipiu, Postu,
+                    Suku, Aldeia, Faze, Tinan, Status, Montante, Orsamento
+                  </li>
+                  <li class="mt-1"><strong>Sheet 2 – Baseline</strong><br>
+                    Rendimentu, Trabalhador, Assets, Vendas antes apoiu
+                  </li>
+                  <li class="mt-1"><strong>Sheet 3 – Monitorizasaun</strong><br>
+                    Rendimentu, Vendas, Assets, Cresimentu (%) terkini
+                  </li>
+                </ul>
+                <a href="{% url 'export-excel-kni' %}?{{ params }}"
+                   class="btn btn-success btn-sm w-100 mt-auto">
+                  <i class="fa fa-download me-1"></i>Download Excel ({{ total }} rekord)
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {# PDF #}
+          <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-danger text-white py-2 d-flex align-items-center gap-2">
+                <i class="fa fa-file-pdf fa-lg"></i>
+                <span class="fw-semibold">PDF Landscape A3</span>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <p class="small text-muted mb-2"><strong>1 halaman ringkas</strong>, siap cetak:</p>
+                <ul class="small text-muted mb-3 ps-3">
+                  <li>No, Naran, Genero, Negosiu, Ideia, Seitor</li>
+                  <li>Mane / Feto / Total Trabalhador</li>
+                  <li>Munisipiu, Postu Administrativu</li>
+                  <li>Faze, Tinan, Status, Orsamento ($)</li>
+                  <li>Footer: Total rekord, Trabalhador, Orsamento</li>
+                </ul>
+                <a href="{% url 'export-pdf-kni' %}?{{ params }}"
+                   class="btn btn-danger btn-sm w-100 mt-auto">
+                  <i class="fa fa-download me-1"></i>Download PDF ({{ total }} rekord)
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      {% endif %}
+
+      {# ── Info kolom — PAKAI list dari context, bukan filter split ── #}
+      <div class="card shadow-sm">
+        <div class="card-header py-2 bg-light d-flex align-items-center gap-2">
+          <i class="fa fa-table text-primary"></i>
+          <span class="fw-semibold small">Kolom Excel Sheet 1 (Dados KNI)</span>
+        </div>
+        <div class="card-body py-2">
+          <div class="row g-1">
+            {% for col in excel_cols %}
+              <div class="col-6 col-md-4 col-lg-3">
+                <span class="badge bg-light text-dark border small w-100 text-start py-1 px-2">
+                  {{ forloop.counter }}. {{ col }}
+                </span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

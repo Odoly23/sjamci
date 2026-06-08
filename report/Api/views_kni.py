@@ -14,7 +14,7 @@ from custom.models import Minister, Diresaun, Position, Municipality, Administra
 from benefisiariu.models import Benefisiariu, AddressTL, Photo, AddressOrigin
 from kni.models import    Business, LocBussiness, Program, Employee, Finance
 from suave.models import CreditInfo
-
+from collections import defaultdict
 # =========================================================
 # 1. SEXU BENEFISIARIU
 # =========================================================
@@ -312,4 +312,55 @@ class APIKPI(APIView):
             'total_business': total_business,
             'total_budget': float(total_budget),
             'total_employee': total_employee,
+        })
+
+
+class APIMun(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, format=None):
+        muns = Municipality.objects.all().order_by('name')
+        beneficiary_stats = (
+            Benefisiariu.active_objects 
+            .values(
+                'addresstl__municipality__name',
+                'sex',
+                'marital'
+            )
+            .annotate(total=Count('id', distinct=True))
+        )
+        data_map = defaultdict(int)
+        detail_pivot = defaultdict(lambda: {"Mane": 0, "Feto": 0, "Total": 0})
+
+        for item in beneficiary_stats:
+            mun_name = item.get('addresstl__municipality__name')
+            sex = item.get('sex') or "Tidak Diketahui"
+            count = item.get('total', 0)
+
+            if mun_name:
+                data_map[mun_name] += count
+                if sex in ["Mane", "Feto"]:
+                    detail_pivot[mun_name][sex] += count
+                detail_pivot[mun_name]["Total"] += count
+        map_data = [
+            {
+                "name": m.name,
+                "hc-key": m.hckey,
+                "value": data_map.get(m.name, 0)
+            }
+            for m in muns
+        ]
+        detail_table = [
+            {
+                "municipality": m.name,
+                "mane_total": detail_pivot[m.name]["Mane"],
+                "feto_total": detail_pivot[m.name]["Feto"],
+                "total_benefisiariu": detail_pivot[m.name]["Total"]
+            }
+            for m in muns
+        ]
+        return Response({
+            "map": map_data,
+            "municipalities": list(muns.values("id", "name", "hckey")),
+            "table": detail_table,
+            "total_global": sum(data_map.values())
         })

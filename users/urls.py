@@ -5,4 +5,11 @@ urlpatterns = [
 	path('profile/update/',   views.update_profile_ajax, name='update_profile_ajax'),
 	path('profile/photo/', views.update_photo_ajax, name='update_photo_ajax'),
 	path('profile/account/',  views.manage_account_ajax, name='manage_account_ajax'),
+
+
+	#benefisiariu Users
+    path("benefisiariu-user/", views.benefisiariu_user_list, name="benefisiariu-user-list"),
+    path("benefisiariu-user/edit/<int:pk>/", views.benefisiariu_user_edit, name="benefisiariu-user-edit"),
+    path("benefisiariu-user/delete/<int:pk>/", views.benefisiariu_user_delete, name="benefisiariu-user-delete"),
+
 ]

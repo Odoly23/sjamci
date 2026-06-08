@@ -36,7 +36,8 @@ urlpatterns = [
     path('Dados-Cliente/', include('benefisiariu.cliente.urls')),
     path('Mpms-Home/', include('mpms.urls')),
     path('Utilizadores/', include('users.urls')),
-    path('monitoring/', include('monitoring.urls'))
+    path('monitoring/', include('monitoring.urls')),
+    path('Notifikasaun/', include('notif.Api.urls'))
 
 ]
 if settings.DEBUG:
