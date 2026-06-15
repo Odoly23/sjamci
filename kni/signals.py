@@ -1,7 +1,11 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.db.models import Sum
+
 from benefisiariu.models import BeneficiariuEvaluation, Benefisiariu
-from custom.models import Status
+from custom.models import Status, Bussines_size
+from .models import Employee, Business
+
 
 @receiver(post_save, sender=BeneficiariuEvaluation)
 def sync_benef_status(sender, instance, created, **kwargs):
@@ -13,3 +17,27 @@ def sync_benef_status(sender, instance, created, **kwargs):
             benef.save()
         except Status.DoesNotExist:
             pass
+
+
+@receiver(post_save, sender=Employee)
+@receiver(post_delete, sender=Employee)
+def update_business_size(sender, instance, **kwargs):
+    business = instance.business
+    total = business.employee_set.aggregate(total=Sum('total'))['total'] or 0
+
+    if total <= 5:
+        kode = "Mo"
+    elif total <= 10:
+        kode = "SM"
+    elif total <= 50:
+        kode = "MD"
+    else:
+        kode = "GD"
+
+    try:
+        size = Bussines_size.objects.get(code=kode)
+    except Bussines_size.DoesNotExist:
+        size = None
+
+    if business.size_id != (size.id if size else None):
+        Business.objects.filter(pk=business.pk).update(size=size)

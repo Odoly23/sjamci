@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sertifikátu KNI - {{ benef.name|default:"Benefisiariu" }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @media print {
+            body {
+                background: white;
+                margin: 0;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .sertifikat {
+                margin: 0;
+                padding: 0.3cm;
+                box-shadow: none;
+            }
+            @page {
+                size: A4;
+                margin: 0.5cm;
+            }
+        }
+
+        body {
+            background: #e8ecf0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Times New Roman', 'Georgia', 'Arial', serif;
+        }
+
+        .sertifikat {
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            padding: 20px 25px;
+            position: relative;
+        }
+
+        /* Border dekoratif tipis */
+        .sertifikat:before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border: 1px solid #c9a03d;
+            pointer-events: none;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #1a3a5c;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            color: #1a3a5c;
+            letter-spacing: 1px;
+        }
+
+        .header h2 {
+            font-size: 12px;
+            font-weight: normal;
+            color: #333;
+        }
+
+        .header h3 {
+            font-size: 11px;
+            font-weight: normal;
+            color: #666;
+        }
+
+        /* JUDUL */
+        .judul {
+            text-align: center;
+            background: #1a3a5c;
+            color: white;
+            padding: 8px;
+            margin: 12px 0 10px 0;
+        }
+
+        .judul h4 {
+            font-size: 18px;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .judul p {
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .no-sertifikat {
+            text-align: center;
+            margin: 8px 0 15px 0;
+        }
+
+        .no-sertifikat span {
+            background: #f0f0f0;
+            padding: 2px 12px;
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        /* TABEL BORDERLESS & SMALL */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+        }
+
+        .table td, .table th {
+            padding: 6px 8px;
+            vertical-align: top;
+        }
+
+        .table-sm td, .table-sm th {
+            padding: 4px 6px;
+        }
+
+        .borderless td, .borderless th {
+            border: none;
+        }
+
+        .label {
+            font-weight: 600;
+            width: 28%;
+            color: #2c5f8a;
+        }
+
+        .label-wide {
+            width: 20%;
+        }
+
+        .value {
+            color: #111;
+        }
+
+        /* Section header */
+        .section-header {
+            background: #2c5f8a;
+            color: white;
+            padding: 5px 10px;
+            margin: 12px 0 8px 0;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .section-header small {
+            font-weight: normal;
+            font-size: 10px;
+        }
+
+        /* Foto & QR */
+        .photo-cell {
+            text-align: center;
+            vertical-align: middle;
+            width: 120px;
+        }
+
+        .photo-frame {
+            width: 100px;
+            height: 120px;
+            border: 1px solid #ccc;
+            background: #fafafa;
+            margin: 0 auto;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #999;
+        }
+
+        .qr-frame {
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .qr-frame img {
+            width: 70px;
+            height: 70px;
+        }
+
+        .qr-text {
+            font-size: 7px;
+            color: #666;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 9px;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        /* Tanda Tangan */
+        .signature-area {
+            margin: 20px 0 12px;
+            padding-top: 10px;
+            border-top: 1px dashed #aaa;
+        }
+
+        .sign-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .sign-table td {
+            text-align: center;
+            padding: 0 5px;
+            vertical-align: bottom;
+        }
+
+        .sign-line {
+            border-bottom: 1px solid #000;
+            width: 90%;
+            margin: 20px auto 5px auto;
+        }
+
+        .sign-name {
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .sign-post {
+            font-size: 8px;
+            color: #555;
+        }
+
+        /* Footer */
+        .footer {
+            font-size: 8px;
+            text-align: center;
+            border-top: 1px solid #ccc;
+            padding-top: 8px;
+            margin-top: 10px;
+            color: #666;
+        }
+
+        .hash {
+            font-family: monospace;
+            font-size: 8px;
+            background: #f5f5f5;
+            padding: 2px 5px;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .btn-print {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1a3a5c;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+            z-index: 100;
+        }
+
+        .btn-print:hover {
+            background: #0f2b44;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sertifikat">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>MINISTÉRIU DO COMÉRCIU NO INDÚSTRIA</h1>
+        <h2>SECRETÁRIA ESTADU BA FOMENTU KOOPERATIVA (SEFOKOP)</h2>
+        <h3>Departamentu Kreditu Profisionál & Kompetisaun Negósiu Inovativu (KNI)</h3>
+    </div>
+
+    <!-- JUDUL -->
+    <div class="judul">
+        <h4>SERTIFIKÁTU PARTISIPASAUN KNI</h4>
+        <p>Programa Kompetisaun Negósiu Inovativu</p>
+    </div>
+    <div class="no-sertifikat">
+        <span>No: KNI-{{ benef.hashed|slice:":10"|upper|default:"000000" }}/{% now "Y" %}</span>
+    </div>
+
+    <!-- TABLE 1: FOTO + DADUS BENEFISIARIU (BORDERLESS) -->
+    <table class="table borderless" style="margin-bottom: 10px;">
+        <tr>
+            <td class="photo-cell" style="width: 120px; vertical-align: top;">
+                <div class="photo-frame">
+                    {% if photo and photo.image %}
+                        <img src="{{ photo.image.url }}" alt="Foto">
+                    {% else %}
+                        <div class="photo-placeholder">[ FOTO ]</div>
+                    {% endif %}
+                </div>
+                <div class="qr-frame">
+                    {% if qr_code_base64 %}
+                        <img src="{{ qr_code_base64 }}" alt="QR">
+                    {% else %}
+                        <div style="width:70px;height:70px;background:#eee;margin:0 auto;"></div>
+                    {% endif %}
+                    <div class="qr-text">Scan to Verify</div>
+                </div>
+            </td>
+            <td style="vertical-align: top;">
+                <table class="table borderless table-sm">
+                    <tr><td class="label">Naran Kompletu</td><td class="value"><strong>{{ benef.name|default:"_________________________________" }}</strong></td></tr>
+                    <tr><td class="label">Fatin Moris</td><td class="value">{{ benef.pob|default:"_________________________________" }}</td></tr>
+                    <tr><td class="label">Data Moris</td><td class="value">{{ benef.dob|date:"d/m/Y"|default:"___/___/_____" }} ({{ benef.age|default:"__" }} Tinan)</td></tr>
+                    <tr><td class="label">Sexu / Estadu Civil</td><td class="value">{{ benef.sex|default:"______" }} / {{ benef.marital|default:"______" }}</td></tr>
+                    <tr><td class="label">Telemóvel / Email</td><td class="value">{{ benef.phone|default:"______" }} / {{ benef.email_website|default:"______"|truncatechars:30 }}</td></tr>
+                    <tr><td class="label">Nivel Edukasaun</td><td class="value">{{ benef.get_nivel_edukasaun_display|default:"______" }}</td></tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- SECTION: HELA FATIN -->
+    <div class="section-header">📍 HELA FATIN</div>
+    <table class="table borderless table-sm">
+        <tr>
+            <td class="label" style="width: 20%;">Municípiu</td>
+            <td class="value" style="width: 30%;">{{ addtl.municipality.name|default:"______________________________" }}</td>
+            <td class="label" style="width: 20%;">Postu Administrativu</td>
+            <td class="value" style="width: 30%;">{{ addtl.administrativepost.name|default:"______________________________" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Suco / Aldeia</td>
+            <td colspan="3">{{ addtl.village.name|default:"______" }} / {{ addtl.aldeia|default:"______" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Address Detallu</td>
+            <td colspan="3">{{ addtl.address|default:"__________________________________________________" }}</td>
+        </tr>
+    </table>
+
+    <!-- SECTION: NEGOSIU -->
+    <div class="section-header">🏢 INFORMASAUN NEGÓSIU</div>
+    {% for business in businesses %}
+    <table class="table borderless table-sm">
+        <tr>
+            <td class="label" style="width: 25%;">Naran Negósiu</td>
+            <td class="value" colspan="3"><strong>{{ business.name|default:business.idea|default:"______________________________" }}</strong></td>
+        </tr>
+        <tr>
+            <td class="label">Setor / Kategoria</td>
+            <td style="width: 35%;">{{ business.sector|default:"______" }}</td>
+            <td class="label" style="width: 20%;">Size</td>
+            <td style="width: 20%;">{{ business.size|default:"______" }}</td>
+        </tr>
+        {% if local %}
+        <tr>
+            <td class="label">Lokalidade</td>
+            <td colspan="3">{{ local.municipality|default:"______" }} - {{ local.village|default:"______" }}</td>
+        </tr>
+        <tr>
+            <td class="label">GPS Koordenadu</td>
+            <td colspan="3">Lat: {{ local.latitude|default:"______" }} | Long: {{ local.longitude|default:"______" }}</td>
+        </tr>
+        {% endif %}
+    </table>
+    {% empty %}
+    <table class="table borderless"><tr><td class="text-center" style="color:#999;">— La iha dadus negósiu rejistadu —</td></tr></table>
+    {% endfor %}
+
+    <!-- SECTION: PROGRAMA & APOIO -->
+    <div class="section-header">💼 PROGRAMA & APOIO</div>
+    <table class="table borderless table-sm" style="width: 100%;">
+        <tr style="border-bottom: 1px solid #ccc;">
+            <td class="label" style="width: 25%;">Tipu Programa</td>
+            <td class="label" style="width: 20%;">Tipu Apoiu</td>
+            <td class="label" style="width: 15%;">Faze</td>
+            <td class="label" style="width: 15%;" class="text-right">Montante ($)</td>
+            <td class="label" style="width: 15%;">Status</td>
+        </tr>
+        {% for prog in programs %}
+        <tr>
+            <td>{{ prog.program_type|default:"-" }}</td>
+            <td>{{ prog.t_apoiu|default:"-" }}</td>
+            <td>{{ prog.faze|default:"-" }}</td>
+            <td class="text-right"><strong>${{ prog.amount|floatformat:2|default:"0.00" }}</strong></td>
+            <td>
+                {% if prog.status.name == "Ativu" %}
+                    <span class="badge badge-success">Ativu</span>
+                {% else %}
+                    {{ prog.status|default:"-" }}
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center" style="color:#999;">— La iha dadus programa —</td></tr>
+        {% endfor %}
+        <tr style="border-top: 1px solid #ccc;">
+            <td colspan="3" class="text-right"><strong>TOTAL</strong></td>
+            <td class="text-right"><strong>${{ total_amount|floatformat:2|default:"0.00" }}</strong></td>
+            <td></td>
+        </tr>
+    </table>
+
+    <!-- SECTION: TRABALLADOR -->
+    <div class="section-header">👥 TRABALLADOR</div>
+    <table class="table borderless table-sm">
+        <tr>
+            <td class="label" style="width: 25%;">Total Traballador</td>
+            <td class="value"><strong>{{ employees|length|default:"0" }} Pessoas</strong></td>
+            <td class="label" style="width: 25%;">Kompozisaun</td>
+            <td class="value">
+                {% for emp in employees %}
+                    Mane: {{ emp.male|default:"0" }} | Feto: {{ emp.female|default:"0" }}{% if not forloop.last %}; {% endif %}
+                {% empty %}La iha dadus{% endfor %}
+            </td>
+        </tr>
+    </table>
+
+    <!-- SECTION: MONITORIZASAUN (jika ada) -->
+    {% if impact_monitorings %}
+    <div class="section-header">📊 REZULTADU MONITORIZASAUN</div>
+    <table class="table borderless table-sm">
+        <tr style="border-bottom: 1px solid #ccc;">
+            <td class="label" style="width: 25%;">Data</td>
+            <td class="label" style="width: 25%;">Rendimentu Fulan ($)</td>
+            <td class="label" style="width: 25%;">Total Vendas ($)</td>
+            <td class="label" style="width: 25%;">Status</td>
+        </tr>
+        {% for item in impact_monitorings|slice:":3" %}
+        <tr>
+            <td>{{ item.monitoring.monitoring_date|date:"d/m/Y"|default:"-" }}</td>
+            <td>${{ item.monitoring.monthly_income|floatformat:2|default:"0" }}</td>
+            <td>${{ item.monitoring.total_sales|floatformat:2|default:"0" }}</td>
+            <td>{{ item.monitoring.monitoring_status|default:"-" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    <!-- TANDA TANGAN -->
+    <div class="signature-area">
+        <table class="sign-table">
+            <tr>
+                <td><div class="sign-line"></div><div class="sign-name">Benefisiáriu</div><div class="sign-post">(Naran & T.Tangan)</div></td>
+                <td><div class="sign-line"></div><div class="sign-name">Koordenador KNI</div><div class="sign-post">(T.Tangan & Stamp)</div></td>
+                <td><div class="sign-line"></div><div class="sign-name">Diretor Departamentu</div><div class="sign-post">(T.Tangan & Stamp)</div></td>
+                <td><div class="sign-line"></div><div class="sign-name">Secretáriu Estadu</div><div class="sign-post">(T.Tangan & Stamp)</div></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div>Sertifikátu ida ne'e mak dokumentu ofisiál husi KNI | Data Emisaun: {% now "d/m/Y H:i" %}</div>
+        <div class="hash">Hash ID: {{ benef.hashed|default:"_________________________________________________" }}</div>
+        <div>© {% now "Y" %} Secretária Estadu ba Fomentu Kooperativa - KNI</div>
+    </div>
+
+</div>
+
+<!-- TOMBOL PRINT -->
+<div class="no-print">
+    <button class="btn-print" onclick="window.print();">🖨️ PRINT SERTIFIKÁTU</button>
+</div>
+
+</body>
+</html>

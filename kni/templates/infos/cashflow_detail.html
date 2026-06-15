@@ -5,27 +5,124 @@
 
 <div class="container-fluid mt-3">
   <div class="row">
-      <div class="col-sm-12">
-    <div class="card shadow-lg pt-1 border-primary rounded">
+    <div class="col-sm-12">
+      <div class="card shadow-lg border-0 rounded">
         <!-- HEADER -->
-        <div class="card-header bg-steel d-flex justify-content-between align-items-center">
-          <span>{{ legend}}</span>
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="fa fa-money-bill-wave"></i> 
+            {{ legend|default:"Detallu Transaction" }}
+          </h5>
+          <a href="{% url 'cashflow-list' %}" class="btn btn-sm btn-light" title="Fila">
+            <i class="fa fa-arrow-left"></i> Fila
+          </a>
         </div>
-    <div class="card-body">
-
-      <p><b>Business:</b> {{ cashflow.monitoring.business }}</p>
-      <p><b>Type:</b> {{ cashflow.transaction_type }}</p>
-      <p><b>Description:</b> {{ cashflow.description }}</p>
-      <p><b>Amount:</b> ${{ cashflow.amount }}</p>
-      <p><b>Date:</b> {{ cashflow.transaction_date }}</p>
-
-
-    </div>
-</div>
+        
+        <!-- BODY -->
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="info-box p-3">
+                <table class="table table-borderless table-detail">
+                  <tbody>
+                    <!-- BUSINESS -->
+                    <tr>
+                      <td width="30%" class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-building text-primary"></i> Business
+                      </td>
+                      <td width="70%" class="pl-3">
+                        {{ cashflow.monitoring.business|default:"-" }}
+                      </td>
+                    </tr>
+                    
+                    <!-- TRANSACTION TYPE -->
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-tag text-info"></i> Type
+                      </td>
+                      <td class="pl-3">
+                        {% if cashflow.transaction_type == 'IN' %}
+                          <span class="badge badge-success">
+                            <i class="fa fa-plus-circle"></i> Income
+                          </span>
+                        {% elif cashflow.transaction_type == 'OUT' %}
+                          <span class="badge badge-danger">
+                            <i class="fa fa-minus-circle"></i> Expense
+                          </span>
+                        {% else %}
+                          <span class="badge badge-secondary">{{ cashflow.transaction_type|default:"-" }}</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    
+                    <!-- DESCRIPTION -->
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-file-text text-warning"></i> Description
+                      </td>
+                      <td class="pl-3">
+                        {{ cashflow.description|default:"-" }}
+                      </td>
+                    </tr>
+                    
+                    <!-- AMOUNT -->
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-dollar-sign text-success"></i> Amount
+                      </td>
+                      <td class="pl-3">
+                        <strong class="h5 text-primary">
+                          $ {{ cashflow.amount|default:"0"|floatformat:2 }}
+                        </strong>
+                      </td>
+                    </tr>
+                    
+                    <!-- TRANSACTION DATE -->
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-calendar-alt text-danger"></i> Date
+                      </td>
+                      <td class="pl-3">
+                        {{ cashflow.transaction_date|date:"d F Y, H:i"|default:"-" }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- FOOTER (Optional: Action Buttons) -->
+        <div class="card-footer bg-white text-right">
+          <a href="{% url 'cashflow-edit' cashflow.id %}" class="btn btn-warning btn-sm">
+            <i class="fa fa-edit"></i> Editar
+          </a>
+          <a href="{% url 'cashflow-list' %}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-times"></i) Fechar
+          </a>
+        </div>
+      </div>
     </div>
   </div>
-
 </div>
 
+<!-- Additional CSS for table detail -->
+<style>
+  .table-detail tr {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .table-detail tr:last-child {
+    border-bottom: none;
+  }
+  .table-detail td {
+    padding: 12px 8px;
+    vertical-align: middle;
+  }
+  .info-box {
+    background: #fafafa;
+    border-radius: 8px;
+  }
+</style>
 
 {% endblock %}

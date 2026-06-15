@@ -1,0 +1,27 @@
+{% extends "main/layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-list"> {{legend|upper}}</i>
+        </div>
+        <div class="card-body">
+                        <form method="POST">
+            {% csrf_token %}
+            <div class="card shadow-lg pt-1 border-success rounded">
+                <div class="card-header">{{ legend|upper }}</div>
+                <div class="card-body">
+                    {% crispy form %}
+                </div> <!--end card-body-->
+            </div> <!--end card-->
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -14,6 +14,8 @@ urlpatterns = [
     path('grafiku/trabalhador/', views_kni.APIEmployee.as_view()),
     path('grafiku/credit/',  views_kni.APICreditRepayment.as_view()),
     path('grafiku/kpi/',   views_kni.APIKPI.as_view()),
+    path('grafiku/size/', views_kni.APIBusinessSize.as_view()),
+    path('grafiku/cat/', views_kni.APICategoryEmp.as_view()),
 
     path('grafiku/mapa/', views_kni.APIMun.as_view()),
 # suave/api/urls.py
@@ -63,4 +65,5 @@ urlpatterns = [
     path('kapital/',      api_mpms.APIMpmsKapital.as_view(),       name='api-mpms-kapital'),
     path('empregador/',   api_mpms.APIMpmsEmpregador.as_view(),    name='api-mpms-empregador'),
     path('materia/',      api_mpms.APIMpmsMateria.as_view(),       name='api-mpms-materia'),
+
 ]

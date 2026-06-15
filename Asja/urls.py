@@ -20,9 +20,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import handler404, handler500
 from main.views import logout_view, loginPage
+from decouple import config
+
+ADMIN_URL = config('ADMIN_URL', default='mci-panel-super-secret-9x7z2k/')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(ADMIN_URL, admin.site.urls), 
     path('login/', loginPage, name='login'),
     path('logout/', logout_view, name='logout'),
     path('', include('main.urls')),

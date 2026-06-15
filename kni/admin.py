@@ -34,8 +34,8 @@ class BusinessResource(resources.ModelResource):
 
     class Meta:
         model = Business
-        fields = ('id', 'benefisiariu', 'category', 'name', 'idea', 'sector', 'hashed')
-        export_order = ('id', 'benefisiariu', 'category', 'name', 'idea', 'sector', 'hashed')
+        fields = ('id', 'benefisiariu', 'category', 'name', 'idea', 'sector','size','hashed')
+        export_order = ('id', 'benefisiariu', 'category', 'name', 'idea', 'sector', 'size','hashed')
         import_id_fields = ('id',)
         skip_unchanged = True
         report_skipped = False

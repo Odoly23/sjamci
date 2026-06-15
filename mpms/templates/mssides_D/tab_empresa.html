@@ -8,6 +8,12 @@
   <tr><th>Naran Kompania</th>   <td>: {{ empresa.company_name }}</td></tr>
   <tr><th>Tipo Atividade</th>   <td>: {{ empresa.tipo_atividade }}</td></tr>
   <tr><th>Tinan Hari</th>       <td>: {{ empresa.tinan_hari }}</td></tr>
+  <tr><th>#</th>                <td>:  {% if group == 'mpms' %}
+      <a href="{% url 'mpms-empresa-edit' empresa.hashed %}"
+         class="btn btn-sm btn-warning ">
+          <i class="fa fa-edit"></i>
+      </a>
+      {% endif %}</td>  </tr>
 </table>
 
 <!-- EMPREGADOR MPMS -->

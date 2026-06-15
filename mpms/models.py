@@ -98,7 +98,6 @@ class mpmsEmpresa(BaseModel):
         verbose_name_plural = 'Empresa mpms Sira'
         ordering            = ['company_name']
 
-
 class mpmsLokalizasaun(BaseModel):
     empresa            = models.OneToOneField(mpmsEmpresa, on_delete=models.CASCADE,related_name='lokalizasaun', verbose_name='Empresa')
     municipality       = models.ForeignKey(Municipality,       on_delete=models.SET_NULL, null=True, verbose_name='Munisipiu')
@@ -126,10 +125,6 @@ class mpmsLokalizasaun(BaseModel):
         verbose_name_plural = 'Lokalizasaun mpms Sira'
 
 
-# ══════════════════════════════════════════════════════════════
-#  3. mpms LISENSAMENTU  — lisensamentu + tipo rai + tinan
-# ══════════════════════════════════════════════════════════════
-
 class mpmsLisensamentu(BaseModel):
     empresa              = models.OneToOneField(mpmsEmpresa, on_delete=models.CASCADE, related_name='lisensamentu', verbose_name='Empresa'    )
     lisensamentu         = models.CharField(max_length=20, choices=LISENSAMENTU_CHOICES,  null=True, blank=True, verbose_name='Lisensamentu Atividade')
@@ -152,9 +147,6 @@ class mpmsLisensamentu(BaseModel):
         verbose_name_plural = 'Lisensamentu mpms Sira'
 
 
-# ══════════════════════════════════════════════════════════════
-#  4. mpms KAPITAL  — kapital, fundus, lukru
-# ══════════════════════════════════════════════════════════════
 
 class mpmsKapital(BaseModel):
     empresa           = models.OneToOneField(mpmsEmpresa, on_delete=models.CASCADE,  related_name='kapital', verbose_name='Empresa')
@@ -182,19 +174,13 @@ class mpmsKapital(BaseModel):
         verbose_name_plural = 'Kapital mpms Sira'
 
 
-# ══════════════════════════════════════════════════════════════
-#  5. mpms EMPREGADOR  — nasional + internasional mane/feto
-# ══════════════════════════════════════════════════════════════
 
 class mpmsEmpregador(BaseModel):
     empresa              = models.OneToOneField(mpmsEmpresa, on_delete=models.CASCADE, related_name='empregador', verbose_name='Empresa')
-    # Nasional
     nasional_mane        = models.IntegerField(default=0, verbose_name='Nasionál Mane')
     nasional_feto        = models.IntegerField(default=0, verbose_name='Nasionál Feto')
-    # Internasional
     internasional_mane   = models.IntegerField(default=0, verbose_name='Internasionál Mane')
     internasional_feto   = models.IntegerField(default=0, verbose_name='Internasionál Feto')
-    # Total (auto-calculate)
     total_nasional       = models.IntegerField(default=0, verbose_name='Total Nasionál')
     total_internasional  = models.IntegerField(default=0, verbose_name='Total Internasionál')
     total_empregador     = models.IntegerField(default=0, verbose_name='Total Empregador')
@@ -219,9 +205,6 @@ class mpmsEmpregador(BaseModel):
         verbose_name_plural = 'Empregador mpms Sira'
 
 
-# ══════════════════════════════════════════════════════════════
-#  6. mpms MATERIA PRIMA  — kustu + asal materia
-# ══════════════════════════════════════════════════════════════
 
 class mpmsMateriaPrima(BaseModel):
     empresa       = models.OneToOneField(mpmsEmpresa, on_delete=models.CASCADE, related_name='materia_prima', verbose_name='Empresa')
@@ -245,15 +228,11 @@ class mpmsMateriaPrima(BaseModel):
         verbose_name_plural = 'Materia Prima mpms Sira'
 
 
-# ══════════════════════════════════════════════════════════════
-#  7. mpms ATIVIDADE  — bantuan pemerintah (support_type, year, amount)
-#     Bisa juga link ke Program yang sudah ada
-# ══════════════════════════════════════════════════════════════
 
 class mpmsAtividade(BaseModel):
     empresa      = models.ForeignKey(mpmsEmpresa, on_delete=models.CASCADE, related_name='atividades', verbose_name='Empresa')
     program      = models.ForeignKey(Program, on_delete=models.SET_NULL, null=True, blank=True, related_name='mpms_atividades',  verbose_name='Programa (se iha ona)',
-        help_text='Opsionál — liga ba Program se registu hanesan iha KNI/KS' )
+        help_text='Opsionál Karik Presija' )
     tipu_apoio   = models.CharField(max_length=20, choices=TIPU_APOIO_CHOICES, null=True, blank=True, verbose_name='Tipu Apoio')
     year         = models.ForeignKey(Year, on_delete=models.SET_NULL, null=True, verbose_name='Tinan')
     amount       = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)],     verbose_name='Montante Apoio ($)'

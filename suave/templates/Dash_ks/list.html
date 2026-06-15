@@ -65,28 +65,27 @@
                   </td>                  <!-- ACTION -->
                   <td class="text-center align-middle">
                     <div class="btn-group btn-group-sm" role="group">
-                      <!-- DETAIL -->
+                       {% if group == 'ks' %}
                       <a href=""
                          class="btn btn-info"
                          title="Detail">
                         <i class="fa fa-edit"></i>
                       </a>
-                      <!-- DELETE -->
-                      {% if group == 'admin' %}
-                      <a href=""
+                      <a href="{% url 'edit-benef-ks' b.hashed %}"
                          class="btn btn-danger ml-1"
                          title="Delete">
 
                         <i class="fa fa-trash"></i>
                       </a>
-                      {% endif %}
+                      {% else %}
                       <!-- VIEW -->
-                      <a href=""
-                         class="btn btn-warning"
+                      <a href="{% url 'benef-detail-ks' b.hashed %}"
+                         class="btn btn-warning ml-1"
                          title="View">
 
                         <i class="fa fa-eye"></i>
                       </a>
+                      {% endif %}
                     </div>
                   </td>
                 </tr>

@@ -364,3 +364,65 @@ class APIMun(APIView):
             "table": detail_table,
             "total_global": sum(data_map.values())
         })
+
+
+# =========================================================
+# 10. BUSINESS SIZE
+# =========================================================
+
+class APIBusinessSize(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+
+        label = []
+        obj = []
+
+        sizes = Bussines_size.objects.all()
+
+        for sz in sizes:
+
+            total = Business.objects.filter(
+                benefisiariu__Pnegosiu__program_type__name="KNI",
+                size=sz
+            ).distinct().count()
+
+            label.append(sz.name)
+            obj.append(total)
+
+        return Response({
+            'label': label,
+            'obj': obj
+        })
+
+
+# =========================================================
+# 11. CATEGORY EMP
+# =========================================================
+
+class APICategoryEmp(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+
+        label = []
+        obj = []
+
+        categories = Category_Emp.objects.all()
+
+        for c in categories:
+
+            total = Business.objects.filter(
+                benefisiariu__Pnegosiu__program_type__name="KNI",
+                category=c
+            ).distinct().count()
+
+            label.append(c.name)
+            obj.append(total)
+
+        return Response({
+            'label': label,
+            'obj': obj
+        })

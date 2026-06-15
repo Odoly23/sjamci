@@ -10,11 +10,14 @@
       <div class="card shadow-lg pt-1 border-primary rounded">
 
         <!-- HEADER -->
-        <div class="card-header bg-steel d-flex justify-content-between align-items-center">
+        <div class="card-header bg-steel d-flex justify-content-between align-items-between">
           <span>{{ legend|upper }}</span>
           {% if group == "KNI" %}
             <a href="{% url 'edit-benef' benef.hashed %}" class="btn btn-sm btn-warning">
               <i class="fa fa-edit"></i> Edit
+            </a>
+            <a href="{% url 'print_sertifikat_kni' benef.hashed %}" class="btn btn-sm btn-warning" target="_blank">
+              <i class="fa fa-file"></i> Print
             </a>
           {% endif %}
         </div>

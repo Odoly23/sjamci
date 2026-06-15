@@ -18,3 +18,51 @@
     <tr><td colspan="2" class="text-muted">La iha dadus</td></tr>
   {% endif %}
 </table>
+
+<!-- ATIVIDADE SIRA -->
+<table class="table table-sm table-bordered mt-3">
+  <thead>
+    <tr class="bg-light">
+      <th colspan="5">
+        ATIVIDADE MPMS
+        {% if group == 'mpms' and empresa %}
+          <a href="{% url 'mpms-atividade-add' empresa.hashed %}" class="btn btn-xs btn-success ml-1">
+            <i class="fa fa-plus"></i>
+          </a>
+        {% endif %}
+      </th>
+    </tr>
+    {% if atividades %}
+    <tr class="text-secondary font-weight-bold">
+      <th width="5%">#</th>
+      <th>Tipu Apoio</th>
+      <th>Tinan</th>
+      <th>Montante ($)</th>
+      <th>Estadu / Aksaun</th>
+    </tr>
+    {% endif %}
+  </thead>
+  <tbody>
+    {% for atividade in atividades %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ atividade.get_tipu_apoio_display }}</td>
+        <td>{{ atividade.year }}</td> <!-- Mengasumsikan model Year memiliki field name/year -->
+        <td>$ {{ atividade.amount|default:"0.00" }}</td>
+        <td>
+          <span class="badge badge-info rounded-pill px-3 mr-2"><i class="fa fa-check"></i> {{ atividade.status.name }}</span>
+          
+          {% if group == 'mpms' %}
+            <a href="" class="btn btn-xs btn-warning">
+              <i class="fa fa-edit"></i>
+            </a>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="5" class="text-muted text-center">La iha dadus atividade</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

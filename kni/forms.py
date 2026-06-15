@@ -5,7 +5,6 @@ from benefisiariu.models import Benefisiariu, AddressTL, AddressOrigin, Photo
 from kni.models import Business, LocBussiness, Program, Employee, Finance, BusinessBaseline, BusinessMonitoring
 from custom.models import AdministrativePost, Village, Year, Faze
 
-
 _BTN = """
     <div class="mt-4 d-flex" style="gap: 0.5rem;">
         <button class="btn btn-sm btn-success" type="submit">
@@ -27,10 +26,11 @@ _ALERT = """
 class BusinessKNIForm(forms.ModelForm):
     class Meta:
         model  = Business
-        fields = ['name', 'idea', 'sector', 'category','size']
+        fields = ['name', 'idea', 'sector', 'category']  
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['category'].label = 'Kategoria Negósiu'
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.layout = Layout(
@@ -40,13 +40,11 @@ class BusinessKNIForm(forms.ModelForm):
                 Column('idea', css_class='col-md-6'),
             ),
             Row(
-                Column('sector',   css_class='col-md-4'),
-                Column('category', css_class='col-md-4'),
-                Column('size', css_class='col-md-4')
+                Column('sector',   css_class='col-md-6'),
+                Column('category', css_class='col-md-6'),
             ),
             HTML(_BTN),
         )
-
 
 class LocBusinessKNIForm(forms.ModelForm):
     class Meta:
@@ -113,6 +111,8 @@ class ProgramKNIForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['year'].label = 'Tinan Apoiu'
+        self.fields['faze'].label = 'Faze Apoiu'
         self.helper = FormHelper()
         self.fields['year'].queryset = Year.active_objects.all().order_by('-year')
         self.fields['faze'].queryset = Faze.active_objects.exclude(name="KREDITU")
@@ -180,7 +180,6 @@ class BusinessBaselineForm(forms.ModelForm):
         model = BusinessBaseline
 
         fields = [
-            'business',
             'daily_income_before',
             'monthly_income_before',
             'yearly_income_before',
@@ -200,11 +199,6 @@ class BusinessBaselineForm(forms.ModelForm):
         self.helper.layout = Layout(
 
             HTML(_ALERT),
-
-            Row(
-                Column('business', css_class='col-md-12'),
-            ),
-
             Row(
                 Column('daily_income_before', css_class='col-md-4'),
                 Column('monthly_income_before', css_class='col-md-4'),

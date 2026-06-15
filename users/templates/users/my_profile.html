@@ -1,0 +1,332 @@
+{% extends "main/layout.html" %}
+{% load static %}
+{% block content %}
+<section class="content mb-5">
+<div class="container-fluid">
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card shadow-lg pt-1 rounded">
+      <div class="card-body">
+
+        <!-- ALERT INLINE EDIT -->
+        <div id="inline-alert" class="d-none mb-2"></div>
+
+        <div class="row">
+          <div class="col-sm-10" style="margin:auto;">
+
+            <!-- ===== CARD IDENTIDADE ===== -->
+            <div class="card mb-3">
+              <div class="card-header" style="background:#f2e7dc;">
+                <strong>IDENTIDADE FUNCIONARIU</strong>
+              </div>
+              <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+
+                  <!-- FOTO -->
+                  <tr>
+                    <td width="35%">Naran</td>
+                    <td>
+                      <strong>
+                        <span class="editable" data-field="name" data-value="{{ emp.name }}">
+                          {{ emp.name }}
+                        </span>
+                      </strong>
+                    </td>
+                    <!-- FOTO rowspan -->
+                    <td rowspan="20" width="200"
+                        style="text-align:center; vertical-align:middle; padding:10px;">
+
+                      <!-- Foto / default -->
+                      <div style="position:relative; display:inline-block;">
+                        <img id="profile-photo"
+                             src="{% if photo and photo.image %}{{ photo.image.url }}{% else %}{% static 'img/default.png' %}{% endif %}"
+                             width="160" height="160"
+                             style="object-fit:cover; border-radius:50%;
+                                    border:3px solid #007bff;
+                                    box-shadow:0 2px 8px rgba(0,0,0,0.2);
+                                    cursor:pointer;"
+                             title="Klik hodi troka foto"
+                             onclick="document.getElementById('photo-input').click()">
+
+                        <!-- Ikon kamera -->
+                        <div onclick="document.getElementById('photo-input').click()"
+                             style="position:absolute; bottom:6px; right:6px;
+                                    background:#007bff; border-radius:50%;
+                                    width:34px; height:34px;
+                                    display:flex; align-items:center;
+                                    justify-content:center; cursor:pointer;
+                                    box-shadow:0 2px 4px rgba(0,0,0,0.3);">
+                          <i class="fa fa-camera text-white" style="font-size:14px;"></i>
+                        </div>
+                      </div>
+
+                      <!-- Input file tersembunyi -->
+                      <input type="file" id="photo-input" accept="image/*"
+                             style="display:none;" onchange="uploadPhoto(this)">
+
+                      <!-- Status upload -->
+                      <div id="photo-status" class="mt-1" style="font-size:11px;"></div>
+
+                      <br>
+                      <small class="text-muted">{{ emp.name }}</small><br>
+                      <small class="text-muted" style="font-size:10px;">
+                        <i class="fa fa-camera"></i> Klik foto hodi troka
+                      </small>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>Sexu</td>
+                    <td>
+                      <span class="editable editable-select"
+                            data-field="sexo"
+                            data-value="{{ emp.sexo }}"
+                            data-options='["Mane","Feto"]'>
+                        {{ emp.sexo|default:"-" }}
+                      </span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>Nu. Telefone</td>
+                    <td>
+                      <span class="editable" data-field="phone" data-value="{{ emp.phone|default:'' }}">
+                        {{ emp.phone|default:"-" }}
+                      </span>
+                    </td>
+                  </tr>
+
+                  <!-- SUBHEADER: POZISAUN -->
+                  <tr>
+                    <th colspan="2" style="background:#f2e7dc;">
+                      POZISAUN & DIVIZAUN
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>Gabinete</td>
+                    <td><strong>{{ division.gabinete|default:"-" }}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Diresaun Geral</td>
+                    <td><strong>{{ division.dn|default:"-" }}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Departamento</td>
+                    <td><strong>{{ division.department|default:"-" }}</strong></td>
+                  </tr>
+
+                  <tr>
+                    <td>Pojisaun</td>
+                    <td><strong>{{ position.position|default:"-" }}</strong></td>
+                  </tr>
+                  <!-- SUBHEADER: USER ACCOUNT -->
+                  <tr>
+                    <th colspan="2" style="background:#f2e7dc;">
+                      USER ACCOUNT
+                    </th>
+                  </tr>
+
+                  <tr>
+                    <td>Username</td>
+                    <td><strong>{{ empuser.user.username }}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Email</td>
+                    <td><strong>{{ empuser.user.email|default:"-" }}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Status Account</td>
+                    <td>
+                      {% if empuser.user.is_active %}
+                        <span class="badge badge-success">Ativo</span>
+                      {% else %}
+                        <span class="badge badge-danger">La Ativo</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+
+                </table>
+              </div>
+            </div>
+            <!-- ===== END CARD ===== -->
+
+            <!-- INFO EDIT -->
+            <small class="text-muted">
+              <i class="fa fa-info-circle"></i>
+              Klik iha valor <i class="fa fa-pencil"></i> hodi edita direitamente.
+            </small>
+
+          </div>
+        </div>
+
+      </div><!-- end card-body -->
+    </div><!-- end card -->
+  </div><!-- end col -->
+</div><!-- end row -->
+</div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const INLINE_URL = "{% url 'profile-inline-update' %}";
+const PHOTO_URL  = "{% url 'profile-photo-update' %}";
+const CSRF_TOKEN = "{{ csrf_token }}";
+
+// ── INLINE EDIT ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.editable').forEach(function(el) {
+  el.style.cursor = 'pointer';
+  el.title = 'Klik hodi edita';
+  el.insertAdjacentHTML('beforeend',
+    ' <i class="fa fa-pencil text-muted" style="font-size:11px;"></i>'
+  );
+
+  el.addEventListener('click', function() {
+    if (el.querySelector('input,select')) return;
+
+    const field    = el.dataset.field;
+    const oldValue = el.dataset.value;
+    const isSelect = el.classList.contains('editable-select');
+    let input;
+
+    if (isSelect) {
+      const options = JSON.parse(el.dataset.options);
+      input = document.createElement('select');
+      input.className = 'form-control form-control-sm d-inline-block w-auto';
+      options.forEach(function(opt) {
+        const o = document.createElement('option');
+        o.value = opt; o.textContent = opt;
+        if (opt === oldValue) o.selected = true;
+        input.appendChild(o);
+      });
+    } else {
+      input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'form-control form-control-sm d-inline-block w-auto';
+      input.value = oldValue;
+    }
+
+    const btnSave = document.createElement('button');
+    btnSave.className = 'btn btn-xs btn-success ml-1';
+    btnSave.innerHTML = '<i class="fa fa-check"></i>';
+
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'btn btn-xs btn-secondary ml-1';
+    btnCancel.innerHTML = '<i class="fa fa-times"></i>';
+
+    el.innerHTML = '';
+    el.appendChild(input);
+    el.appendChild(btnSave);
+    el.appendChild(btnCancel);
+    input.focus();
+
+    function doSave() {
+      const newValue = input.value.trim();
+      if (!newValue) { showAlert('danger', 'Valor la bele mamuk!'); return; }
+
+      btnSave.disabled = true;
+      btnSave.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+
+      fetch(INLINE_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': CSRF_TOKEN,
+        },
+        body: JSON.stringify({ field: field, value: newValue }),
+      })
+      .then(r => r.json())
+      .then(function(data) {
+        if (data.success) {
+          el.dataset.value = newValue;
+          el.innerHTML = newValue +
+            ' <i class="fa fa-pencil text-muted" style="font-size:11px;"></i>';
+          // Update nama di bawah foto jika field name
+          if (field === 'name') {
+            document.querySelectorAll('.foto-nama').forEach(function(n) {
+              n.textContent = newValue;
+            });
+          }
+          showAlert('success', 'Dadus salva ho susesu! ✓');
+        } else {
+          showAlert('danger', 'Sala: ' + data.error);
+          restore();
+        }
+      })
+      .catch(function() {
+        showAlert('danger', 'Koneksaun sala. Tenta fali.');
+        restore();
+      });
+    }
+
+    function restore() {
+      el.innerHTML = oldValue +
+        ' <i class="fa fa-pencil text-muted" style="font-size:11px;"></i>';
+    }
+
+    btnSave.addEventListener('click', doSave);
+    btnCancel.addEventListener('click', restore);
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter')  doSave();
+      if (e.key === 'Escape') restore();
+    });
+  });
+});
+
+// ── UPLOAD FOTO ─────────────────────────────────────────────────────────────
+function uploadPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  // Preview lokal
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('profile-photo').src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+
+  const statusEl = document.getElementById('photo-status');
+  statusEl.innerHTML = '<i class="fa fa-spinner fa-spin text-primary"></i> A karu...';
+
+  const formData = new FormData();
+  formData.append('image', file);
+
+  fetch(PHOTO_URL, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': CSRF_TOKEN },
+    body: formData,
+  })
+  .then(r => r.json())
+  .then(function(data) {
+    if (data.success) {
+      document.getElementById('profile-photo').src = data.url;
+      statusEl.innerHTML =
+        '<span class="text-success"><i class="fa fa-check"></i> Susesu!</span>';
+      showAlert('success', 'Foto atualiza ho susesu! ✓');
+    } else {
+      statusEl.innerHTML =
+        '<span class="text-danger"><i class="fa fa-times"></i> ' + data.error + '</span>';
+      showAlert('danger', data.error);
+    }
+    setTimeout(function() { statusEl.innerHTML = ''; }, 3000);
+  })
+  .catch(function() {
+    statusEl.innerHTML =
+      '<span class="text-danger"><i class="fa fa-times"></i> Sala.</span>';
+    showAlert('danger', 'Koneksaun sala. Tenta fali.');
+  });
+
+  input.value = '';
+}
+
+// ── ALERT ────────────────────────────────────────────────────────────────────
+function showAlert(type, msg) {
+  const el = document.getElementById('inline-alert');
+  el.className = 'alert alert-' + type + ' py-1 px-3';
+  el.style.fontSize = '13px';
+  el.innerHTML = msg;
+  el.classList.remove('d-none');
+  setTimeout(function() { el.classList.add('d-none'); }, 3000);
+}
+</script>
+{% endblock %}

@@ -10,7 +10,7 @@ from kni.models import Business, LocBussiness, Program, Employee, Finance, Busin
 from kni.forms import BusinessKNIForm, LocBusinessKNIForm, ProgramKNIForm, EmployeeKNIForm, FinanceKNIForm, BusinessMonitoringForm, BusinessBaselineForm
 from custom.models import TIpu_Programa, Status, Year
 from config.decorators import allowed_users
-
+from django.utils import timezone
 
 
 @login_required
@@ -157,7 +157,14 @@ def monitoring_create(request, hashid):
         'form': form,
         'business': business,
         'title': 'Input Monitoring',
-        'legend': 'Depois Apoiu Monitoring'
+        'legend': 'Depois Apoiu Monitoring',
+        'link_antes': [
+            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
+            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'benef-evaluation-list', 'link_text': 'Lista Avaliasaun Benefisiariu'},
+            {'link_name': 'baseline-list', 'link_text': 'Lista Baseline'},
+            {'link_name': 'add-monits', 'link_text': f'Monitorizasaun: {business.name}', 'link_param': business.hashed}
+        ],
     }
 
     return render(request, 'avaliasaun/forms.html', context)
@@ -168,87 +175,92 @@ def monitoring_create(request, hashid):
 def baseline_create(request, hashid):
     business = get_object_or_404(Business, hashed=hashid)
     if hasattr(business, 'baseline'):
-        messages.warning(
-            request,
-            "Baseline ba negósiu ida ne'e iha ona.")
+        messages.warning(request, f"Baseline ba negósiu '{business.name}' iha ona.")
         return redirect('baseline-list')
+    if not business.benefisiariu:
+        messages.error(request, "Benefisiariu la iha dadus kompletu. Favor kompleta dadus benefisiariu uluk.")
+        return redirect('benefisiariu-update', hashed=business.benefisiariu.hashed)
     if request.method == 'POST':
         form = BusinessBaselineForm(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.business = business
             obj.created_by = request.user
+            obj.created_at = timezone.now()
             obj.save()
-            messages.success(request, "Baseline rai ho sukses.")
+            
+            messages.success(request, f"Baseline ba '{business.name}' rai ho sukses.")
             return redirect('baseline-list')
-
+        else:
+            messages.error(request, "Formulariu la validu. Favor verifika dadus.")
     else:
-        form = BusinessBaselineForm()
+        initial_data = {}
+        if business.benefisiariu:
+            initial_data = {
+                'note': f"Baseline ba {business.name} - {business.benefisiariu.name}"
+            }
+        form = BusinessBaselineForm(initial=initial_data)
+    
     context = {
         'form': form,
         'business': business,
-        'title': 'Input Baseline',
+        'title': f'Input Baseline - {business.name}',
         'legend': 'Baseline Antes Apoiu',
+        'button_text': 'Rai Baseline',
+        'link_antes': [
+            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
+            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'list-ava', 'link_text': 'Lista Avaliasaun Benefisiariu'},
+            {'link_name': 'baseline-list', 'link_text': 'Lista Baseline'},
+            {'link_name': 'add-baseline', 'link_text': f'Baseline: {business.name}', 'link_param': business.hashed}
+        ],
     }
     return render(request, 'avaliasaun/forms.html', context)
+
 
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def baseline_list(request):
-
-    baselines = BusinessBaseline.objects.select_related(
-        'business',
-        'business__benefisiariu'
-    )
-
+    group = request.user.groups.all()[0].name
+    baselines = BusinessBaseline.objects.select_related('business', 'business__benefisiariu')
     context = {
+        'group':group,
         'baselines': baselines,
         'title': 'Lista Baseline',
         'legend': 'Dadus Antes Apoiu',
+        'link_antes': [
+            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
+            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'list-ava', 'link_text': 'Lista Avaliasaun Benefisiariu'},
+            {'link_name': 'baseline-list', 'link_text': 'Lista Avaliasaun Antes Apoiu'}
+        ],
     }
-
-    return render(
-        request,
-        'avaliasaun/baseline_list.html',
-        context
-    )
+    return render(request, 'avaliasaun/baseline_list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def monitoring_list(request):
     monitorings = BusinessMonitoring.objects.select_related('business', 'business__benefisiariu')
     pending = monitorings.filter(verification_status='Pending').count()
-    verified = monitorings.filter(verification_status='Verified'
-    ).count()
-
-    critical = monitorings.filter(
-        monitoring_status='Critical'
-    ).count()
-
-    risk = monitorings.filter(
-        monitoring_status='Risk'
-    ).count()
-
-    normal = monitorings.filter(
-        monitoring_status='Normal'
-    ).count()
-
+    verified = monitorings.filter(verification_status='Verified').count()
+    critical = monitorings.filter(monitoring_status='Critical').count()
+    risk = monitorings.filter(monitoring_status='Risk').count()
+    normal = monitorings.filter(monitoring_status='Normal').count()
     context = {
         'monitorings': monitorings,
-
         'pending': pending,
         'verified': verified,
-
         'critical': critical,
         'risk': risk,
         'normal': normal,
-
         'title': 'Lista Monitoring',
         'legend': 'Dadus Monitoring',
+        'link_antes': [
+            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
+            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'list-ava', 'link_text': 'Lista Avaliasaun Benefisiariu'},
+            {'link_name': 'monitoring-list', 'link_text': 'Lista Avaliasaun Depois Apoiu'},
+        ],
     }
 
-    return render(
-        request,
-        'avaliasaun/monitoring_list.html',
-        context
-    )
+    return render(request, 'avaliasaun/monitoring_list.html', context)

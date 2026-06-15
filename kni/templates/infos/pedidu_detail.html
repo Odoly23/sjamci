@@ -4,36 +4,292 @@
 {% block content %}
 
 <div class="container-fluid mt-3">
-  <div class="card">
-      <div class="row">
+  <div class="row">
     <div class="col-sm-12">
-      <div class="card shadow-lg pt-1 border-primary rounded">
-
+      <div class="card shadow-lg border-0 rounded">
         <!-- HEADER -->
-        <div class="card-header bg-steel d-flex justify-content-between align-items-center">
-          <span>{{ legend|upper}}</span>
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="fa fa-file-text"></i> 
+            {{ legend|default:"Detallu Pedidu"|upper }}
+          </h5>
+          <a href="{% url 'pedidu-list' %}" class="btn btn-sm btn-light" title="Fila ba Lista">
+            <i class="fa fa-arrow-left"></i> Fila
+          </a>
         </div>
-          <div class="card-body">
-            <p><b>Benefisiariu:</b> {{ pedidu.benefisiariu }}</p>
-            <p><b>Tipo:</b> {{ pedidu.tipo }}</p>
-            <p><b>Assuntu:</b> {{ pedidu.assuntu }}</p>
-            <p><b>Deskrisaun:</b> {{ pedidu.deskrisaun }}</p>
-
-            <p>
-              <b>Status:</b>
-              <span class="badge badge-success">{{ pedidu.status }}</span>
-            </p>
-
-            <p><b>Resposta:</b> {{ pedidu.resposta|default:"Belum ada resposta" }}</p>
-
-            <p><b>Resolvidu By:</b> {{ pedidu.resolvidu_by }}</p>
-
-            <a href="{% url 'pedidu-list' %}" class="btn btn-secondary btn-sm">Back</a>
-
+        
+        <!-- BODY -->
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <!-- STATUS BANNER -->
+              <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="fa fa-info-circle"></i>
+                <strong>Informasaun:</strong> Detallu kompletu husi pedidu ne'e.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              
+              <!-- DETAIL TABLE -->
+              <div class="info-box p-3">
+                <table class="table table-borderless table-detail">
+                  <tbody>
+                    <!-- BENEFISIARIU -->
+                    <tr>
+                      <td width="30%" class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-user text-primary"></i> Benefisiariu
+                      </td>
+                      <td width="70%" class="pl-3">
+                        <strong>{{ pedidu.benefisiariu|default:"-" }}</strong>
+                      </td>
+                    </tr>
+                    
+                    <!-- TIPO -->
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-tag text-info"></i> Tipo
+                      </td>
+                      <td class="pl-3">
+                        {% if pedidu.tipo == 'URGENTE' %}
+                          <span class="badge badge-danger">
+                            <i class="fa fa-exclamation-circle"></i> Urgente
+                          </span>
+                        {% elif pedidu.tipo == 'NORMAL' %}
+                          <span class="badge badge-success">
+                            <i class="fa fa-check-circle"></i> Normal
+                          </span>
+                        {% else %}
+                          <span class="badge badge-secondary">{{ pedidu.tipo|default:"-" }}</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    
+                    <!-- ASSUNTU -->
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-tasks text-warning"></i> Assuntu
+                      </td>
+                      <td class="pl-3">
+                        {{ pedidu.assuntu|default:"-" }}
+                      </td>
+                    </tr>
+                    
+                    <!-- DESKRISAUN -->
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-file-text text-secondary"></i> Deskrisaun
+                      </td>
+                      <td class="pl-3">
+                        <div class="well well-sm p-2 bg-light rounded">
+                          {{ pedidu.deskrisaun|default:"-"|linebreaks }}
+                        </div>
+                      </td>
+                    </tr>
+                    
+                    <!-- STATUS -->
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-flag-checkered text-success"></i> Status
+                      </td>
+                      <td class="pl-3">
+                        {% if pedidu.status == 'PENDING' %}
+                          <span class="badge badge-warning badge-lg">
+                            <i class="fa fa-clock-o"></i> Pending
+                          </span>
+                        {% elif pedidu.status == 'PROCESSING' %}
+                          <span class="badge badge-info badge-lg">
+                            <i class="fa fa-spinner fa-spin"></i> Processing
+                          </span>
+                        {% elif pedidu.status == 'RESOLVED' %}
+                          <span class="badge badge-success badge-lg">
+                            <i class="fa fa-check-circle"></i> Resolved
+                          </span>
+                        {% elif pedidu.status == 'REJECTED' %}
+                          <span class="badge badge-danger badge-lg">
+                            <i class="fa fa-times-circle"></i> Rejected
+                          </span>
+                        {% else %}
+                          <span class="badge badge-secondary">{{ pedidu.status|default:"-" }}</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    
+                    <!-- RESPOSTA -->
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-reply-all text-primary"></i> Resposta
+                      </td>
+                      <td class="pl-3">
+                        {% if pedidu.resposta %}
+                          <div class="alert alert-success mb-0">
+                            <i class="fa fa-comment"></i> {{ pedidu.resposta }}
+                          </div>
+                        {% else %}
+                          <span class="text-muted">
+                            <i class="fa fa-clock-o"></i> Seidauk iha resposta
+                          </span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    
+                    <!-- RESOLVIDU BY -->
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-user-check text-info"></i> Resolvidu By
+                      </td>
+                      <td class="pl-3">
+                        {% if pedidu.resolvidu_by %}
+                          <strong>{{ pedidu.resolvidu_by }}</strong>
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    
+                    <!-- CREATED AT (Optional) -->
+                    {% if pedidu.created_at %}
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-calendar text-danger"></i> Data Kria
+                      </td>
+                      <td class="pl-3">
+                        {{ pedidu.created_at|date:"d F Y, H:i" }}
+                      </td>
+                    </tr>
+                    {% endif %}
+                    
+                    <!-- UPDATED AT (Optional) -->
+                    {% if pedidu.updated_at %}
+                    <tr>
+                      <td class="font-weight-bold bg-light pl-3">
+                        <i class="fa fa-edit text-warning"></i> Data Atualizasaun
+                      </td>
+                      <td class="pl-3">
+                        {{ pedidu.updated_at|date:"d F Y, H:i" }}
+                      </td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-  </div>
+        </div>
+        
+        <!-- FOOTER WITH ACTION BUTTONS -->
+        <div class="card-footer bg-white text-right">
+          {% if pedidu.status != 'RESOLVED' and pedidu.status != 'REJECTED' %}
+          <a href="" class="btn btn-warning btn-sm">
+            <i class="fa fa-edit"></i> Editar
+          </a>
+          <button type="button" 
+                  class="btn btn-success btn-sm" 
+                  data-toggle="modal"
+                  data-target="#respostaModal">
+            <i class="fa fa-reply"></i> Responde
+          </button>
+          {% endif %}
+          
+          <a href="{% url 'pedidu-list' %}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> Back
+          </a>
+          
+          {% if pedidu.status != 'RESOLVED' and pedidu.status != 'REJECTED' %}
+          <button type="button" 
+                  class="btn btn-danger btn-sm" 
+                  data-toggle="modal"
+                  data-target="#deleteModal">
+            <i class="fa fa-trash"></i> Delete
+          </button>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- MODAL FOR RESPONSE -->
+<div class="modal fade" id="respostaModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">
+          <i class="fa fa-reply"></i> Responde ba Pedidu
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+      </div>
+      <form method="POST" action="">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Resposta:</label>
+            <textarea name="resposta" class="form-control" rows="4" placeholder="Hakerek resposta ba pedidu ne'e..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Status:</label>
+            <select name="status" class="form-control">
+              <option value="RESOLVED">Resolved</option>
+              <option value="REJECTED">Rejected</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success btn-sm">Submit</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FOR DELETE -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h6 class="modal-title">Konfirmasaun</h6>
+        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        Ita boot hakarak hamoos pedidu ida ne'e?
+      </div>
+      <div class="modal-footer">
+        <form method="POST" action="">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger btn-sm">Hamoos</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Kansela</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Additional CSS -->
+<style>
+  .table-detail tr {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .table-detail tr:last-child {
+    border-bottom: none;
+  }
+  .table-detail td {
+    padding: 12px 8px;
+    vertical-align: middle;
+  }
+  .info-box {
+    background: #fafafa;
+    border-radius: 8px;
+  }
+  .badge-lg {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+  .well {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+  }
+</style>
 
 {% endblock %}

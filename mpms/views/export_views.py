@@ -74,7 +74,7 @@ HEADERS = [
     ("Naran Diretor",           lambda e: e.benefisiariu.name if e.benefisiariu else ""),
     ("Naran Kompania",          lambda e: e.company_name or ""),
     ("Sexo",                    lambda e: e.benefisiariu.sex if e.benefisiariu else ""),
-    ("Nivel Edukasaun",         lambda e: getattr(e.benefisiariu, "marital", "") or ""),
+    ("Nivel Edukasaun",         lambda e: getattr(e.benefisiariu, "nivel_edukasaun", "") or ""),
     ("Munisipiu",               lambda e: str(e.lokalizasaun.municipality) if getattr(e, "lokalizasaun", None) else ""),
     ("Postu Administrativu",    lambda e: str(e.lokalizasaun.administrativepost) if getattr(e, "lokalizasaun", None) else ""),
     ("Suku",                    lambda e: str(e.lokalizasaun.village) if getattr(e, "lokalizasaun", None) else ""),

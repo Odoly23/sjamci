@@ -39,7 +39,8 @@ urlpatterns = [
     #Importasaun Excel)
     path('Importa-excel/kni/.html', views.import_kni_excel, name='import_kni_excel'),
 
-
+    #print sert
+    path('Print/sertifikado/<str:hashid>/', views.print_sertifikat_kni, name='print_sertifikat_kni'),
 
     #monitorizasaun/Avaliasaun
     path('Lista-Avalisaun-Finasaira/', views.avalia_list2, name='av-list2'),

@@ -46,49 +46,35 @@ def update_profile_ajax(request):
 
 @login_required
 def update_photo_ajax(request):
-
     if request.method == "POST":
-
         empuser = EmpUser.objects.get(user=request.user)
         emp = empuser.emp
-
         photo, created = EmpPhoto.objects.get_or_create(
             emp=emp
         )
-
         if request.FILES.get('image'):
             photo.image = request.FILES.get('image')
             photo.save()
-
         return JsonResponse({
             'status': 'success'
         })
-
     return JsonResponse({
         'status': 'error'
     })
 
 @login_required
 def manage_account_ajax(request):
-
     if request.method == "POST":
-
         user = request.user
-
         user.username = request.POST.get('username')
         user.email = request.POST.get('email')
-
         password = request.POST.get('password')
-
         if password:
             user.set_password(password)
-
         user.save()
-
         return JsonResponse({
             'status': 'success'
         })
-
     return JsonResponse({
         'status': 'error'
     })

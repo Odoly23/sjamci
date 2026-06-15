@@ -21,38 +21,29 @@
             <tbody>
             {% for item in data %}
             <tr>
-
                 <td class="text-center">
                     {{ forloop.counter }}
                 </td>
-
                 <td>
                     {{ item.benefisiariu.name }}
                 </td>
-
                 <td>
                     {{ item.user.username }} ({{item.user.groups.first}})
                 </td>
-
                 <td>
                     {{ item.user.email }}
                 </td>
-
                 <td class="text-center">
-
                     <a href="{% url 'benefisiariu-user-edit' item.id %}"
                        class="btn btn-info btn-sm">
                         <i class="fa fa-edit"></i>
                     </a>
-
                     <a href="{% url 'benefisiariu-user-delete' item.id %}"
                        class="btn btn-danger btn-sm"
                        onclick="return confirm('Ita hakarak hamoos dadus ida ne'e?')">
                         <i class="fa fa-trash"></i>
                     </a>
-
                 </td>
-
             </tr>
             {% empty %}
             <tr>

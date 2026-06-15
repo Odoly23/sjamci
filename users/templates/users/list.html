@@ -1,0 +1,54 @@
+{% extends "main/layout.html" %}
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-list"> {{legend|upper}}</i>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+                                 {% if group == "admin" %}
+                    <a class="btn btn-primary btn-sm mb-1" href="{% url 'user-add'%}"><i class="fa fa-plus"></i> Aumenta</a>
+                    {% endif %}
+                    <table id="example1" class="table table-sm responsive" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Naran</th>
+                                <th>Username (Grupo)</th>
+                                <th>#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for obj in objects %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ obj.emp.name }}</td>
+                                <td>{{ obj.user }} ({{ obj.user.groups.all.0.name }})</td>
+                                <td>
+                                <a class="btn btn-sm btn-info" href="{% url 'emp-detail' obj.emp.pk %}">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                {% if group == "admin" %}
+                                <a class="btn btn-sm btn-warning" href="{% url 'emp-update' obj.emp.pk %}">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a class="btn btn-sm btn-danger" href="">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                                {% endif %}
+                            </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

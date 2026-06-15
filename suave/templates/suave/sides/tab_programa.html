@@ -9,14 +9,13 @@
     </th>
    </tr>
   <tr class="bg-light">
-    <th>Programa</th><th>Faze</th><th>Tinan</th>
+    <th>Programa</th><th>Tinan</th>
     <th class="text-right">Aprovadu ($)</th>
     <th class="text-right">Montante ($)</th>
    </tr>
   {% for p in programs %}
   <tr>
     <td>{{ p.program_type }}</td>
-    <td>{{ p.faze }}</td>
     <td>{{ p.year }}</td>
     <td class="text-right">{{ p.approved_amount|default:"-" }}</td>
     <td class="text-right"><strong>{{ p.amount|default:"-" }}</strong></td>

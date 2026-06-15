@@ -29,6 +29,30 @@
       {% else %}
         {% include 'main/sidenavs/cliente.html' %}
       {% endif %}
+      <!-- ACCOUNT -->
+      <div class="admin-menu">
 
+    <h5 class="sidenav-heading">
+        Konta - Perfil
+    </h5>
+    <ul class="side-menu list-unstyled">
+        {% if request.user.groups.all.0.name == 'Cliente' %}
+        {% else %}
+        <li>
+            <a href="{% url 'UserProfile' %}">
+                <i class="icon-user"></i>
+                konta
+            </a>
+        </li>
+        {% endif %}
+        <li>
+            <a href="{% url 'logout' %}">
+               <i class="fa fa-sign-out"></i>
+                Logout
+            </a>
+        </li>
+    </ul>
+
+</div>
     {% endif %}
   </div>

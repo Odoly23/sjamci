@@ -25,7 +25,6 @@ def _back(hashid):
  
  
 def _ctx(hashid, benef, form, title, legend):
-    """Context standar untuk form edit."""
     return {
         'hashid': hashid,
         'emp':    benef,
@@ -33,7 +32,11 @@ def _ctx(hashid, benef, form, title, legend):
         'title':  title,
         'legend': legend,
         'link_antes': [
-            {'link_name': 'benef-detail-ks', 'link_text': 'Fila Fali Detail'},
+            {
+                'link_name': 'benef-detail-ks', 
+                'link_text': 'Fila Fali Detail', 
+                'link_param': hashid,  
+            },
         ],
     }
  

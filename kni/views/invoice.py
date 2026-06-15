@@ -1,24 +1,3 @@
-"""
-kni/export_views.py
-====================
-Views export data KNI ke Excel (.xlsx) dan PDF.
-
-PERBAIKAN:
-    - Employee tidak punya related_name  → pakai 'employee_set' (Django default)
-    - Finance  tidak punya related_name  → pakai 'finance_set'  (Django default)
-    - prefetch_related disesuaikan dengan nama relasi yang benar
-    - Queryset berbasis Benefisiariu (bukan Business) agar filter
-      locnegosiu / Pnegosiu bekerja langsung tanpa double-join
-
-Filter GET params:
-    ?mun=Dili     – Munisipiu lokasi negosiu
-    ?year=2021    – Tinan programa
-    ?faze=I       – Faze (I / II / III)
-    ?sector=      – Setor negosiu
-    ?sexo=Feto    – Genero benefisiariu
-    ?status=Ativu – Status programa
-"""
-
 import io
 from datetime import date
 
@@ -33,34 +12,21 @@ from kni.models import Business, LocBussiness, Program, Employee, Finance, \
                        BusinessBaseline, BusinessMonitoring
 
 
-# ---------------------------------------------------------------------------
-# Helper: queryset Benefisiariu + filter
-# ---------------------------------------------------------------------------
-
 def _get_filtered_qs(params):
-    """
-    Kembalikan queryset Benefisiariu program KNI dengan semua relasi.
-    Berbasis Benefisiariu (bukan Business) supaya filter lokasi/program
-    bekerja langsung tanpa cross-join yang rumit.
-    """
     qs = (
         Benefisiariu.active_objects
         .filter(Pnegosiu__program_type__name="KNI")
         .select_related("status")
         .prefetch_related(
-            # Lokasi negosiu
             "locnegosiu__municipality",
             "locnegosiu__administrativepost",
             "locnegosiu__village",
-            # Program
             "Pnegosiu__program_type",
             "Pnegosiu__faze",
             "Pnegosiu__year",
             "Pnegosiu__status",
             "Pnegosiu__t_apoiu",
             "Pnegosiu__t_fundus",
-            # Business → Employee, Finance, Baseline, Monitoring
-            # related_name = default Django (employee_set, finance_set, dll)
             "negosiu__sector",
             "negosiu__category",
             "negosiu__size",
@@ -72,7 +38,6 @@ def _get_filtered_qs(params):
         .order_by("locnegosiu__municipality__name", "name")
         .distinct()
     )
-
     mun    = params.get("mun",    "").strip()
     year   = params.get("year",   "").strip()
     faze   = params.get("faze",   "").strip()
@@ -101,29 +66,20 @@ def _filter_label(params):
     return " | ".join(parts) if parts else "Dadus Tomak KNI (Hotu)"
 
 
-# ---------------------------------------------------------------------------
-# Accessor helpers — ambil relasi dari Benefisiariu
-# ---------------------------------------------------------------------------
-
 def _biz(benef):
-    """Business KNI pertama milik benefisiariu."""
     return benef.negosiu.first()
 
 def _loc(benef):
-    """LocBussiness pertama milik benefisiariu."""
     return benef.locnegosiu.first()
 
 def _prog(benef):
-    """Program KNI pertama milik benefisiariu."""
     return benef.Pnegosiu.filter(program_type__name="KNI").first()
 
 def _emp(benef):
-    """Employee dari business pertama (pakai employee_set — default Django)."""
     biz = _biz(benef)
     return biz.employee_set.first() if biz else None
 
 def _fin(benef):
-    """Finance dari business pertama (pakai finance_set — default Django)."""
     biz = _biz(benef)
     return biz.finance_set.first() if biz else None
 
@@ -137,7 +93,6 @@ def _baseline(benef):
         return None
 
 def _mon(benef):
-    """Monitoring terkini (ordering = -monitoring_date dari Meta)."""
     biz = _biz(benef)
     return biz.monitorings.first() if biz else None
 
@@ -148,10 +103,6 @@ def _safe(fn):
     except Exception:
         return ""
 
-
-# ---------------------------------------------------------------------------
-# Definisi kolom — sesuai format KNI_1-5.xlsx
-# ---------------------------------------------------------------------------
 
 KNI_HEADERS = [
     ("No",                    None),
@@ -217,71 +168,43 @@ MON_HEADERS = [
 ]
 
 
-# ===========================================================================
-# EXPORT EXCEL
-# ===========================================================================
-
 @login_required
 @allowed_users(allowed_roles=["admin", "KNI", "XFD"])
 def export_excel_kni(request):
-    """
-    Download .xlsx data KNI — 3 sheets:
-        Sheet 1: Dados KNI       (kolom sesuai KNI_1-5.xlsx + kolom baru)
-        Sheet 2: Baseline        (kondisi sebelum apoiu)
-        Sheet 3: Monitorizasaun  (data terkini)
-    """
     from openpyxl import Workbook
     from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
     from openpyxl.utils import get_column_letter
-
     params   = request.GET
     qs       = _get_filtered_qs(params)
     benef_list = list(qs)
     label    = _filter_label(params)
     today    = date.today().strftime("%d-%m-%Y")
     filename = f"KNI_Export_{today}.xlsx"
-
     wb = Workbook()
-
-    # ── Style constants ──
     BLUE   = "1F3864"
     GREEN  = "1A5276"
     PURPLE = "4A235A"
     WHITE  = "FFFFFF"
     GRAY   = "F2F2F2"
     LBLUE  = "D6E4F0"
-
     center = Alignment(horizontal="center", vertical="center", wrap_text=True)
     left   = Alignment(horizontal="left",   vertical="center", wrap_text=True)
     thin   = Border(
         left=Side(style="thin"),  right=Side(style="thin"),
         top=Side(style="thin"),   bottom=Side(style="thin"),
     )
-
     def fill(hex_color):
         return PatternFill("solid", fgColor=hex_color)
-
     def _write_sheet(ws, headers, data, title_text, hdr_hex):
-        """
-        Tulis satu sheet.
-        PENTING: TIDAK pakai merge_cells — menghindari MergedCell read-only error.
-        """
-        # Baris 1: Judul
         ws["A1"] = title_text
         ws["A1"].font      = Font(name="Arial", bold=True, size=12, color=hdr_hex)
         ws["A1"].alignment = center
         ws.row_dimensions[1].height = 22
-
-        # Baris 2: Filter & tanggal
         ws["A2"] = f"Filter: {label}  |  Rai tiha: {today}"
         ws["A2"].font      = Font(name="Arial", size=9, italic=True, color="555555")
         ws["A2"].alignment = center
         ws.row_dimensions[2].height = 16
-
-        # Baris 3: spacer
         ws.row_dimensions[3].height = 6
-
-        # Baris 4: Header kolom
         hdr_fill = fill(hdr_hex)
         hdr_font = Font(name="Arial", bold=True, color=WHITE, size=10)
         for col, (name, _) in enumerate(headers, 1):
@@ -289,8 +212,6 @@ def export_excel_kni(request):
             c.font = hdr_font; c.fill = hdr_fill
             c.alignment = center; c.border = thin
         ws.row_dimensions[4].height = 28
-
-        # Baris 5+: Data
         DATA_START = 5
         nfont = Font(name="Arial", size=9)
         for i, benef in enumerate(data, 1):
@@ -302,8 +223,6 @@ def export_excel_kni(request):
                 c.border = thin
                 c.alignment = center if col == 1 else left
             ws.row_dimensions[DATA_START + i - 1].height = 16
-
-        # Baris total — PER SEL, tidak merge
         total_row = DATA_START + len(data)
         tfont = Font(name="Arial", bold=True, size=9, color=hdr_hex)
         for col in range(1, len(headers) + 1):
@@ -311,8 +230,6 @@ def export_excel_kni(request):
             c.fill = fill(LBLUE); c.border = thin
         ws.cell(row=total_row, column=1,
                 value=f"Total Rekord: {len(data)}").font = tfont
-
-        # Lebar kolom
         for col, (name, _) in enumerate(headers, 1):
             ltr = get_column_letter(col)
             ws.column_dimensions[ltr].width = max(10, min(len(name) + 4, 28))
@@ -320,7 +237,6 @@ def export_excel_kni(request):
         ws.freeze_panes = "A5"
         ws.auto_filter.ref = f"A4:{get_column_letter(len(headers))}4"
 
-    # ── Sheet 1: Dados KNI ──
     ws1 = wb.active
     ws1.title = "Dados KNI"
     _write_sheet(
@@ -329,7 +245,6 @@ def export_excel_kni(request):
         BLUE,
     )
 
-    # ── Sheet 2: Baseline ──
     ws2 = wb.create_sheet("Baseline")
     with_baseline = [b for b in benef_list if _baseline(b)]
     _write_sheet(
@@ -338,7 +253,6 @@ def export_excel_kni(request):
         GREEN,
     )
 
-    # ── Sheet 3: Monitorizasaun ──
     ws3 = wb.create_sheet("Monitorizasaun")
     with_mon = [b for b in benef_list if _mon(b)]
     _write_sheet(
@@ -347,7 +261,6 @@ def export_excel_kni(request):
         PURPLE,
     )
 
-    # ── Stream response ──
     output = io.BytesIO()
     wb.save(output)
     output.seek(0)
@@ -359,14 +272,9 @@ def export_excel_kni(request):
     return response
 
 
-# ===========================================================================
-# EXPORT PDF
-# ===========================================================================
-
 @login_required
 @allowed_users(allowed_roles=["admin", "KNI", "XFD"])
 def export_pdf_kni(request):
-    """Download .pdf data KNI — landscape A3, kolom ringkas."""
     from reportlab.lib           import colors
     from reportlab.lib.pagesizes import A3, landscape
     from reportlab.lib.styles    import getSampleStyleSheet, ParagraphStyle
@@ -496,10 +404,6 @@ def export_pdf_kni(request):
     response["Content-Disposition"] = f'attachment; filename="{filename}"'
     return response
 
-
-# ===========================================================================
-# HALAMAN FILTER
-# ===========================================================================
 
 @login_required
 @allowed_users(allowed_roles=["admin", "KNI", "XFD"])

@@ -12,7 +12,7 @@ from .models import (
     mpmsMateriaPrima,
     mpmsAtividade
 )
-from kni.models import Program
+from kni.models import Program, Business
 # =========================================================
 # SHARED UI
 # =========================================================
@@ -42,6 +42,31 @@ _ALERT = """
 # =========================================================
 # EMPRESA
 # =========================================================
+class BusinessMPMSForm(forms.ModelForm):
+    class Meta:
+        model  = Business
+        fields = ['name', 'idea', 'sector', 'category']  
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].label = 'Kategoria Negósiu'
+        self.fields['idea'].label = 'Tipo Atividade'
+        self.fields['name'].label = 'Naran Kompania'
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            HTML(_ALERT),
+            Row(
+                Column('name', css_class='col-md-6'),
+                Column('idea', css_class='col-md-6'),
+            ),
+            Row(
+                Column('sector',   css_class='col-md-6'),
+                Column('category', css_class='col-md-6'),
+            ),
+            HTML(_BTN),
+        )
+
 class ProgramMPMSForm(forms.ModelForm):
     class Meta:
         model  = Program
@@ -49,6 +74,7 @@ class ProgramMPMSForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['faze'].label='Apoiu Husi'
         self.helper = FormHelper()
         self.fields['year'].queryset = Year.active_objects.all().order_by('-year')
         self.fields['faze'].queryset = Faze.active_objects.filter(name="mpms")
@@ -68,38 +94,29 @@ class ProgramMPMSForm(forms.ModelForm):
         )
 
 class MpmsEmpresaForm(forms.ModelForm):
-
     class Meta:
         model = mpmsEmpresa
-
         fields = [
             'company_name',
             'tipo_atividade',
             'tinan_hari',
         ]
-
     def __init__(self, *args, **kwargs):
-
         super().__init__(*args, **kwargs)
-
+        self.fields['tipo_atividade'].label = 'Tipu Fundus Kapital '
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-
         self.helper.layout = Layout(
-
             HTML(_ALERT),
             Row(
                 Column('company_name', css_class='col-md-8'),
                 Column('tinan_hari', css_class='col-md-4'),
             ),
-
             Row(
                 Column('tipo_atividade', css_class='col-md-12'),
             ),
-
             HTML(_BTN),
         )
-
 
 # =========================================================
 # LOKALIZASAUN
@@ -372,54 +389,47 @@ class MpmsMateriaPrimaForm(forms.ModelForm):
 # =========================================================
 # ATIVIDADE
 # =========================================================
-
 class MpmsAtividadeForm(forms.ModelForm):
 
     class Meta:
         model = mpmsAtividade
-
         fields = [
             'program',
             'tipu_apoio',
             'year',
             'amount',
-            'status',
             'observasaun',
         ]
-
         widgets = {
             'observasaun': forms.Textarea(attrs={'rows': 3})
         }
 
     def __init__(self, *args, **kwargs):
-
+        benef = kwargs.pop('benef', None)
         super().__init__(*args, **kwargs)
-
-        self.fields['year'].queryset = (
-            Year.active_objects.all().order_by('-year')
-        )
-
+        self.fields['tipu_apoio'].label = 'Tipu Fundus Kapital '
+        self.fields['year'].queryset = Year.active_objects.all().order_by('-year')
+        if benef:
+            queryset_program = Program.objects.filter(benefisiariu=benef)
+            self.fields['program'].queryset = queryset_program
+            if queryset_program.count() == 1:
+                self.fields['program'].initial = queryset_program.first()
+            self.fields['program'].disabled = True
+            self.fields['program'].required = False 
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-
         self.helper.layout = Layout(
-
             HTML(_ALERT),
-
             Row(
                 Column('program', css_class='col-md-6'),
                 Column('tipu_apoio', css_class='col-md-6'),
             ),
-
             Row(
-                Column('year', css_class='col-md-4'),
-                Column('amount', css_class='col-md-4'),
-                Column('status', css_class='col-md-4'),
+                Column('year', css_class='col-md-6'),
+                Column('amount', css_class='col-md-6'),
             ),
-
             Row(
                 Column('observasaun', css_class='col-md-12'),
             ),
-
             HTML(_BTN),
         )

@@ -19,7 +19,7 @@ from mpms.models import (
     mpmsKapital, mpmsEmpregador, mpmsMateriaPrima, mpmsAtividade
 )
 from mpms.forms import (
-    MpmsEmpresaForm, MpmsLokalizasaunForm, MpmsLisensamentuForm,
+    MpmsEmpresaForm, MpmsLokalizasaunForm, MpmsLisensamentuForm, BusinessMPMSForm,
     MpmsKapitalForm, MpmsEmpregadorForm, MpmsMateriaPrimaForm, MpmsAtividadeForm, ProgramMPMSForm
 )
 
@@ -55,7 +55,7 @@ def add_benef_mpms(request):
             obj.save()
 
             messages.success(request, "Dadus Benefisiariu rai ho susesu.")
-            return redirect('mpms-detail', hashid=obj.hashed)
+            return redirect('mpms-business-add', hashid=obj.hashed)
     else:
         form = BenefisiariuForm()
 
@@ -226,7 +226,7 @@ def Business_Add_mpms(request, hashid):
     emp = get_object_or_404(Benefisiariu, hashed=hashid)
 
     if request.method == 'POST':
-        form = BusinessKNIForm(request.POST)
+        form = BusinessMPMSForm(request.POST)
         if form.is_valid():
             business              = form.save(commit=False)
             business.benefisiariu = emp
@@ -242,9 +242,9 @@ def Business_Add_mpms(request, hashid):
             )
 
             messages.success(request, "Negosiu no Empresa MPMS rai ho susesu.")
-            return redirect('mpms-detail', hashid=hashid)
+            return redirect('mpms-program-add', hashid=hashid)
     else:
-        form = BusinessKNIForm()
+        form = BusinessMPMSForm()
 
     context = {
         'hashid': hashid,
@@ -265,19 +265,13 @@ def Business_Add_mpms(request, hashid):
 @transaction.atomic
 def Business_Edit_mpms(request, hashid):
     business = get_object_or_404(Business, hashed=hashid)
-
     if request.method == 'POST':
         form = BusinessKNIForm(request.POST, instance=business)
         if form.is_valid():
             old_name = business.name
             obj      = form.save()
-
-            # ── Sync nama ke mpmsEmpresa jika berubah ─────────
             if old_name != obj.name:
-                mpmsEmpresa.objects.filter(
-                    business=obj
-                ).update(company_name=obj.name)
-
+                mpmsEmpresa.objects.filter(business=obj).update(company_name=obj.name)
             messages.success(request, "Negosiu atualiza ho susesu.")
             return redirect('mpms-detail', hashid=obj.benefisiariu.hashed)
     else:
@@ -490,8 +484,6 @@ def mpms_lokalizasaun_create(request, hashid):
  
 # ══════════════════════════════════════════════════════════════
 #  LISENSAMENTU
-#  Bug fix: sebelumnya pakai get_object_or_404(Benefisiariu,...)
-#  padahal lisensamentu milik mpmsEmpresa
 # ══════════════════════════════════════════════════════════════
  
 @login_required
@@ -519,6 +511,34 @@ def mpms_lisensamentu_create(request, hashid):
         'title':   'Lisensamentu',
         'legend':  'Input Lisensamentu',
     })
+
+@login_required
+@allowed_users(allowed_roles=['mpms'])
+@transaction.atomic
+def mpms_empresa_edit(request, hashid):
+    group = request.user.groups.all()[0].name
+    empresa, benef = _get_empresa_and_benef(hashid)
+    if request.method == 'POST':
+        form = MpmsEmpresaForm(request.POST, instance=empresa)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.benefisiariu = benef
+            if not obj.business:
+                obj.business = empresa.business
+            obj.save()
+            messages.success(request, 'Dadus Empresa atualiza ho susesu.')
+            return redirect('mpms-detail', hashid=benef.hashed)
+    else:
+        form = MpmsEmpresaForm(instance=empresa)
+    context = {
+        'group':group,
+        'form': form,
+        'empresa': empresa,
+        'benef': benef,
+        'title': 'Empresa MPMS',
+        'legend': 'Atualiza Dadus Empresa',
+    }
+    return render(request, 'mpms/forms.html', context)
  
  
 # ══════════════════════════════════════════════════════════════
@@ -617,28 +637,30 @@ def mpms_materia_create(request, hashid):
 # ══════════════════════════════════════════════════════════════
 #  ATIVIDADE
 # ══════════════════════════════════════════════════════════════
- 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
 @transaction.atomic
 def mpms_atividade_create(request, hashid):
+    group = request.user.groups.all()[0].name
     empresa, benef = _get_empresa_and_benef(hashid)
- 
     if request.method == 'POST':
-        form = MpmsAtividadeForm(request.POST)
+        form = MpmsAtividadeForm(request.POST, benef=benef)
         if form.is_valid():
             obj         = form.save(commit=False)
             obj.empresa = empresa
+            obj.status_id = 1
             obj.save()
             messages.success(request, 'Atividade konsege rai.')
             return redirect('mpms-detail', hashid=benef.hashed)
     else:
-        form = MpmsAtividadeForm()
+        form = MpmsAtividadeForm(benef=benef)
  
-    return render(request, 'mpms/forms.html', {
+    context = {
+        'group':group,
         'form':    form,
         'empresa': empresa,
         'benef':   benef,
         'title':   'Atividade',
         'legend':  'Input Atividade',
-    })
+    }
+    return render(request, 'mpms/forms.html', context)

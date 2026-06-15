@@ -239,36 +239,6 @@ def Business_Add(request, hashid):
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 @transaction.atomic
-def Program_AddEs(request, hashid):
-    emp = get_object_or_404(Benefisiariu, hashed=hashid)
-    if request.method == 'POST':
-        form = ProgramKNIForm(request.POST)
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.benefisiariu = emp
-            obj.program_type = TIpu_Programa.objects.get(name='KNI')
-            obj.status_id = 1
-            obj.save()
-            total_budget = Program.objects.filter(benefisiariu=emp, program_type__name='KNI').aggregate(total=Sum('amount'))['total'] or 0
-            for b in Business.objects.filter(benefisiariu=emp):
-                Finance.objects.update_or_create(business=b, defaults={'budget': total_budget})
-            messages.success(request, "Programa KNI rai ho susesu.")
-            return redirect('benef-detail-kni', hashid=hashid)
-    else:
-        form = ProgramKNIForm()
-
-    context = {
-        'hashid': hashid,
-        'form': form,
-        'emp': emp,
-        'title': 'Rejistu Programa KNI',
-        'legend': 'Programa KNI Foun',
-    }
-    return render(request, 'Dash/Forms/form.html', context)
-
-@login_required
-@allowed_users(allowed_roles=['KNI'])
-@transaction.atomic
 def Program_Add(request, hashid):
     emp = get_object_or_404(Benefisiariu, hashed=hashid)
  

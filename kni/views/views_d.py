@@ -11,7 +11,8 @@ from django.http import JsonResponse
 from custom.models import Minister, Diresaun, Position, Municipality, AdministrativePost, Village, \
 							Sector, Status, Bussines_size, Category_Emp, Year, Faze
 from benefisiariu.models import Benefisiariu, AddressTL, Photo, AddressOrigin
-from kni.models import    Business, LocBussiness, Program, Employee, Finance
+from kni.models import    Business, LocBussiness, Program, Employee, Finance, BusinessMonitoring
+from kni.utils import generate_qrcode_base64
 from itertools import groupby
 from operator import itemgetter
 from django.core.paginator import Paginator
@@ -121,6 +122,11 @@ def geral_kni(request):
         'mun'       : mun,
         'title'     : 'Lista Jeral Benefisiariu KNI',
         'legend'    : 'Lista Jeral Benefisiariu KNI',
+        'link_antes': [
+            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
+            {'link_name': 'av-dash', 'link_text': 'Avalia Benefisiariu'},
+            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+        ],
     }
     return render(request, 'Dash/list_geral_kni.html', context)
 
@@ -181,3 +187,48 @@ def benef_detail_kni(request, hashid):
         ],
     }
     return render(request, 'kni/benef_detail_kni.html', context)
+
+
+# views.py
+
+@login_required
+@allowed_users(allowed_roles=['admin', 'staff', 'KNI'])
+def print_sertifikat_kni(request, hashid):
+    benef = get_object_or_404(Benefisiariu, hashed=hashid)
+    addtl = getattr(benef, 'addresstl', None)
+    photo = getattr(benef, 'photo', None)
+    businesses = Business.active_objects.filter(benefisiariu=benef)
+    programs = Program.active_objects.filter(benefisiariu=benef, program_type__name='KNI')
+    total_amount = programs.aggregate(total=Sum('amount'))['total'] or 0
+    employees = Employee.active_objects.filter(business__in=businesses)
+    local = LocBussiness.active_objects.filter(benefisiariu=benef).first()
+    
+    # Generate QR Code dengan data verifikasi lengkap
+    qr_data = f"KNI|{benef.hashed}|{benef.name}|{benef.id}|{timezone.now().date()}"
+    qr_code_base64 = generate_qrcode_base64(qr_data)
+    
+    impact_monitorings = []
+    for business in businesses:
+        # Sesuaikan dengan model Anda
+        monitorings = BusinessMonitoring.active_objects.filter(business=business)
+        for mon in monitorings:
+            impact_monitorings.append({
+                'monitoring': mon,
+                'business': business,
+                'fund_balance': 0,  # Sesuaikan dengan field Anda
+            })
+    
+    context = {
+        'benef': benef,
+        'addtl': addtl,
+        'photo': photo,
+        'businesses': businesses,
+        'programs': programs,
+        'total_amount': total_amount,
+        'employees': employees,
+        'local': local,
+        'impact_monitorings': impact_monitorings,
+        'now': timezone.now(),
+        'qr_code_base64': qr_code_base64,
+    }
+    return render(request, 'kni/print_sertifikat_kni.html', context)

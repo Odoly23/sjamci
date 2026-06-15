@@ -3,60 +3,291 @@
 
 {% block content %}
 <div class="container-fluid mt-3">
-  <div class="card">
-      <div class="row">
+  <div class="row">
     <div class="col-sm-12">
-      <div class="card shadow-lg pt-1 border-primary rounded">
-
+      <div class="card shadow-lg border-0 rounded">
         <!-- HEADER -->
-        <div class="card-header bg-steel d-flex justify-content-between align-items-center">
-          <span>{{ legend|upper }}</span>
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="fa fa-file-text-o"></i>
+            {{ legend|default:"LISTA PEDIDU"|upper }}
+          </h5>
+          <div>
+            <span class="badge badge-light">
+              <i class="fa fa-database"></i> {{ pedidus|length }} Pedidu
+            </span>
+            
+          </div>
         </div>
-    <div class="card-body">
-          <!-- FILTER -->
-          <form method="GET" class="form-inline mb-3">
-            <select name="status" class="form-control mr-2">
-              <option value="">Hotu</option>
-              <option value="pending">Pending</option>
-              <option value="prosesu">Prosesu</option>
-              <option value="resolvidu">Resolvidu</option>
-              <option value="rejeita">Rejeita</option>
-            </select>
-            <button class="btn btn-primary btn-sm">Filter</button>
-          </form>
+        
+        <div class="card-body">
+          <!-- FILTER SECTION -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <form method="GET" class="form-inline">
+                <div class="form-group mr-2">
+                  <label class="mr-2"><i class="fa fa-filter"></i> Status:</label>
+                  <select name="status" class="form-control form-control-sm">
+                    <option value="">Hotu (All)</option>
+                    <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="prosesu" {% if request.GET.status == 'prosesu' %}selected{% endif %}>Prosesu</option>
+                    <option value="resolvidu" {% if request.GET.status == 'resolvidu' %}selected{% endif %}>Resolvidu</option>
+                    <option value="rejeita" {% if request.GET.status == 'rejeita' %}selected{% endif %}>Rejeita</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <i class="fa fa-search"></i> Filter
+                </button>
+                {% if request.GET.status %}
+                  <a href="{% url 'pedidu-list' %}" class="btn btn-secondary btn-sm ml-2">
+                    <i class="fa fa-eraser"></i> Clear
+                  </a>
+                {% endif %}
+              </form>
+            </div>
+          </div>
 
-          <table class="table table-bordered table-sm" id="example1">
-            <thead>
-              <tr>
-                <th>Benefisiariu</th>
-                <th>Tipo</th>
-                <th>Assuntu</th>
-                <th>Status</th>
-                <th>Aksaun</th>
-              </tr>
-            </thead>
+          <!-- SEARCH BOX (Optional) -->
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="🔍 Search by benefisiariu or assuntu...">
+            </div>
+            <div class="col-md-8 text-right">
+              <a href="{% url 'pedidu-list' %}" class="btn btn-secondary btn-sm">
+                <i class="fa fa-refresh"></i> Refresh
+              </a>
+            </div>
+          </div>
 
-            <tbody>
-              {% for p in pedidus %}
-              <tr>
-                <td>{{ p.benefisiariu }}</td>
-                <td>{{ p.tipo }}</td>
-                <td>{{ p.assuntu }}</td>
-                <td>
-                  <span class="badge badge-info">{{ p.status }}</span>
-                </td>
-                <td>
-                  <a href="{% url 'pedidu-detail' p.hashed %}" class="btn btn-sm btn-info">Detail</a>
-                  <a href="{% url 'pedidu-update' p.id %}" class="btn btn-sm btn-warning">Update</a>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+          <!-- TABLE RESPONSIVE -->
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped table-sm" id="example1" width="100%">
+              <thead class="thead-light">
+                <tr class="text-center">
+                  <th width="5%">#</th>
+                  <th width="20%">Benefisiariu</th>
+                  <th width="10%">Tipo</th>
+                  <th width="30%">Assuntu</th>
+                  <th width="15%">Status</th>
+                  <th width="20%">Aksaun</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in pedidus %}
+                <tr>
+                  <!-- NUMBER -->
+                  <td class="text-center align-middle">
+                    {{ forloop.counter }}
+                  </td>
+                  
+                  <!-- BENEFISIARIU -->
+                  <td class="align-middle">
+                    <strong>{{ p.benefisiariu|default:"-" }}</strong>
+                    {% if p.benefisiariu.phone %}
+                      <br>
+                      <small class="text-muted">
+                        <i class="fa fa-phone"></i> {{ p.benefisiariu.phone }}
+                      </small>
+                    {% endif %}
+                  </td>
+                  
+                  <!-- TIPO -->
+                  <td class="text-center align-middle">
+                    {% if p.tipo == 'URGENTE' or p.tipo == 'urgente' %}
+                      <span class="badge badge-danger">
+                        <i class="fa fa-exclamation-circle"></i> Urgente
+                      </span>
+                    {% elif p.tipo == 'NORMAL' or p.tipo == 'normal' %}
+                      <span class="badge badge-success">
+                        <i class="fa fa-check-circle"></i> Normal
+                      </span>
+                    {% else %}
+                      <span class="badge badge-secondary">{{ p.tipo|default:"-" }}</span>
+                    {% endif %}
+                  </td>
+                  
+                  <!-- ASSUNTU -->
+                  <td class="align-middle">
+                    {{ p.assuntu|default:"-"|truncatechars:50 }}
+                  </td>
+                  
+                  <!-- STATUS -->
+                  <td class="text-center align-middle">
+                    {% if p.status == 'pending' %}
+                      <span class="badge badge-warning badge-lg">
+                        <i class="fa fa-clock-o"></i> Pending
+                      </span>
+                    {% elif p.status == 'prosesu' %}
+                      <span class="badge badge-info badge-lg">
+                        <i class="fa fa-spinner fa-spin"></i> Prosesu
+                      </span>
+                    {% elif p.status == 'resolvidu' %}
+                      <span class="badge badge-success badge-lg">
+                        <i class="fa fa-check-circle"></i> Resolvidu
+                      </span>
+                    {% elif p.status == 'rejeita' %}
+                      <span class="badge badge-danger badge-lg">
+                        <i class="fa fa-times-circle"></i> Rejeita
+                      </span>
+                    {% else %}
+                      <span class="badge badge-secondary">{{ p.status|default:"-" }}</span>
+                    {% endif %}
+                  </td>
+                  
+                  <!-- ACTION -->
+                  <td class="text-center align-middle">
+                    <div class="btn-group btn-group-sm" role="group">
+                      <a href="{% url 'pedidu-detail' p.hashed %}" 
+                         class="btn btn-info" 
+                         title="Detail">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      <a href="{% url 'pedidu-update' p.id %}" 
+                         class="btn btn-warning" 
+                         title="Editar">
+                        <i class="fa fa-edit"></i>
+                      </a>
+                      <button type="button" 
+                              class="btn btn-danger" 
+                              title="Delete"
+                              data-toggle="modal"
+                              data-target="#deleteModal{{ p.id }}">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
+                    
+                    <!-- DELETE MODAL -->
+                    <div class="modal fade" id="deleteModal{{ p.id }}" tabindex="-1" role="dialog">
+                      <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header bg-danger text-white">
+                            <h6 class="modal-title">Konfirmasaun</h6>
+                            <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                          </div>
+                          <div class="modal-body">
+                            Ita boot hakarak hamoos pedidu husi "<strong>{{ p.benefisiariu }}</strong>"?
+                          </div>
+                          <div class="modal-footer">
+                            <form method="POST" action="">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger btn-sm">Hamoos</button>
+                              <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Kansela</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="6" class="text-center text-muted py-5">
+                    <i class="fa fa-inbox fa-3x mb-2 d-block"></i>
+                    <strong>La iha pedidu</strong><br>
+                    <small>Klik "Pedidu Foun" atu aumenta dadus foun</small>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- PAGINATION (Optional) -->
+          {% if pedidus.has_other_pages %}
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center pagination-sm">
+                  {% if pedidus.has_previous %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ pedidus.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
+                        <i class="fa fa-chevron-left"></i> Previous
+                      </a>
+                    </li>
+                  {% endif %}
+                  
+                  {% for num in pedidus.paginator.page_range %}
+                    <li class="page-item {% if pedidus.number == num %}active{% endif %}">
+                      <a class="page-link" href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{{ num }}</a>
+                    </li>
+                  {% endfor %}
+                  
+                  {% if pedidus.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ pedidus.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
+                        Next <i class="fa fa-chevron-right"></i>
+                      </a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </nav>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
-      </div>
-  </div>
 </div>
+
+<!-- JavaScript for Live Search -->
+<script>
+  document.getElementById('searchInput').addEventListener('keyup', function() {
+    let input = document.getElementById('searchInput');
+    let filter = input.value.toLowerCase();
+    let table = document.getElementById('example1');
+    let tr = table.getElementsByTagName('tr');
+    
+    for (let i = 1; i < tr.length; i++) {
+      let tdBenef = tr[i].getElementsByTagName('td')[1];
+      let tdAssunt = tr[i].getElementsByTagName('td')[3];
+      
+      if (tdBenef || tdAssunt) {
+        let benefValue = tdBenef.textContent || tdBenef.innerText;
+        let assuntValue = tdAssunt.textContent || tdAssunt.innerText;
+        
+        if (benefValue.toLowerCase().indexOf(filter) > -1 || 
+            assuntValue.toLowerCase().indexOf(filter) > -1) {
+          tr[i].style.display = '';
+        } else {
+          tr[i].style.display = 'none';
+        }
+      }
+    }
+  });
+</script>
+
+<!-- Additional CSS -->
+<style>
+  .table-responsive {
+    overflow-x: auto;
+  }
+  
+  .table td, .table th {
+    vertical-align: middle;
+  }
+  
+  .badge-lg {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+  
+  .btn-group-sm .btn {
+    margin: 0 2px;
+  }
+  
+  .card-header .badge {
+    font-size: 14px;
+    padding: 5px 10px;
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+  }
+  
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0,0,0,.02);
+  }
+</style>
 
 {% endblock %}

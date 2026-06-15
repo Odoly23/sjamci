@@ -1,54 +1,214 @@
-{% extends "base.html" %}
+{% extends "main/layout.html" %}
+{% load static %}
 {% block content %}
 
-<div class="container-fluid mt-2">
+<div class="container-fluid mt-3">
   <div class="row">
     <div class="col-sm-12">
-      <div class="card shadow-lg pt-1 border-primary rounded">
+      <div class="card shadow-lg border-0 rounded">
+        <!-- HEADER -->
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="fa fa-chart-line"></i> 
+            Jestaun Florentina
+          </h5>
+          <span class="badge badge-light">
+            <i class="fa fa-database"></i> {{ cashflows|length }} Transaction
+          </span>
+        </div>
+        
         <div class="card-body">
-            <!-- FILTER -->
-            <form method="GET" class="form-inline mb-3">
-              <select name="type" class="form-control mr-2">
-                <option value="">Hotu</option>
-                <option value="IN">Osan Tama</option>
-                <option value="OUT">Osan Sai</option>
-              </select>
-              <button class="btn btn-primary btn-sm">Filter</button>
-            </form>
+          <!-- FILTER SECTION -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <form method="GET" class="form-inline">
+                <div class="form-group mr-2">
+                  <label class="mr-2"><i class="fa fa-filter"></i> Type:</label>
+                  <select name="type" class="form-control form-control-sm">
+                    <option value="">Hotu (All)</option>
+                    <option value="IN" {% if request.GET.type == 'IN' %}selected{% endif %}>Osan Tama (Income)</option>
+                    <option value="OUT" {% if request.GET.type == 'OUT' %}selected{% endif %}>Osan Sai (Expense)</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <i class="fa fa-search"></i> Filter
+                </button>
+                {% if request.GET.type %}
+                  <a href="." class="btn btn-secondary btn-sm ml-2">
+                    <i class="fa fa-eraser"></i> Clear
+                  </a>
+                {% endif %}
+              </form>
+            </div>
+          </div>
 
-            <table class="table table-bordered table-sm">
-              <thead>
+          <!-- TABLE RESPONSIVE -->
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped table-sm" id="cashflowTable">
+              <thead class="thead-light">
+                <tr class="text-center">
+                  <th width="5%">#</th>
+                  <th width="20%">Business</th>
+                  <th width="10%">Type</th>
+                  <th width="30%">Description</th>
+                  <th width="15%">Amount</th>
+                  <th width="15%">Date</th>
+                  <th width="10%">Aksaun</th>
                 <tr>
-                  <th>Business</th>
-                  <th>Type</th>
-                  <th>Description</th>
-                  <th>Amount</th>
-                  <th>Date</th>
-                  <th>Aksaun</th>
-                </tr>
               </thead>
-
               <tbody>
                 {% for c in cashflows %}
                 <tr>
-                  <td>{{ c.monitoring.business }}</td>
-                  <td>
-                    <span class="badge badge-warning">{{ c.transaction_type }}</span>
+                  <!-- NUMBER -->
+                  <td class="text-center align-middle">
+                    {{ forloop.counter }}
                   </td>
-                  <td>{{ c.description }}</td>
-                  <td>${{ c.amount }}</td>
-                  <td>{{ c.transaction_date }}</td>
-                  <td>
-                    <a href="{% url 'cashflow-detail' c.id %}" class="btn btn-sm btn-info">Detail</a>
+                  
+                  <!-- BUSINESS -->
+                  <td class="align-middle">
+                    <strong>{{ c.monitoring.business|default:"-" }}</strong>
+                    {% if c.monitoring.business.owner %}
+                      <br>
+                      <small class="text-muted">{{ c.monitoring.business.owner }}</small>
+                    {% endif %}
+                  </td>
+                  
+                  <!-- TYPE -->
+                  <td class="text-center align-middle">
+                    {% if c.transaction_type == 'IN' %}
+                      <span class="badge badge-success">
+                        <i class="fa fa-plus-circle"></i> Tama
+                      </span>
+                    {% elif c.transaction_type == 'OUT' %}
+                      <span class="badge badge-danger">
+                        <i class="fa fa-minus-circle"></i> Sai
+                      </span>
+                    {% else %}
+                      <span class="badge badge-secondary">{{ c.transaction_type|default:"-" }}</span>
+                    {% endif %}
+                  </td>
+                  
+                  <!-- DESCRIPTION -->
+                  <td class="align-middle">
+                    {{ c.description|default:"-"|truncatechars:50 }}
+                  </td>
+                  
+                  <!-- AMOUNT -->
+                  <td class="text-right align-middle">
+                    <strong class="{% if c.transaction_type == 'IN' %}text-success{% else %}text-danger{% endif %}">
+                      $ {{ c.amount|default:"0"|floatformat:2 }}
+                    </strong>
+                  </td>
+                  
+                  <!-- DATE -->
+                  <td class="text-center align-middle">
+                    <small>{{ c.transaction_date|date:"d/m/Y H:i"|default:"-" }}</small>
+                  </td>
+                  
+                  <!-- ACTION -->
+                  <td class="text-center align-middle">
+                    <div class="btn-group btn-group-sm" role="group">
+                      <a href="{% url 'cashflow-detail' c.id %}" 
+                         class="btn btn-info" 
+                         title="Detail">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      <a href="{% url 'cashflow-edit' c.id %}" 
+                         class="btn btn-warning" 
+                         title="Editar">
+                        <i class="fa fa-edit"></i>
+                      </a>
+                      <button type="button" 
+                              class="btn btn-danger" 
+                              title="Delete"
+                              data-toggle="modal"
+                              data-target="#deleteModal{{ c.id }}">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
+                    
+                    <!-- DELETE MODAL -->
+                    <div class="modal fade" id="deleteModal{{ c.id }}" tabindex="-1" role="dialog">
+                      <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header bg-danger text-white">
+                            <h6 class="modal-title">Konfirmasaun</h6>
+                            <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                          </div>
+                          <div class="modal-body">
+                            Ita boot hakarak hamoos transaction ida ne'e?
+                          </div>
+                          <div class="modal-footer">
+                            <form method="POST" action="{% url 'cashflow-delete' c.id %}">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger btn-sm">Hamoos</button>
+                              <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Kansela</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-4">
+                    <i class="fa fa-inbox fa-3x mb-2 d-block"></i>
+                    <strong>La iha transaction</strong><br>
+                    <small>Seidauk iha dadus ba periodu ne'e</small>
                   </td>
                 </tr>
                 {% endfor %}
               </tbody>
+              
+              <!-- TABLE FOOTER WITH SUMMARY -->
+              <tfoot class="bg-light">
+                <tr class="font-weight-bold">
+                  <td colspan="4" class="text-right">Total:</td>
+                  <td class="text-right">
+                    $ {{ total_income|default:"0"|floatformat:2 }}
+                    <br>
+                    <small class="text-success">Income</small>
+                  </td>
+                  <td class="text-right">
+                    $ {{ total_expense|default:"0"|floatformat:2 }}
+                    <br>
+                    <small class="text-danger">Expense</small>
+                  </td>
+                  <td class="text-right">
+                    <strong>$ {{ balance|default:"0"|floatformat:2 }}</strong>
+                    <br>
+                    <small>Balance</small>
+                  </td>
+                </tr>
+              </tfoot>
             </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Additional CSS -->
+<style>
+  .table-responsive {
+    overflow-x: auto;
+  }
+  
+  .table td, .table th {
+    vertical-align: middle;
+  }
+  
+  .badge {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+  
+  tfoot td {
+    border-top: 2px solid #dee2e6;
+    background-color: #f8f9fa;
+  }
+</style>
 
 {% endblock %}

@@ -473,7 +473,7 @@ def cliente_financial_book_add(request, business_id):
             obj.save()
             for user in kni_users:
                 send_notification(
-                    sender=request.user, receiver=user, title='Livru Kontabilidade Foun', message=f'{benef.name} submete Livru.',  notif_type='BOOK',  link=f'KNI-Home/financial-book/{book.id}/')
+                    sender=request.user, receiver=user, title='Livru Kontabilidade Foun', message=f'{benef.name} submete Livru.',  notif_type='BOOK',  link=f'KNI-Home/financial-book/{obj.id}/')
             messages.success(request, "Livru kontabilidade rai ho susesu!")
             return redirect('cliente-dashboard')
     else:
