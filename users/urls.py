@@ -20,4 +20,6 @@ urlpatterns = [
     path('emp/<str:pk>/position/',  views.empposition_update,   name='empposition-update'),
     path('emp/<str:pk>/division/',  views.empdivision_update,   name='empdivision-update'),
 
+    path('emp/<int:pk>/upload-photo/', views.upload_photo, name='emp-upload-photo'),
+
 ]

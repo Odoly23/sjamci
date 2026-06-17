@@ -1,71 +1,77 @@
-import csv, io, datetime
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
 from django.contrib.auth.hashers import make_password
+from django.views.decorators.http import require_POST
+from django.db import transaction
 from config.decorators import allowed_users
 from users.models import Emp, EmpPosition, EmpDivision, EmpUser, EmpPhoto
-from users.forms import EmpForm, EmpPositionForm, EmpDivisionForm, UserForm
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-import json
-
+from users.forms import EmpForm, EmpPositionForm, EmpDivisionForm
+from users.utils import criar_ou_atualiza_user
 
 @login_required
 @allowed_users(allowed_roles=['admin'])
 def PList(request):
-	group = request.user.groups.all()[0].name
-	objects = EmpUser.objects.all()
-	context = {
-		'group': group, 'objects': objects,
-		'title': 'Lista Utilizador', 'legend': 'Lista Utilizador',
-		'link_antes': [{'link_name':"u-list",'link_text':"Lista Utilizador"}],
-        
-	}
-	return render(request, 'users/list.html', context)
-
+    group = request.user.groups.first().name if request.user.groups.exists() else None
+    objects = EmpUser.objects.select_related('emp', 'user').prefetch_related('user__groups').all()
+    context = {
+        'group': group,
+        'objects': objects,
+        'title': 'Lista Utilizador',
+        'legend': 'Lista Utilizador',
+        'link_antes': [{'link_name': "u-list", 'link_text': "Lista Utilizador"}],
+    }
+    return render(request, 'users/list.html', context)
 
 @login_required
 def emp_detail(request, pk):
-    emp = get_object_or_404(Emp, pk=pk)
-    position = EmpPosition.objects.filter(employee=emp).first()
-    division = EmpDivision.objects.filter(employee=emp).first()
-    empuser = EmpUser.objects.filter(emp=emp).first()
+    emp = get_object_or_404(Emp.objects.select_related('created_by'),pk=pk)
+    position = emp.positions.filter(is_active=True).first()
+    division = emp.divisions.filter(is_active=True).first()
+    photo = getattr(emp, 'photo', None)
+    empuser = getattr(emp, 'account', None)
+    contact = {
+        'phone': emp.phone,
+        'email': empuser.user.email if empuser and empuser.user else None
+    }
     context = {
         'legend': 'Detallu Funcionariu',
         'title': 'Detallu Funcionariu',
-        'emp': emp,
+        'obj': emp,
         'position': position,
         'division': division,
-        'empuser': empuser,
-        'link_antes': [
-        		{'link_name':"u-list",'link_text':"Lista Utilizador"},
-        		 {'link_name':'emp-detail','link_text':'Dados Pessoal','link_param': emp.pk}
-        		],
+        'photo': photo,
+        'membrouser': empuser,
+        'contact': contact,
     }
     return render(request, 'users/detail.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['admin'])
 def EmpAdd(request):
-	group = request.user.groups.all()[0].name
-	if request.method == 'POST':
-		form = EmpForm(request.POST)
-		if form.is_valid():
-			instance = form.save(commit=False)
-			instance.save()
-			messages.success(request, f'Aumenta ona.')
-			return redirect('emp-detail', pk=instance.pk)
-	else: form = EmpForm()
-	context = {
-		'form': form,'group':group,
-		'title': 'Aumenta User', 'legend': 'Aumenta User'
-	}
-	return render(request, 'users/form.html', context)
+    group = request.user.groups.first().name if request.user.groups.exists() else None
+    if request.method == 'POST':
+        form = EmpForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.created_by = request.user
+            instance.save()
+            messages.success(request, f'Funcionariu {instance.name} aumenta ona. Favor kompleta Pozisaun ho Divizaun.')
+            return redirect('emp-detail', pk=instance.pk)
+    else:
+        form = EmpForm()
+    context = {
+        'form': form,
+        'group': group,
+        'title': 'Aumenta Funcionariu',
+        'legend': 'Aumenta Funcionariu'
+    }
+    return render(request, 'users/form.html', context)
 
 @login_required
+@allowed_users(allowed_roles=['admin'])
 def emp_update(request, pk):
     emp = get_object_or_404(Emp, pk=pk)
     form = EmpForm(request.POST or None, instance=emp)
@@ -75,138 +81,94 @@ def emp_update(request, pk):
         return redirect('emp-detail', pk=emp.pk)
     context = {
         'legend': 'Atualiza Dadus Funcionariu',
+        'title': 'Atualiza Dadus Funcionariu',
         'form': form,
         'emp': emp,
     }
     return render(request, 'users/form.html', context)
 
-
 @login_required
+@allowed_users(allowed_roles=['admin'])
 def emp_delete(request, pk):
     emp = get_object_or_404(Emp, pk=pk)
     if request.method == 'POST':
         emp.delete()
         messages.success(request, 'Funcionariu halakon ho susesu!')
-        return redirect('emp-list')
+        return redirect('u-list')
     context = {
         'legend': 'Halakon Funcionariu',
         'emp': emp,
     }
-    return render(request, 'emp/emp_confirm_delete.html', context)
+    return render(request, 'users/emp_confirm_delete.html', context)
 
 
 @login_required
+@allowed_users(allowed_roles=['admin'])
+@transaction.atomic
 def empposition_update(request, pk):
     emp = get_object_or_404(Emp, pk=pk)
-    instance = EmpPosition.objects.filter(employee=emp).first()
+    instance, created = EmpPosition.objects.get_or_create(employee=emp)
     form = EmpPositionForm(request.POST or None, instance=instance)
-
     if form.is_valid():
-        instance = form.save(commit=False)
-        instance.employee = emp
-        instance.save()
-        emp_division   = EmpDivision.objects.filter(employee=emp).first()
-        position_name  = instance.position.name if instance.position else ""
-        has_gabinete   = emp_division and emp_division.gabinete is not None
-        has_diresaun   = emp_division and emp_division.dn is not None
-        has_departamento = emp_division and emp_division.department is not None
-        diresaun_code  = emp_division.dn.code.upper()  if (emp_division and emp_division.dn)  else ""
-        dept_name      = emp_division.department.name.upper() if (emp_division and emp_division.department) else ""
-        group_name = None
-        if has_gabinete and not has_diresaun and not has_departamento:
-            if "DIRECTOR GERAL" in position_name.upper():
-                group_name = "admin"
-            else:
-                group_name = "staff"
-        elif has_gabinete and has_diresaun and diresaun_code == "DNADMPEME":
-            if not has_departamento:
-                if "Xefe Departamento" in position_name.upper():
-                    group_name = "XFD"
-                else:
-                    group_name = "staff"
-            else:
-                if "KREDITU SUAVE" in dept_name:
-                    group_name = "KS"
-                elif "KNI" in dept_name or "KOMPETISAUN" in dept_name:
-                    group_name = "KNI"
-                else:
-                    group_name = "staff"
-        elif has_gabinete and has_diresaun and diresaun_code == "DNIM":
-            group_name = "dnim"
-        else:
-            group_name = "staff"
-        name     = emp.name or ""
-        first_word = (emp.name or "").strip().split()[0].lower()
-        names = (emp.name or "").strip().split()
-        first_name =  names[0] if len(names) >= 1 else ""
-        last_name = " ".join(names[1:])  if len(names) >  1 else ""
-        username   = f"{first_word}@#mci"
-        if User.objects.filter(username=f"{first_word}@#mci{emp.id}").exists():
-            username = f"{username}.{instance.id}"
-        obj = User(
-            username=username,
-            password=make_password('MCI@#2026'),
-            first_name=first_name,
-            last_name=last_name,
-        )
-        obj.save()
-        obj2 =  EmpUser(user=obj, emp=emp)
-        obj2.save()
-        if group_name:
-            try:
-                group = Group.objects.get(name=group_name)
-                obj.groups.add(group)
-            except Group.DoesNotExist:
-                messages.warning(
-                    request,
-                    f"Group '{group_name}' la hetan iha sistema. "
-                    f"User kria ona maibé laiha group."
-                )
-
-        messages.success(
-            request,
-            f"Pojisaun atualiza ho susesu! "
-            f"User '{username}' kria ho group '{group_name}'. "
-            f"Password default: MCI@#2026"
-        )
+        position_obj = form.save(commit=False)
+        position_obj.employee = emp
+        position_obj.save()
+        user, group_name = criar_ou_atualiza_user(emp)
+        messages.success(request, f"Pozisaun atualiza. User: {user.username} Group: {group_name}")
         return redirect('emp-detail', pk=emp.pk)
-
+    else:
+        form = EmpPositionForm(instance=instance)
     context = {
         'legend': 'Atualiza Pojisaun',
+        'title': 'Atualiza Pojisaun',
         'form': form,
         'emp': emp,
     }
     return render(request, 'users/form.html', context)
 
-# ─── EMP DIVISION ────────────────────────────────────────────────────────────
-
 @login_required
+@allowed_users(allowed_roles=['admin'])
 def empdivision_update(request, pk):
     emp = get_object_or_404(Emp, pk=pk)
-    instance = EmpDivision.objects.filter(employee=emp).first()
+    instance, created = EmpDivision.objects.get_or_create(employee=emp)
     form = EmpDivisionForm(request.POST or None, instance=instance)
     if form.is_valid():
         obj = form.save(commit=False)
         obj.employee = emp
         obj.save()
+        user, group_name = criar_ou_atualiza_user(emp)
+        messages.success(request,  f"Divizaun atualiza. Group: {group_name}")
         messages.success(request, 'Divizaun atualiza ho susesu!')
         return redirect('emp-detail', pk=emp.pk)
     context = {
         'legend': 'Atualiza Divizaun',
+        'title': 'Atualiza Divizaun',
         'form': form,
         'emp': emp,
     }
     return render(request, 'users/form.html', context)
 
-
-
+@login_required
+@require_POST
+def upload_photo(request, pk):
+    emp = get_object_or_404(Emp, pk=pk)
+    photo, created = EmpPhoto.objects.get_or_create(emp=emp)
+    if 'image' in request.FILES:
+        photo.image = request.FILES['image']
+        photo.save()
+        messages.success(request, 'Foto atualiza ho susesu!')
+    else:
+        messages.error(request, 'Favor hili foto uluk.')
+    return redirect('emp-detail', pk=pk)
 
 @login_required
+@allowed_users(allowed_roles=['admin'])
 def audit_login_list(request):
-    from .models import AuditLogin
-    logs = AuditLogin.objects.all().order_by('-login_time')
+    from.models import AuditLogin
+    logs = AuditLogin.objects.select_related('user').all().order_by('-login_time')
     context = {
         'legend': 'Audit Login',
+        'title': 'Audit Login',
         'logs': logs,
     }
-    return render(request, 'emp/audit_login_list.html', context)
+    return render(request, 'users/audit_login_list.html', context)

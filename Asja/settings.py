@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 from django.contrib.messages import constants as message_constants
 from decouple import config, Csv
+from django.utils.translation import gettext_lazy as _
+
 
 # ══════════════════════════════════════════════════════════════
 #  PATH
@@ -66,6 +68,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',      
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'corsheaders.middleware.CorsMiddleware',            
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -131,11 +134,16 @@ AUTH_PASSWORD_VALIDATORS = [
 # ══════════════════════════════════════════════════════════════
 #  INTERNASIONALISASI
 # ══════════════════════════════════════════════════════════════
-LANGUAGE_CODE = 'pt-br'
+LANGUAGE_CODE = 'pt'
 TIME_ZONE     = 'Asia/Dili'
 USE_I18N      = True
 USE_TZ        = True
 
+LANGUAGES = [
+    ('tet', _('Tetun (Dili)')),
+    ('pt', _('Português')),
+    ('en', _('English')),
+]
 
 # ══════════════════════════════════════════════════════════════
 #  STATIC & MEDIA
