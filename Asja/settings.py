@@ -23,7 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 DEBUG       = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
-MAPBOX_TOKEN = config('MAPBOX_TOKEN', default='')
+MAPBOX_TOKEN  = config('MAPBOX_TOKEN', default='')
+MAPBOX_TOKENS = config('MAPBOX_TOKENS', default='')
+GOOGLE_KEY    = config('google_key', default='')
 
 # ══════════════════════════════════════════════════════════════
 #  APLIKASAUN

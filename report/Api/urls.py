@@ -3,6 +3,7 @@ from . import views_kni
 from . import views_ks
 from . import views_manuf
 from . import api_mpms
+from . import views_G
 urlpatterns = [
 
     path('grafiku/sexu/', views_kni.APISexu.as_view()),
@@ -65,5 +66,8 @@ urlpatterns = [
     path('kapital/',      api_mpms.APIMpmsKapital.as_view(),       name='api-mpms-kapital'),
     path('empregador/',   api_mpms.APIMpmsEmpregador.as_view(),    name='api-mpms-empregador'),
     path('materia/',      api_mpms.APIMpmsMateria.as_view(),       name='api-mpms-materia'),
+
+
+    path('geral/program/', views_G.APISumarioProgram.as_view(), name='api-sumario-program'),
 
 ]

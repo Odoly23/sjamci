@@ -11,7 +11,7 @@ from benefisiariu.models import Benefisiariu, AddressTL, AddressOrigin, Photo
 from kni.models import Business, LocBussiness, Program, Employee, Finance
 from manufatureira.models import  Manufatur, Lokalizasaun, Membro, Aktividade
 from config.decorators import allowed_users
-
+from django.conf import settings
 # Create your views here.
 
 @login_required
@@ -41,15 +41,30 @@ def grafiku_kni(request):
 	return render(request, 'Dash_R/Grafiku_kni.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['admin','KS','XFD','dnim'])
+@allowed_users(allowed_roles=['admin', 'KS', 'XFD', 'dnim'])
 def grafiku_ks(request):
-	group = request.user.groups.all()[0].name
-	context = {
-		'title':"Sumario Geral",
-		'legend':"Sumario Geral",
-		'group':group,
-	}
-	return render(request, 'Dash_R/Grafiku_ks.html', context)
+    group = request.user.groups.all()[0].name
+    municipalities = Municipality.objects.all()
+    selected_municipality_id = request.GET.get('municipality')
+    mapobjects = LocBussiness.objects.filter(benefisiariu__in=Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE")).select_related('benefisiariu', 'benefisiariu__photo','municipality', 'administrativepost', 'village',).distinct()
+    if selected_municipality_id:
+        mapobjects = mapobjects.filter(municipality_id=selected_municipality_id)
+    total_benefisiariu = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").count()
+    total_business = Business.objects.filter(benefisiariu__in=Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE")).count()
+    context = {
+        'title': 'Grafiku Kreditu Suave',
+        'legend': 'Grafiku Kreditu Suave',
+        'group': group,
+        'mapobjects': mapobjects,
+        'municipalities': municipalities,
+        'total_benefisiariu': total_benefisiariu,
+        'total_business': total_business,
+        'MAPBOX_TOKEN': settings.MAPBOX_TOKEN,
+        'MAPBOX_TOKENS': settings.MAPBOX_TOKENS,
+        'google_key': settings.GOOGLE_KEY,
+        'selected_municipality_id': selected_municipality_id,
+    }
+    return render(request, 'Dash_R/Grafiku_ks.html', context)
 
 
 @login_required
