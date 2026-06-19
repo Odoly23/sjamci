@@ -19,7 +19,7 @@ urlpatterns = [
     path('emp/<str:pk>/update/',    views.emp_update,           name='emp-update'),
     path('emp/<str:pk>/position/',  views.empposition_update,   name='empposition-update'),
     path('emp/<str:pk>/division/',  views.empdivision_update,   name='empdivision-update'),
-
     path('emp/<int:pk>/upload-photo/', views.upload_photo, name='emp-upload-photo'),
+    path('user/reset-password/<int:pk>/', views.reset_password, name='reset-password'),
 
 ]

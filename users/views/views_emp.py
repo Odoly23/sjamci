@@ -172,3 +172,14 @@ def audit_login_list(request):
         'logs': logs,
     }
     return render(request, 'users/audit_login_list.html', context)
+
+
+@login_required
+@allowed_users(allowed_roles=['admin'])
+def reset_password(request, pk):
+    empuser = get_object_or_404(EmpUser, pk=pk)
+    default_password = "MCI@#2026"
+    empuser.user.set_password(default_password)
+    empuser.user.save()
+    messages.success(request,f'Password {empuser.user.username} Sesuso Altera ona.')
+    return redirect('u-list')

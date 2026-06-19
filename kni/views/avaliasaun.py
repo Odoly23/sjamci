@@ -95,9 +95,10 @@ def benef_evaluation_list(request):
     return render(request, 'avaliasaun/list2.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['KNI'])
+@allowed_users(allowed_roles=['KNI','dnim','mpms'])
 @transaction.atomic
 def evaluate_benef(request, hashid):
+    group = request.user.groups.all()[0].name
     benef = get_object_or_404(Benefisiariu, hashed=hashid)
     if request.method == 'POST':
         form = BeneficiariuEvaluationForm(request.POST)
@@ -112,11 +113,17 @@ def evaluate_benef(request, hashid):
             else:
                 messages.error(request, f"Status '{evaluation.status}' la Ejiste iha tabela Status.")
                 return redirect('benef-evaluation-list')
-            messages.success(request, "Avaliasaun sukses.")
-            return redirect('benef-evaluation-list')
+            messages.success(request, "Altera Estudo ho Suseso.")
+            if group == 'KNI':
+                return redirect('benef-evaluation-list')
+            elif group == 'dnim':
+                return redirect('list-dnim-ava')
+            else:
+                return redirect('home')
     else:
         form = BeneficiariuEvaluationForm()
     context = {
+        'group':group,
         'benef': benef,
         'form': form,
         'title': 'Avaliasaun Benefisiariu Geral',

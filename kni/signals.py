@@ -25,11 +25,11 @@ def update_business_size(sender, instance, **kwargs):
     business = instance.business
     total = business.employee_set.aggregate(total=Sum('total'))['total'] or 0
 
-    if total <= 5:
+    if total <= 1 - 5:
         kode = "Mo"
-    elif total <= 10:
+    elif total <= 6 - 20 :
         kode = "SM"
-    elif total <= 50:
+    elif total <= 21 - 50:
         kode = "MD"
     else:
         kode = "GD"

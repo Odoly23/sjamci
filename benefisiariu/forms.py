@@ -63,6 +63,14 @@ class UploadExcelForm(forms.Form):
             """)
         )
 
+import os
+from django import forms
+from django.core.exceptions import ValidationError
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Row, Column, HTML
+# Asumsi widget DateInput sudah di-import dari projek Anda
+# from .widgets import DateInput 
+
 class BenefisiariuForm(forms.ModelForm):
     dob = forms.DateField(label='Data Moris', required=False, widget=DateInput())
 
@@ -75,7 +83,7 @@ class BenefisiariuForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-        self.helper.form_enctype = 'multipart/form-data' # fix: form_enctype
+        self.helper.form_enctype = 'multipart/form-data'
         self.helper.layout = Layout(
             HTML("""
                 <div class="alert alert-info">
@@ -108,6 +116,33 @@ class BenefisiariuForm(forms.ModelForm):
                 </div>
             """)
         )
+
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+        
+        if not file:
+            return file
+
+        ext = os.path.splitext(file.name)[1].lower()
+        valid_extensions = ['.pdf', '.jpg', '.jpeg', '.png']
+        
+        if ext not in valid_extensions:
+            raise ValidationError(
+                "Format dokumentu la simu. Labele karga File ho estensaun %(ext)s. Tenki uza format: PDF, JPG, ka PNG.",
+                params={'ext': ext}
+            )
+
+        max_size_mb = 2
+        max_size_bytes = max_size_mb * 1024 * 1024 
+        
+        if file.size > max_size_bytes:
+            raise ValidationError(
+                "Tamanho dokumentu boot liu. File labele boot liu %(max)s MB.",
+                params={'max': max_size_mb}
+            )
+
+        return file
+
 
 class AddressTLForm(forms.ModelForm):
     class Meta:

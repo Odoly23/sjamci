@@ -19,10 +19,10 @@ def avaliasaun_dnim(request):
     context ={
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
-        'legend': 'Avaliasaun Geral KNI',
+        'legend': 'Avaliasaun Geral Manufatureira',
         'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'dash-man', 'link_text': 'Painel Manufatureira'},
+            {'link_name': 'geral_man', 'link_text': 'Lista Benefisiariu'},
             {'link_name': 'av-dash', 'link_text':'Avaliasaun Benefisiariu'}
         ],
     }
@@ -30,17 +30,17 @@ def avaliasaun_dnim(request):
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])
-def avalia_list(request):
+def dnimvalia_list(request):
     group = request.user.groups.all()[0].name
-    benefs = Benefisiariu.objects.prefetch_related('negosiu', 'Pnegosiu').all()
+    benefs = Benefisiariu.objects.filter(Pnegosiu__program_type__name="MANUFATUREIRA").all()
     context ={
         'benefs': benefs,
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
         'legend': 'Avaliasaun Geral KNI',
         'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'dash-man', 'link_text': 'Painel Manufatureira'},
+            {'link_name': 'geral_man', 'link_text': 'Lista Benefisiariu'},
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
@@ -57,8 +57,8 @@ def avalia_list2(request):
         'title': 'Avaliasaun Benefisiariu Geral',
         'legend': 'Avaliasaun Geral KNI',
         'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'dash-man', 'link_text': 'Painel Manufatureira'},
+            {'link_name': 'geral_man', 'link_text': 'Lista Benefisiariu'},
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
@@ -66,9 +66,10 @@ def avalia_list2(request):
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])
-def benef_evaluation_list(request):
+def dnim_evaluation_list(request):
+    group = request.user.groups.all()[0].name
     filter_status = request.GET.get('status')
-    benefs = Benefisiariu.objects.select_related('status').prefetch_related('evaluations').all()
+    benefs = Benefisiariu.objects.select_related('status').prefetch_related('evaluations').filter(Pnegosiu__program_type__name="MANUFATUREIRA").all()
     if filter_status:
         benefs = benefs.filter(evaluations__status=filter_status).distinct()
     total_ativu = BeneficiariuEvaluation.objects.filter(status='Ativu').count()
@@ -76,6 +77,7 @@ def benef_evaluation_list(request):
     total_suspendu = BeneficiariuEvaluation.objects.filter(status='Suspendu').count()
     total_pending = BeneficiariuEvaluation.objects.filter(status='Pending').count()
     context = {
+        'group':group,  
         'benefs': benefs,
         'filter_status': filter_status,
         'total_ativu': total_ativu,
@@ -86,8 +88,8 @@ def benef_evaluation_list(request):
         'legend': 'Lista Avaliasaun Benefisiariu',
         'link_antes': [
             {
-                'link_name': 'kni-dash',
-                'link_text': 'Painel KNI'
+                'link_name': 'dash-man',
+                'link_text': 'Painel Manufatureira'
             },
         ],
     }
@@ -121,8 +123,8 @@ def evaluate_benef(request, hashid):
         'title': 'Avaliasaun Benefisiariu Geral',
         'legend': 'Avaliasaun Geral KNI',
         'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'dash-man', 'link_text': 'Painel Manufatureira'},
+            {'link_name': 'geral_man', 'link_text': 'Lista Benefisiariu'},
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }

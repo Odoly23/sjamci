@@ -42,4 +42,6 @@ urlpatterns = [
 
     #Avaliasaun
     path('Pajina-Avaliasaun/.html/', views.avaliasaun_dnim, name='dmin-ava'),
+    path('Lista-Avalisaun-Ddnim.html/', views.dnimvalia_list, name='list-dnim-ava'),
+    path('Lista-Avalisaun-Finanseeira-Dnim/', views.dnim_evaluation_list, name='f-dnim')
 ]

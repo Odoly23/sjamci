@@ -16,6 +16,7 @@ from monitoring.models import BusinessImpactMonitoring
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
 # ══════════════════════════════════════════════════════════════
 #  HELPER
 # ══════════════════════════════════════════════════════════════
@@ -91,7 +92,7 @@ def edit_benef_kni(request, hashid):
         if form.is_valid():
             benef = form.save(commit=False)
             benef.updated_by = request.user
-            benef.updated_at = datetime.datetime.now()
+            benef.updated_at = timezone.now()
             benef.save()
             messages.success(request,"Dadus Benefisiariu atualiza ho sukses.")
             return redirect('benef-detail-kni', hashid=benef.hashed)
