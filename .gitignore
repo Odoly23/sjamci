@@ -12,6 +12,7 @@ db.sqlite3
 
 # Environment Variables
 .env
+.env_prod
 
 # VS Code
 .vscode/
