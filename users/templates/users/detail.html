@@ -131,9 +131,9 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th colspan="2">POZISAUN | {% if division %} 
-                                                                    {% if position %}
+                                                                    
                                                                     <a href="{% url 'empposition-update' division.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-plus"></i></a>
-                                                                    {% endif %} 
+                                                                   
                                                                    {% endif %}</th>
                                     </tr>
                                 </thead>
@@ -193,7 +193,7 @@
 
                                 <thead class="thead-light">
                                     <tr>
-                                        <th colspan="2">UNIDADE SERVISU |  <a href="{% url 'empdivision-update' division.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-plus"></i></a></th>
+                                        <th colspan="2">UNIDADE SERVISU |  <a href="{% url 'empdivision-update' obj.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-plus"></i></a></th>
                                     </tr>
                                 </thead>
 

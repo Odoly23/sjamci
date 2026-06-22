@@ -9,7 +9,7 @@ from .models import Employee, Business
 
 @receiver(post_save, sender=BeneficiariuEvaluation)
 def sync_benef_status(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.status:
         benef = instance.benefisiariu
         try:
             status_obj = Status.objects.get(name=instance.status)
@@ -23,13 +23,15 @@ def sync_benef_status(sender, instance, created, **kwargs):
 @receiver(post_delete, sender=Employee)
 def update_business_size(sender, instance, **kwargs):
     business = instance.business
-    total = business.employee_set.aggregate(total=Sum('total'))['total'] or 0
-
-    if total <= 1 - 5:
+    if not business:
+        return
+    aggregate_result = Employee.objects.filter(business=business).aggregate(total_pekerja=Sum('total'))
+    total = aggregate_result['total_pekerja'] or 0
+    if 0 <= total <= 5:
         kode = "Mo"
-    elif total <= 6 - 20 :
+    elif 6 <= total <= 20:
         kode = "SM"
-    elif total <= 21 - 50:
+    elif 21 <= total <= 50:
         kode = "MD"
     else:
         kode = "GD"

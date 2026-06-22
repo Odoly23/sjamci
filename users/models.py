@@ -6,17 +6,9 @@ from custom.models import BaseModel, Position, Diresaun, Departamento, Gabinete
 
 class Emp(BaseModel):
     name = models.CharField(max_length=100, verbose_name='Naran', null=True)
-    sexo = models.CharField(
-        max_length=4, null=True,
-        choices=[('Mane','Mane'),('Feto','Feto')]
-    )
-    phone = models.CharField(
-        max_length=15, 
-        verbose_name="Nu. Telf.",
-        validators=[RegexValidator(r'^\+?670\d{7,8}$', 'Format: +6707xxxxxxx')],
-        null=True, blank=True
-    )
-
+    sexo = models.CharField(max_length=4, null=True, choices=[('Mane','Mane'),('Feto','Feto')])
+    phone = models.CharField(max_length=15, verbose_name="Nu. Telf.", validators=[RegexValidator(r'^\+?670\d{7,8}$', 'Format: +6707xxxxxxx')], null=True, blank=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
     def __str__(self):
         return self.name
 

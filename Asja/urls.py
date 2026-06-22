@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 from django.conf.urls import handler404, handler500
 from main.views import logout_view, loginPage
 from decouple import config
+from django.contrib.auth import views as auth_views
 
 ADMIN_URL = config('ADMIN_URL', default='mci-panel-super-secret-9x7z2k/')
 
@@ -40,8 +41,14 @@ urlpatterns = [
     path('Mpms-Home/', include('mpms.urls')),
     path('Utilizadores/', include('users.urls')),
     path('monitoring/', include('monitoring.urls')),
-    path('Notifikasaun/', include('notif.Api.urls'))
+    path('Notifikasaun/', include('notif.Api.urls')),
 
+    #auth Password
+    path('password-reset/', auth_views.PasswordResetView.as_view(template_name='auth/password_reset.html', email_template_name='auth/email/password_reset_email.txt', html_email_template_name='auth/email/password_reset_email.html',
+            subject_template_name='auth/email/password_reset_subject.txt',), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='auth/password_reset_done.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view( template_name='auth/password_reset_confirm.html'), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='auth/password_reset_complete.html'), name='password_reset_complete'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

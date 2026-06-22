@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<section class="content mb-5">
+<section class="content mb-5 mt-3">
   <div class="container-fluid">
 
     {% if messages %}
@@ -21,10 +21,8 @@
     <div class="row justify-content-center">
 
       <div class="col-lg-4 mb-4">
-
         <!-- PHOTO CARD -->
         <div class="card border-0 shadow rounded-4 overflow-hidden">
-
           <div class="card-header text-center bg-success text-white">
             <h5 class="mb-0">
               <i class="fa fa-user-circle"></i>
@@ -33,47 +31,29 @@
           </div>
 
           <div class="card-body text-center">
-
-            {% if photo and photo.image %}
-              <img src="{{ photo.image.url }}"
-                   class="rounded-circle shadow"
-                   width="220"
-                   height="220"
-                   style="object-fit: cover;">
-            {% else %}
-              <img src="{% static 'img/default.png' %}"
-                   class="rounded-circle shadow"
-                   width="220"
-                   height="220"
-                   style="object-fit: cover;">
-            {% endif %}
+            <!-- Diperbaiki menggunakan property model .photo_url agar aman dari null error -->
+            <img src="{{ photo.photo_url }}"
+                 class="rounded-circle shadow"
+                 width="220"
+                 height="220"
+                 style="object-fit: cover;">
 
             <div class="mt-4">
-
               <button class="btn btn-warning btn-sm rounded-pill px-4"
                       data-toggle="modal"
                       data-target="#updatePhotoModal">
-
                 <i class="fa fa-camera"></i>
                 Update Photo
-
               </button>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
 
       <!-- PROFILE INFO -->
       <div class="col-lg-8">
-
         <div class="card border-0 shadow rounded-4 overflow-hidden">
-
           <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-
             <h5 class="mb-0">
               <i class="fa fa-id-card"></i>
               Informasaun Pessoal
@@ -82,446 +62,222 @@
             <button class="btn btn-light btn-sm rounded-pill"
                     data-toggle="modal"
                     data-target="#manageAccountModal">
-
-              <i class="fa fa-user"></i>
+              <i class="fa fa-user-cog"></i>
               Manage Account
-
             </button>
-
           </div>
 
           <div class="card-body">
-
             <div class="table-responsive">
-
               <table class="table table-borderless">
-
                 <tr>
                   <th width="30%">Naran Kompletu</th>
                   <td>: {{ profile.name }}</td>
                 </tr>
-
                 <tr>
                   <th>Seksu</th>
                   <td>: {{ profile.sexo }}</td>
                 </tr>
-
                 <tr>
                   <th>Nu. Telemovel</th>
                   <td>: {{ profile.phone }}</td>
                 </tr>
-
+                <tr>
+                  <th>Grupu Aksesu</th>
+                  <td>: <span class="badge badge-info">{{ group }}</span></td>
+                </tr>
                 <tr>
                   <th>Username</th>
                   <td>: {{ request.user.username }}</td>
                 </tr>
-
                 <tr>
                   <th>Email</th>
-                  <td>: {{ request.user.email }}</td>
+                  <td>: {{ request.user.email|default:"-" }}</td>
                 </tr>
-
                 <tr>
                   <th>Gabinete</th>
-                  <td>:
-                    {% if division.gabinete %}
-                      {{ division.gabinete }}
-                    {% else %}
-                      -
-                    {% endif %}
-                  </td>
+                  <td>: {{ division.gabinete.name|default:"-" }}</td>
                 </tr>
-
                 <tr>
                   <th>Diresaun</th>
-                  <td>:
-                    {% if division.dn %}
-                      {{ division.dn }}
-                    {% else %}
-                      -
-                    {% endif %}
-                  </td>
+                  <td>: {{ division.dn.name|default:"-" }}</td>
                 </tr>
-
                 <tr>
                   <th>Departamento</th>
-                  <td>:
-                    {% if division.department %}
-                      {{ division.department }}
-                    {% else %}
-                      -
-                    {% endif %}
-                  </td>
+                  <td>: {{ division.department.name|default:"-" }}</td>
                 </tr>
-
                 <tr>
                   <th>Pozisaun</th>
-                  <td>:
-                    {% if position.position %}
-                      {{ position.position }}
-                    {% else %}
-                      -
-                    {% endif %}
-                  </td>
+                  <td>: {{ position.position.name|default:"-" }}</td>
                 </tr>
-
+                <tr>
+                  <th>Login Ikus</th>
+                  <td>: {{ last_login.login_time|date:"d/m/Y H:i"|default:"-" }} (IP: {{ last_login.ip_address|default:"-" }})</td>
+                </tr>
               </table>
-
             </div>
-
           </div>
 
           <div class="card-footer text-right">
-
             <button class="btn btn-info rounded-pill px-4"
                     data-toggle="modal"
                     data-target="#updateProfileModal">
-
               <i class="fa fa-edit"></i>
               Update Profile
-
             </button>
-
           </div>
-
         </div>
-
       </div>
 
     </div>
-
   </div>
 </section>
 
 <!-- ================================================= -->
 <!-- UPDATE PROFILE MODAL -->
 <!-- ================================================= -->
-
 <div class="modal fade" id="updateProfileModal">
-
   <div class="modal-dialog">
     <div class="modal-content border-0 rounded-4">
-
       <div class="modal-header bg-info text-white">
-
-        <h5 class="modal-title">
-          Update Profile
-        </h5>
-
-        <button type="button"
-                class="close text-white"
-                data-dismiss="modal">
-
-          &times;
-
-        </button>
-
+        <h5 class="modal-title">Update Profile</h5>
+        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
       </div>
 
-      <form id="profileForm">
-
+      <!-- Diperbaiki mengarah ke rute aksi perubahan data Anda, misalnya url 'profile-update' -->
+      <form method="POST" action="">
         {% csrf_token %}
-
         <div class="modal-body">
-
           <div class="form-group">
-
             <label>Naran</label>
-
-            <input type="text"
-                   name="name"
-                   value="{{ emp.name }}"
-                   class="form-control">
-
+            <!-- Diubah dari emp.name menjadi profile.name agar sinkron -->
+            <input type="text" name="name" value="{{ profile.name }}" class="form-control" required>
           </div>
 
           <div class="form-group">
-
             <label>Seksu</label>
-
-            <select name="sexo"
-                    class="form-control">
-
-              <option value="Mane"
-                {% if emp.sexo == 'Mane' %}
-                  selected
-                {% endif %}
-              >
-                Mane
-              </option>
-
-              <option value="Feto"
-                {% if emp.sexo == 'Feto' %}
-                  selected
-                {% endif %}
-              >
-                Feto
-              </option>
-
+            <select name="sexo" class="form-control">
+              <option value="Mane" {% if profile.sexo == 'Mane' %}selected{% endif %}>Mane</option>
+              <option value="Feto" {% if profile.sexo == 'Feto' %}selected{% endif %}>Feto</option>
             </select>
-
           </div>
 
           <div class="form-group">
-
             <label>Nu. Telemovel</label>
-
-            <input type="text"
-                   name="phone"
-                   value="{{ emp.phone }}"
-                   class="form-control">
-
+            <input type="text" name="phone" value="{{ profile.phone|default:'' }}" class="form-control">
           </div>
-
         </div>
-
         <div class="modal-footer">
-
-          <button type="submit"
-                  class="btn btn-info">
-
-            Save Changes
-
-          </button>
-
+          <button type="submit" class="btn btn-info">Save Changes</button>
         </div>
-
       </form>
-
     </div>
   </div>
 </div>
 
 <!-- ================================================= -->
-<!-- UPDATE PHOTO -->
+<!-- UPDATE PHOTO MODAL -->
 <!-- ================================================= -->
-
 <div class="modal fade" id="updatePhotoModal">
-
   <div class="modal-dialog">
     <div class="modal-content border-0 rounded-4">
-
       <div class="modal-header bg-warning">
-
-        <h5 class="modal-title">
-          Update Photo
-        </h5>
-
-        <button type="button"
-                class="close"
-                data-dismiss="modal">
-
-          &times;
-
-        </button>
-
+        <h5 class="modal-title">Update Photo</h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
-
-      <form id="photoForm"
-            enctype="multipart/form-data">
-
+      
+      <!-- ID Diubah menjadi #photoForm dan tambahkan accept="image/*" -->
+      <form id="photoForm" enctype="multipart/form-data">
         {% csrf_token %}
-
         <div class="modal-body">
-
-          <input type="file"
-                 name="image"
-                 class="form-control"
-                 required>
-
+          <div class="form-group">
+            <label>Pilih File Foto Baru</label>
+            <input type="file" id="photoInput" name="image" class="form-control-file" accept="image/*" required>
+          </div>
         </div>
-
         <div class="modal-footer">
-
-          <button type="submit"
-                  class="btn btn-warning">
-
-            Upload Photo
-
-          </button>
-
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Kansela</button>
+          <button type="submit" class="btn btn-warning" id="btnUploadPhoto">Upload Photo</button>
         </div>
-
       </form>
-
     </div>
   </div>
 </div>
 
 <!-- ================================================= -->
-<!-- MANAGE ACCOUNT -->
+<!-- MANAGE ACCOUNT MODAL (PERBAIKAN KODE TERPOTONG) -->
 <!-- ================================================= -->
-
 <div class="modal fade" id="manageAccountModal">
-
   <div class="modal-dialog">
     <div class="modal-content border-0 rounded-4">
-
-      <div class="modal-header bg-primary text-white">
-
-        <h5 class="modal-title">
-          Manage Account
-        </h5>
-
-        <button type="button"
-                class="close text-white"
-                data-dismiss="modal">
-
-          &times;
-
-        </button>
-
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title"><i class="fa fa-user-shield"></i> Manage Account</h5>
+        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
       </div>
-
-      <form id="accountForm">
-
+      <form method="POST" action="">
         {% csrf_token %}
-
         <div class="modal-body">
-
           <div class="form-group">
-
             <label>Username</label>
-
-            <input type="text"
-                   name="username"
-                   value="{{ request.user.username }}"
-                   class="form-control">
-
+            <input type="text" name="username" value="{{ request.user.username }}" class="form-control" required>
           </div>
-
           <div class="form-group">
-
             <label>Email</label>
-
-            <input type="email"
-                   name="email"
-                   value="{{ request.user.email }}"
-                   class="form-control">
-
+            <input type="email" name="email" value="{{ request.user.email|default:'' }}" class="form-control">
           </div>
-
+          <hr>
+          <div class="p-2 bg-light rounded border-left border-warning mb-2 small text-muted">
+            <i class="fa fa-info-circle"></i> Sira bele husik mamuk kolom iha kraik ne'e se la hakarak muda password.
+          </div>
           <div class="form-group">
-
-            <label>Password Foun</label>
-
-            <input type="password"
-                   name="password"
-                   class="form-control">
-
+            <label>Password Foun (Password Baru)</label>
+            <input type="password" name="password" class="form-control" placeholder="Ketik password baru">
           </div>
-
         </div>
-
         <div class="modal-footer">
-
-          <button type="submit"
-                  class="btn btn-primary">
-
-            Update Account
-
-          </button>
-
+          <button type="submit" class="btn btn-dark">Update Account</button>
         </div>
-
       </form>
-
     </div>
   </div>
 </div>
 
-{% endblock content %}
-
+{% endblock %}
 {% block scripts %}
-
-<script>
-
-$("#profileForm").submit(function(e){
-
-    e.preventDefault();
-
-    $.ajax({
-
-        url: "{% url 'update_profile_ajax' %}",
-        type: "POST",
-        data: $(this).serialize(),
-
-        success: function(response){
-
-            alert("Profile Atualiza Ho Susesu");
-            location.reload();
-
-        },
-
-        error: function(){
-
-            alert("Error Atualiza Profile");
-
-        }
-
+  <script>
+    $(document).ready(function() {
+        $('#photoForm').on('submit', function(e) {
+            e.preventDefault(); 
+            var formData = new FormData(this);
+            var token = $('input[name=csrfmiddlewaretoken]').val(); 
+            $('#btnUploadPhoto').prop('disabled', true).text('Loading...');
+            $.ajax({
+                url: "{% url 'update_photo_ajax' %}", 
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                cache: false,
+                contentType: false,
+                processData: false,
+                headers: {
+                    "X-CSRFToken": token 
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        $('#updatePhotoModal').modal('hide');
+                        alert('Foto atualiza ho susesu!');
+                        window.location.reload(); 
+                    } else {
+                        alert('Error: falha Altera Foto. ' + (response.message || ''));
+                        $('#btnUploadPhoto').prop('disabled', false).text('Upload Photo');
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    alert('Koneksaun ba server error!');
+                    $('#btnUploadPhoto').prop('disabled', false).text('Upload Photo');
+                }
+            });
+        });
     });
-
-});
-
-$("#photoForm").submit(function(e){
-
-    e.preventDefault();
-
-    let formData = new FormData(this);
-
-    $.ajax({
-
-        url: "{% url 'update_photo_ajax' %}",
-        type: "POST",
-        data: formData,
-
-        processData: false,
-        contentType: false,
-
-        success: function(response){
-
-            alert("Photo Atualiza Ho Susesu");
-            location.reload();
-
-        },
-
-        error: function(){
-
-            alert("Error Upload Photo");
-
-        }
-
-    });
-
-});
-
-$("#accountForm").submit(function(e){
-
-    e.preventDefault();
-
-    $.ajax({
-
-        url: "{% url 'manage_account_ajax' %}",
-        type: "POST",
-        data: $(this).serialize(),
-
-        success: function(response){
-
-            alert("Account Atualiza Ho Susesu");
-            location.reload();
-
-        },
-
-        error: function(){
-
-            alert("Error Atualiza Account");
-
-        }
-
-    });
-
-});
-
 </script>
-
 {% endblock scripts %}

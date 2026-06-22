@@ -8,7 +8,7 @@ from users.models import Emp, EmpPosition, EmpDivision, EmpUser
 class EmpForm(forms.ModelForm):
     class Meta:
         model = Emp
-        fields = ['name', 'sexo', 'phone']
+        fields = ['name', 'sexo', 'phone','email']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -23,9 +23,11 @@ class EmpForm(forms.ModelForm):
                 </div>
             """),
             Row(
-                Column('name', css_class='form-group col-md-6 mb-2'),
+                Column('name', css_class='form-group col-md-4 mb-2'),
                 Column('sexo', css_class='form-group col-md-3 mb-2'),
-                Column('phone', css_class='form-group col-md-3 mb-2'),
+                Column('phone', css_class='form-group col-md-2 mb-2'),
+                Column('email', css_class='form-group col-md-3 mb-2'),
+                css_class="form-row"
             ),
             HTML("""
                 <div class="mt-4">

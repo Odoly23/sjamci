@@ -1,0 +1,271 @@
+{% extends "main/layout.html" %}
+
+{% block content %}
+
+<div class="container-fluid mt-3">
+
+    <!-- STATISTIC -->
+    <div class="row mb-3">
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h4>{{ pending }}</h4>
+
+                    <span class="badge badge-warning">
+                        Hein
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h4>{{ verified }}</h4>
+
+                    <span class="badge badge-success">
+                        Verifikado
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-2">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h4>{{ normal }}</h4>
+
+                    <span class="badge badge-primary">
+                        Normal
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-2">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h4>{{ risk }}</h4>
+
+                    <span class="badge badge-danger">
+                        Risku
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-2">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h4>{{ critical }}</h4>
+
+                    <span class="badge badge-dark">
+                        Critical
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="card shadow-sm border-0">
+
+                <!-- HEADER -->
+                <div class="card-header d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <i class="fa fa-line-chart"></i>
+
+                        <strong>{{ legend|upper }}</strong>
+
+                    </div>
+
+                    <div>
+
+                        <span class="badge badge-primary">
+
+                            TOTAL : {{ monitorings|length }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <!-- BODY -->
+                <div class="card-body">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered table-hover table-striped table-sm"
+                               id="example1"
+                               width="100%">
+
+                            <thead class="thead-light">
+
+                                <tr>
+
+                                    <th width="5%">#</th>
+
+                                    <th>Benefisiariu</th>
+
+                                    <th>Negósiu</th>
+
+                                    <th>Fulan</th>
+
+                                    <th>Rendimentu</th>
+
+                                    <th>Cresimentu</th>
+
+                                    <th>Status</th>
+
+                                    <th>Verifikasaun</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for m in monitorings %}
+
+                                <tr>
+
+                                    <td class="text-center">
+                                        {{ forloop.counter }}
+                                    </td>
+
+                                    <td>
+                                        {{ m.business.benefisiariu.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ m.business.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ m.month }}
+                                    </td>
+
+                                    <td>
+                                        $ {{ m.monthly_income }}
+                                    </td>
+
+                                    <td>
+
+                                        {{ m.growth_percentage }} %
+
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        {% if m.monitoring_status == 'Normal' %}
+
+                                            <span class="badge badge-primary">
+                                                Normal
+                                            </span>
+
+                                        {% elif m.monitoring_status == 'Risk' %}
+
+                                            <span class="badge badge-danger">
+                                                Risk
+                                            </span>
+
+                                        {% elif m.monitoring_status == 'Critical' %}
+
+                                            <span class="badge badge-dark">
+                                                Critical
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge badge-secondary">
+                                                {{ m.monitoring_status }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        {% if m.verification_status == 'Pending' %}
+
+                                            <span class="badge badge-warning rounded-pill px-3">
+                                                Hein Hela   <i class="fa fa-spin fa-refresh"></i>
+                                            </span>
+
+                                        {% elif m.verification_status == 'Verified' %}
+
+                                            <span class="badge badge-success rounded-pill px-3">
+                                                Verifikado  <i class="fa fa-check-circle"></i>
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge badge-danger rounded-pill px-3">
+                                                Rejected  <i class="fa fa-times"></i>
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

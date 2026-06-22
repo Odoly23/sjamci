@@ -12,6 +12,7 @@ urlpatterns = [
     path("benefisiariu-user/", views.benefisiariu_user_list, name="benefisiariu-user-list"),
     path("benefisiariu-user/edit/<int:pk>/", views.benefisiariu_user_edit, name="benefisiariu-user-edit"),
     path("benefisiariu-user/delete/<int:pk>/", views.benefisiariu_user_delete, name="benefisiariu-user-delete"),
+    path('benefisiariu-user/<int:pk>/reset-password/', views.benefisiariu_user_reset_password, name='benefisiariu-user-reset-password'),
 
     path('list/', views.PList, name="u-list"),
     path('add/', views.EmpAdd, name="user-add"),

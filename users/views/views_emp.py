@@ -128,6 +128,7 @@ def empposition_update(request, pk):
 
 @login_required
 @allowed_users(allowed_roles=['admin'])
+@transaction.atomic  
 def empdivision_update(request, pk):
     emp = get_object_or_404(Emp, pk=pk)
     instance, created = EmpDivision.objects.get_or_create(employee=emp)
@@ -137,7 +138,7 @@ def empdivision_update(request, pk):
         obj.employee = emp
         obj.save()
         user, group_name = criar_ou_atualiza_user(emp)
-        messages.success(request,  f"Divizaun atualiza. Group: {group_name}")
+        messages.success(request, f"Divizaun atualiza. Group: {group_name}")
         messages.success(request, 'Divizaun atualiza ho susesu!')
         return redirect('emp-detail', pk=emp.pk)
     context = {

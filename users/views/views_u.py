@@ -8,12 +8,13 @@ from django.http import JsonResponse
 
 @login_required
 def UserProfile(request):
-    group = request.user.groups.all()[0].name
-    emp_user = get_object_or_404(EmpUser, user=request.user )
-    profile = emp_user.emp
-    photo = getattr(profile, 'empphoto',   None  )
-    division = getattr(profile, 'employeedivision',  None  )
-    position = getattr(profile, 'employeeposition',   None   )
+    user_groups = request.user.groups.all()
+    group = user_groups[0].name if user_groups.exists() else "No Group"
+    emp_user = get_object_or_404(EmpUser, user=request.user)
+    profile = emp_user.emp  
+    photo = getattr(profile, 'photo', None)
+    division = profile.divisions.filter(is_active=True).first()
+    position = profile.positions.filter(is_active=True).first()
     last_login = AuditLogin.objects.filter(user=request.user).order_by('-login_time').first()
     context = {
         'group': group,
@@ -25,8 +26,7 @@ def UserProfile(request):
         'title': 'Profile Utilizador',
         'legend': 'Profile Utilizador',
     }
-    return render( request, 'profile.html', context)
-
+    return render(request, 'profile.html', context)
 
 @login_required
 def update_profile_ajax(request):
@@ -47,21 +47,20 @@ def update_profile_ajax(request):
 @login_required
 def update_photo_ajax(request):
     if request.method == "POST":
-        empuser = EmpUser.objects.get(user=request.user)
-        emp = empuser.emp
-        photo, created = EmpPhoto.objects.get_or_create(
-            emp=emp
-        )
-        if request.FILES.get('image'):
-            photo.image = request.FILES.get('image')
-            photo.save()
-        return JsonResponse({
-            'status': 'success'
-        })
-    return JsonResponse({
-        'status': 'error'
-    })
-
+        try:
+            empuser = EmpUser.objects.get(user=request.user)
+            emp = empuser.emp
+            photo, created = EmpPhoto.objects.get_or_create(emp=emp)            
+            if request.FILES.get('image'):
+                photo.image = request.FILES.get('image')
+                photo.save()
+                return JsonResponse({'status': 'success'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Laiha dokumentu imajen ne\'ebé simu'})
+        except EmpUser.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'User la terdaftar iha data Kariawan'})
+    return JsonResponse({'status': 'error', 'message': 'Metodu tenke POST'})
+    
 @login_required
 def manage_account_ajax(request):
     if request.method == "POST":

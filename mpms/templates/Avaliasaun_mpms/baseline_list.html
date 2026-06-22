@@ -1,0 +1,118 @@
+{% extends "main/layout.html" %}
+
+{% block content %}
+
+<div class="container-fluid mt-3">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="card shadow-sm border-0">
+
+                <!-- HEADER -->
+                <div class="card-header d-flex justify-content-between align-items-center">
+
+                    <div>
+                        <i class="fa fa-database"></i>
+                        <strong>{{ legend|upper }}</strong>
+                    </div>
+
+                    <div>
+                        <span class="badge badge-primary">
+                            TOTAL : {{ baselines|length }}
+                        </span>
+                    </div>
+
+                </div>
+
+                <!-- BODY -->
+                <div class="card-body">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered table-hover table-striped table-sm"
+                               id="example1"
+                               width="100%">
+
+                            <thead class="thead-light">
+
+                                <tr>
+
+                                    <th width="5%">#</th>
+
+                                    <th>Benefisiariu</th>
+
+                                    <th>Negósiu</th>
+
+                                    <th>Rendimentu Fulan</th>
+
+                                    <th>Total Trabalhador</th>
+
+                                    <th>Total Assets</th>
+
+                                    <th>Status</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for b in baselines %}
+
+                                <tr>
+
+                                    <td class="text-center">
+                                        {{ forloop.counter }}
+                                    </td>
+
+                                    <td>
+                                        {{ b.business.benefisiariu.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ b.business.name }}
+                                    </td>
+
+                                    <td>
+                                        $ {{ b.monthly_income_before }}
+                                    </td>
+
+                                    <td class="text-center">
+                                        {{ b.employee_before }}
+                                    </td>
+
+                                    <td>
+                                        $ {{ b.asset_before }}
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        <span class="badge badge-success">
+                                            Avalia Ona  <i class="fa fa-check-circle"></i>
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

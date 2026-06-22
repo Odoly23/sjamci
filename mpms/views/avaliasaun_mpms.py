@@ -18,7 +18,7 @@ def avaliasaun_mpms(request):
     context ={
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
-        'legend': 'Avaliasaun Geral KNI',
+        'legend': 'Avaliasaun Geral MPMS',
         'link_antes': [
             {'link_name': 'dash-mpms', 'link_text': 'Painel MPMS'},
             {'link_name': 'mpms-list', 'link_text': 'Lista Benefisiariu'},
@@ -29,16 +29,16 @@ def avaliasaun_mpms(request):
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
-def avalia_list(request):
+def avalia_list_mpms(request):
     group = request.user.groups.all()[0].name
-    benefs = Benefisiariu.objects.prefetch_related('negosiu', 'Pnegosiu').all()
+    benefs = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="MPMS").all()
     context ={
         'benefs': benefs,
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
-        'legend': 'Avaliasaun Geral KNI',
+        'legend': 'Avaliasaun Geral MPMS',
         'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
+            {'link_name': 'dash-mpms', 'link_text': 'Painel MPMS'},
             {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
@@ -47,16 +47,16 @@ def avalia_list(request):
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
-def avalia_list2(request):
+def avalia_list2_mpms(request):
     group = request.user.groups.all()[0].name
-    benefs = Benefisiariu.objects.prefetch_related('negosiu', 'Pnegosiu','negosiu__monitorings','negosiu__baseline',).all()
+    benefs = Benefisiariu.objects.filter(Pnegosiu__program_type__name="MPMS").prefetch_related('negosiu', 'Pnegosiu','negosiu__monitorings','negosiu__baseline',).all()
     context ={
         'benefs': benefs,
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
-        'legend': 'Avaliasaun Geral KNI',
+        'legend': 'Avaliasaun Geral MPMS',
         'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
+            {'link_name': 'dash-mpms', 'link_text': 'Painel MPMS'},
             {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
@@ -85,7 +85,7 @@ def benef_evaluation_list(request):
         'legend': 'Lista Avaliasaun Benefisiariu',
         'link_antes': [
             {
-                'link_name': 'kni-dash',
+                'link_name': 'dash-mpms',
                 'link_text': 'Painel KNI'
             },
         ],
@@ -93,160 +93,125 @@ def benef_evaluation_list(request):
     return render(request, 'Avaliasaun_mpms/list2.html', context)
 
 @login_required
-@allowed_users(allowed_roles=['mpms'])
-@transaction.atomic
-def evaluate_benef(request, hashid):
-    benef = get_object_or_404(Benefisiariu, hashed=hashid)
-    if request.method == 'POST':
-        form = BeneficiariuEvaluationForm(request.POST)
-        if form.is_valid():
-            evaluation = form.save(commit=False)
-            evaluation.benefisiariu = benef
-            evaluation.save()
-            status_obj = Status.objects.filter(name=evaluation.status).first()
-            if status_obj:
-                benef.status = status_obj
-                benef.save()
-            else:
-                messages.error(request, f"Status '{evaluation.status}' la Ejiste iha tabela Status.")
-                return redirect('benef-evaluation-list')
-            messages.success(request, "Avaliasaun sukses.")
-            return redirect('benef-evaluation-list')
-    else:
-        form = BeneficiariuEvaluationForm()
-    context = {
-        'benef': benef,
-        'form': form,
-        'title': 'Avaliasaun Benefisiariu Geral',
-        'legend': 'Avaliasaun Geral KNI',
-        'link_antes': [
-            {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
-            {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
-        ],
-    }
-    return render(request, 'Avaliasaun_mpms/forms.html', context)
-
-
-
-@login_required
 @allowed_users(allowed_roles=['Employee', 'mpms'])
 @transaction.atomic
-def monitoring_create(request, hashid):
+def monitoring_create_mpms(request, hashid):
+    group = request.user.groups.all()[0].name
     business = get_object_or_404(Business, hashed=hashid)
-    if not hasattr(business, 'baseline'):
-        messages.warning(request, "Presiza halo baseline antes monitoring.")
-        return redirect('baseline-list')
+    if not BusinessBaseline.objects.filter(business=business).exists():
+        messages.warning(request, "Presiza halo Avaliasaun Antes.")
+        return redirect('avalia-list2-mpms')
     tinan = Year.active_objects.filter(is_active=True).first()
+    if not tinan:
+        messages.error(request, "Tinan ativu la ejiste! Favor ativa tinan ida iha admin antes.")
+        return redirect('avalia-list2-mpms')
     if request.method == 'POST':
         form = BusinessMonitoringForm(request.POST, request.FILES)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.business = business
             obj.verification_status = 'Pending'
-            obj.uploaded_by = request.user
+            if hasattr(obj, 'uploaded_by'):
+                obj.uploaded_by = request.user
             obj.year = tinan
-            obj.save()
-            messages.success(request, "Monitoring hato'o ho status Pending.")
-            return redirect('monitoring-list')
+            obj.save()            
+            messages.success(request, "Avaliasaun Depois Susesu Hein Konfirmasaun")
+            return redirect('avalia-list2-mpms')
     else:
         form = BusinessMonitoringForm()
+        
     context = {
         'form': form,
         'business': business,
+        'group':group,
         'title': 'Input Monitoring',
-        'legend': 'Depois Apoiu Monitoring'
+        'legend': 'Depois Apoiu Monitoring',
+        'link_antes': [
+            {'link_name': 'dash-mpms', 'link_text': 'Painel MPMS'},
+            {'link_name': 'mpms-list', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
+        ],
     }
-
     return render(request, 'Avaliasaun_mpms/forms.html', context)
+
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
 @transaction.atomic
-def baseline_create(request, hashid):
+def baseline_create_mpms(request, hashid):
+    group = request.user.groups.all()[0].name
     business = get_object_or_404(Business, hashed=hashid)
-    if hasattr(business, 'baseline'):
-        messages.warning(
-            request,
-            "Baseline ba negósiu ida ne'e iha ona.")
-        return redirect('baseline-list')
+    if BusinessBaseline.objects.filter(business=business).exists():
+        messages.warning(request, "Baseline ba negósiu ida ne'e iha ona.")
+        return redirect('avalia-list2-mpms')        
     if request.method == 'POST':
         form = BusinessBaselineForm(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.business = business
-            obj.created_by = request.user
-            obj.save()
-            messages.success(request, "Baseline rai ho sukses.")
-            return redirect('baseline-list')
-
+            if hasattr(obj, 'created_by'):
+                obj.created_by = request.user
+            obj.save()            
+            messages.success(request, "Avaliasaun Antes Susesu.")
+            return redirect('avalia-list2-mpms')
     else:
         form = BusinessBaselineForm()
     context = {
         'form': form,
+        'group':group,
         'business': business,
         'title': 'Input Baseline',
         'legend': 'Baseline Antes Apoiu',
+        'link_antes': [
+            {'link_name': 'dash-mpms', 'link_text': 'Painel MPMS'},
+            {'link_name': 'mpms-list', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
+        ],
     }
     return render(request, 'Avaliasaun_mpms/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
-def baseline_list(request):
-
-    baselines = BusinessBaseline.objects.select_related(
-        'business',
-        'business__benefisiariu'
-    )
-
+def baseline_list_mpms(request):
+    group = request.user.groups.all()[0].name
+    baselines = BusinessBaseline.objects.filter(business__benefisiariu__Pnegosiu__program_type__name="MPMS").select_related('business', 'business__benefisiariu').distinct()
     context = {
         'baselines': baselines,
         'title': 'Lista Baseline',
         'legend': 'Dadus Antes Apoiu',
+        'group':group,
+        'link_antes': [
+            {'link_name': 'dash-mpms', 'link_text': 'Painel MPMS'},
+            {'link_name': 'mpms-list', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
+        ],
     }
-
-    return render(
-        request,
-        'Avaliasaun_mpms/baseline_list.html',
-        context
-    )
+    return render(request, 'Avaliasaun_mpms/baseline_list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
-def monitoring_list(request):
-    monitorings = BusinessMonitoring.objects.select_related('business', 'business__benefisiariu')
+def monitoring_list_mpms(request):
+    group = request.user.groups.all()[0].name
+    monitorings = BusinessMonitoring.objects.filter(business__benefisiariu__Pnegosiu__program_type__name="MPMS").select_related('business', 'business__benefisiariu').distinct()
     pending = monitorings.filter(verification_status='Pending').count()
-    verified = monitorings.filter(verification_status='Verified'
-    ).count()
-
-    critical = monitorings.filter(
-        monitoring_status='Critical'
-    ).count()
-
-    risk = monitorings.filter(
-        monitoring_status='Risk'
-    ).count()
-
-    normal = monitorings.filter(
-        monitoring_status='Normal'
-    ).count()
-
+    verified = monitorings.filter(verification_status='Verified').count()
+    critical = monitorings.filter(monitoring_status='Critical').count()
+    risk = monitorings.filter(monitoring_status='Risk').count()
+    normal = monitorings.filter(monitoring_status='Normal').count()
     context = {
         'monitorings': monitorings,
-
         'pending': pending,
         'verified': verified,
-
         'critical': critical,
         'risk': risk,
         'normal': normal,
-
         'title': 'Lista Monitoring',
         'legend': 'Dadus Monitoring',
+        'group':group,
+        'link_antes': [
+            {'link_name': 'dash-mpms', 'link_text': 'Painel MPMS'},
+            {'link_name': 'mpms-list', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
+        ],
     }
-
-    return render(
-        request,
-        'Avaliasaun_mpms/monitoring_list.html',
-        context
-    )
+    return render(request, 'Avaliasaun_mpms/monitoring_list.html', context)

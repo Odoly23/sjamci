@@ -1,0 +1,125 @@
+{% extends "main/layout.html" %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-sm-12">
+              <div class="card mb-3">
+          <div class="card-body">
+            <div class="text-center d-flex justify-content-center align-items-center flex-wrap gap-2 mb-2">
+              {% if group == "mpms" %}
+              <a class="btn btn-sm btn-warning mb-2 ml-2"
+                 href="{% url 'ava-mpms-antes' %}">
+                Lista Avaliasaun Antes De Apoiu
+                <i class="fa fa-list"></i>
+              </a>
+              <a class="btn btn-sm btn-success mb-2 ml-2"
+                 href="{% url 'ava-mpms-depois' %}">
+                Lista Avaliasaun Depois De Apoiu
+                <i class="fa fa-list"></i>
+              </a>
+              {% endif %}
+            </div>
+            <hr/>
+          </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="card shadow-sm border-0">
+        <!-- HEADER -->
+        <div class="card-header  d-flex justify-content-between align-items-center">
+          <div>
+            <i class="fa fa-list"></i>
+            <strong>{{ legend|upper }}</strong>
+          </div>
+          <div>
+            <span class="badge badge-light">
+              TOTAL : {{ benefs|length }}
+            </span>
+          </div>
+        </div>
+        <!-- BODY -->
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped table-sm"
+                   width="100%"
+                   id="example1">
+              <thead>
+                <tr>
+                  <th width="5%">#</th>
+                  <th>Naran</th>
+                  <th width="10%">Sexu</th>
+                  <th width="15%">Telefone</th>
+                  <th width="15%">Munisipiu</th>
+                  <th width="15%">Postu</th>
+                  <th width="12%">Asaun</th>
+                </tr>
+
+              </thead>
+              <tbody>
+
+                {% for b in benefs %}
+                <tr>
+                  <!-- NUMBER -->
+                  <td class="text-center align-middle">
+                    {{ forloop.counter }}
+                  </td>
+                  <!-- NAME -->
+                  <td class="align-middle">
+                    <strong>{{ b.name }}</strong>
+                  </td>
+                  <!-- SEX -->
+                  <td class="text-center align-middle">
+                    {{ b.sex|default:"-" }}
+                  </td>
+                  <!-- PHONE -->
+                  <td class="align-middle">
+                    {{ b.phone|default:"-" }}
+                  </td>
+                  <!-- MUNICIPALITY -->
+                  <td class="align-middle">
+                    {{ b.addresstl.municipality|default:"-" }}
+                  </td>
+                  <!-- POST -->
+                  <td class="align-middle">
+                    {{ b.addresstl.administrativepost|default:"-" }}
+                  </td>                  <!-- ACTION -->
+                  <!-- ACTION -->
+              <td class="text-center align-middle">
+                  {% for biz in b.negosiu.all %}
+                      <!-- SUDAH ADA BASELINE -->
+                      {% if biz.baseline %}
+                          <a class="btn btn-sm btn-success mb-1"
+                             href="{% url 'monit-add' biz.hashed %}">
+                              <i class="fa fa-line-chart"></i>
+                              Depois Apoiu
+                          </a>
+                      {% else %}
+                          <a class="btn btn-sm btn-primary mb-1"
+                             href="{% url 'evaluate-add' biz.hashed %}">
+                              <i class="fa fa-database"></i>
+                              Avalia Antes
+                          </a>
+                      {% endif %}
+
+                  {% empty %}
+
+                      <span class="text-muted">
+                          La iha negósiu
+                      </span>
+
+                  {% endfor %}
+
+              </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

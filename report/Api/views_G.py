@@ -20,49 +20,55 @@ class APISumarioProgram(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [AllowAny]
     def get(self, request, format=None):
-        program_list = [
-            ('KNI', 'KNI'),
-            ('Kreditu Suave', 'KREDITU SUAVE'),
-            ('MPMS', 'MPMS'),
-            ('Manufatureira', 'MANUFATUREIRA'),
-            ('DNDI', 'DNDI'),
-        ]
+        selected_municipality_id = request.GET.get('municipality')
+        program_names = ['KNI', 'KREDITU SUAVE', 'MPMS', 'MANUFATUREIRA', 'DNDI']
+        mapobjects = LocBussiness.objects.filter(
+            benefisiariu__in=Benefisiariu.active_objects.filter(
+                Pnegosiu__program_type__name__in=program_names
+            )
+        ).select_related(
+            'benefisiariu',
+            'benefisiariu__photo',
+            'municipality',
+            'administrativepost',
+            'village',
+        ).distinct()
 
-        label = []
-        obj = []
+        if selected_municipality_id:
+            mapobjects = mapobjects.filter(municipality_id=selected_municipality_id)
+
+        total_benefisiariu = Benefisiariu.active_objects.filter(
+            Pnegosiu__program_type__name__in=program_names
+        ).distinct().count()
+
+        total_business = Business.objects.filter(
+            benefisiariu__in=Benefisiariu.active_objects.filter(
+                Pnegosiu__program_type__name__in=program_names
+            )
+        ).distinct().count()
+
         locations = []
+        for m in mapobjects:
+            if m.latitude and m.longitude:
+                photo_url = None
+                if hasattr(m.benefisiariu, 'photo') and m.benefisiariu.photo:
+                    photo_url = request.build_absolute_uri(m.benefisiariu.photo.image.url)
 
-        for display_name, program_type_name in program_list:
-            benefisiariu_qs = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name=program_type_name).distinct()
-            total = benefisiariu_qs.count()
-            label.append(display_name)
-            obj.append(total)
-            mapobjects = LocBussiness.objects.filter(benefisiariu__in=benefisiariu_qs).select_related(
-                'benefisiariu','benefisiariu__photo',
-                'municipality', 'administrativepost',
-                'village',).distinct()
-            for m in mapobjects:
-                if m.latitude and m.longitude:
-                    photo_url = None
-                    if hasattr(m.benefisiariu, 'photo') and m.benefisiariu.photo:
-                        photo_url = request.build_absolute_uri(m.benefisiariu.photo.image.url)
-
-                    locations.append({
-                        'program': display_name,
-                        'latitude': m.latitude,
-                        'longitude': m.longitude,
-                        'benefisiariu_name': m.benefisiariu.name,
-                        'address': m.address,
-                        'municipality': m.municipality.name if m.municipality else None,
-                        'administrativepost': m.administrativepost.name if m.administrativepost else None,
-                        'village': m.village.name if m.village else None,
-                        'aldeia': m.aldeia,
-                        'photo_url': photo_url,
-                    })
+                locations.append({
+                    'latitude': m.latitude,
+                    'longitude': m.longitude,
+                    'benefisiariu_name': m.benefisiariu.name,
+                    'address': m.address,
+                    'municipality': m.municipality.name if m.municipality else None,
+                    'administrativepost': m.administrativepost.name if m.administrativepost else None,
+                    'village': m.village.name if m.village else None,
+                    'aldeia': m.aldeia,
+                    'photo_url': photo_url,
+                })
 
         return Response({
-            'label': label,
-            'obj': obj,
-            'total': sum(obj),
+            'total_benefisiariu': total_benefisiariu,
+            'total_business': total_business,
+            'selected_municipality_id': selected_municipality_id,
             'locations': locations,
         })

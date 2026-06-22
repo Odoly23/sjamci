@@ -22,6 +22,7 @@ from monitoring.models import   BusinessImpactMonitoring, FundUsage,  BusinessAs
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def pedidu_list(request):
+    group = request.user.groups.all()[0].name
     status = request.GET.get('status')
     pedidus = Pedidu.objects.all().select_related('benefisiariu')
     if status:
@@ -29,6 +30,7 @@ def pedidu_list(request):
     context = {
         'pedidus': pedidus,
         'status': status,
+        'group':group,
         'title':'Lista Pedido',
         'legend':'Lista Pedido'
     }
@@ -36,9 +38,11 @@ def pedidu_list(request):
 
 @login_required
 def pedidu_detail(request, hashed):
+    group = request.user.groups.all()[0].name
     pedidu = get_object_or_404(Pedidu, hashed=hashed)
     context =  {
         'pedidu': pedidu,
+        'group':group,
         'title':f'Detaillu Pedido {pedidu.benefisiariu}',
         'legend':f'Detaillu Pedido {pedidu.benefisiariu}',
     }
@@ -47,6 +51,7 @@ def pedidu_detail(request, hashed):
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def pedidu_update_status(request, pk):
+    group = request.user.groups.all()[0].name
     pedidu = get_object_or_404(Pedidu, id=pk)
     if request.method == 'POST':
         status = request.POST.get('status')
@@ -59,7 +64,8 @@ def pedidu_update_status(request, pk):
     context = {
         'pedidu': pedidu,
         'title': 'Altera Statutu Pedidu',   
-        'legend': 'Altera Statutu Pedidu'
+        'legend': 'Altera Statutu Pedidu',
+        'group':group
     }
     return render(request, 'infos/pedidu_update.html', context)
 
@@ -67,6 +73,7 @@ def pedidu_update_status(request, pk):
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def cashflow_list(request):
+    group = request.user.groups.all()[0].name
     status = request.GET.get('type')
     qs = CashFlow.objects.select_related('monitoring', 'monitoring__business')
     if status:
@@ -74,6 +81,7 @@ def cashflow_list(request):
     context = {
         'cashflows': qs,
         'status': status,
+        'group':group,
         'title':'Lista Utilizasaun Fundus',
         'legend':'Lista Utilizasaun Fundus',
     }
@@ -81,9 +89,11 @@ def cashflow_list(request):
 
 @login_required
 def cashflow_detail(request, pk):
+    group = request.user.groups.all()[0].name
     obj = get_object_or_404(CashFlow, id=pk)
     context = {
         'cashflow': obj,
+        'group':group,
         'title':'Detaillu Utilizasaun Fundus',
         'legend':'Detaillu Utilizasaun Fundus',
     }
@@ -103,9 +113,11 @@ def financial_book_list(request):
 
 @login_required
 def financial_book_detail(request, pk):
+    group = request.user.groups.all()[0].name
     obj = get_object_or_404(FinancialBook, id=pk)
     context = {
         'book': obj,
+        'group':group,
         'title':'Detaillu Submisaun Livro kontabilidade',
         'legend':'Detaillu Submisaun Livro kontabilidade',
     

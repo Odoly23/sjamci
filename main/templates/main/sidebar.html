@@ -26,6 +26,8 @@
         {% include 'main/sidenavs/XFD.html' %}
       {% elif user.groups.all.0.name == 'mpms' %}
         {% include 'main/sidenavs/mpms.html' %}
+      {% elif user.groups.all.0.name == 'DNDI' %}
+        {% include 'main/sidenavs/dndi.html' %}
       {% else %}
         {% include 'main/sidenavs/cliente.html' %}
       {% endif %}
