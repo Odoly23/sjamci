@@ -10,6 +10,7 @@ from benefisiariu.forms import BenefisiariuUserForm
 from benefisiariu.models import BenefisiariuUser
 from config.decorators import allowed_users, user_group
 from users.passwords import temporary_password
+from seguransa.utils import require_password_change, log_security_event
 
 security_log = logging.getLogger('sjamci.security')
 
@@ -78,6 +79,8 @@ def benefisiariu_user_reset_password(request, pk):
     new_password = temporary_password()
     user_account.set_password(new_password)
     user_account.save()
+    require_password_change(user_account)
+    log_security_event(request, 'Reset password', user_account)
     security_log.info('password reset: target=%s by=%s', user_account.username, request.user.username)
     messages.success(
         request,

@@ -30,6 +30,7 @@ monitoring/         # Monitorizasaun impaktu negósiu
 mpms/               # Modulu MPMS
 notif/              # Sistema notifikasaun
 report/             # Relatóriu no dashboard
+seguransa/          # 2FA, troka password, auditoria, backup
 suave/              # Modulu suave
 users/              # Gestão utilizador
 manage.py
@@ -69,6 +70,22 @@ blokeiu login hafoin tentativa sala, no la iha password default iha kodigu.
 - **Kontrolu asesu** tuir grupu; asesu la autorizadu simu pajina 403.
 - **Audit**: login/logout rejista iha *Master Data → Audit Login*; eventu seguransa hakerek ba `logs/security.log`.
 - **Segredu** (SECRET_KEY, password baze-dadus, email) rai iha `.env` de'it — nunka iha Git.
+
+## 🛡️ Funsionalidade seguransa no operasaun
+
+| Funsionalidade | Oinsá uza |
+|---|---|
+| **Troka password obrigatóriu** | Konta foun ka reset tenke troka password temporáriu iha login dahuluk. Obriga konta hotu: `python manage.py force_password_change --all` |
+| **Verifikasaun pasu-2 (2FA)** | Kada utilizador ativa iha menu *2FA* ho aplikasaun autentikadór (TOTP). Se lakon telemovel, admin reset iha painel admin → *Seguransa Konta* |
+| **Rejistu atividade (auditoria)** | Kada kria/altera/hamoos dadus rejista ho utilizador, IP no valór uluk → foun. Haree iha *Master Data → Rejistu Atividade* (filtra, esporta CSV) |
+| **Backup** | `python manage.py backup_data --keep 30` (rai iha `backups/`; restaura ho `loaddata`). Rekomenda halo ho cron loron-loron |
+| **Health check** | `GET /healthz/` fó `200` se aplikasaun no baze-dadus la'o — ba monitorizasaun servidór |
+
+Ezemplu cron (backup kalan-kalan tuku 02:00):
+
+```bash
+0 2 * * * cd /srv/sjamci && venv/bin/python manage.py backup_data --keep 30
+```
 
 ## 🚀 Produsaun
 

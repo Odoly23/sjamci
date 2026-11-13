@@ -18,6 +18,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from users.passwords import temporary_password
+from seguransa.utils import require_password_change
 # ══════════════════════════════════════════════════════════════
 #  HELPER
 # ══════════════════════════════════════════════════════════════
@@ -54,6 +55,7 @@ def add_benef_kni(request):
             user.set_password(temp_password)
             user.save()
             user.groups.add(u_group)
+            require_password_change(user)
             BenefisiariuUser.objects.create( benefisiariu = benef, user= user,)
 
             messages.success(request, f"Dadus Benefisiariu Rejistado ho Suseso. Username: {username} — Password temporáriu: {temp_password} (hatudu dala ida de'it; entrega ba benefisiáriu)")

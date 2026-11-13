@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.utils import timezone
 
 from users.models import AuditLogin
+from seguransa.views import start_two_factor
 
 
 # ══════════════════════════════════════════════════════════════
@@ -30,6 +31,19 @@ def _get_user_type(user):
     return 'emp'
 
 
+def complete_login(request, user):
+    """Rejistu audit login no haruka utilizador ba pajina inisiu."""
+    AuditLogin.objects.create(
+        user       = user,
+        ip_address = _get_client_ip(request),
+        user_agent = request.META.get('HTTP_USER_AGENT', ''),
+        user_type  = _get_user_type(user),
+        is_active  = True,
+    )
+    messages.success(request, f'Bem-vindo, {user.get_full_name() or user.username}!')
+    return redirect('home')
+
+
 # ══════════════════════════════════════════════════════════════
 #  LOGIN
 # ══════════════════════════════════════════════════════════════
@@ -48,16 +62,13 @@ def loginPage(request):
             if not user.is_active:
                 messages.error(request, 'Konta ne\'e desativadu. Kontaktu administrador.')
                 return render(request, 'auth/login.html', {'title': 'Pajina Login'})
+            security = getattr(user, 'security', None)
+            if security is not None and security.totp_enabled:
+                # Password loos ona; presiza kódigu husi aplikasaun autentikadór
+                start_two_factor(request, user)
+                return redirect('two-factor-verify')
             login(request, user)
-            AuditLogin.objects.create(
-                user       = user,
-                ip_address = _get_client_ip(request),
-                user_agent = request.META.get('HTTP_USER_AGENT', ''),
-                user_type  = _get_user_type(user),
-                is_active  = True,
-            )
-            messages.success(request, f'Bem-vindo, {user.get_full_name() or user.username}!')
-            return redirect('home')
+            return complete_login(request, user)
         else:
             messages.error(request, 'Username ka password salah. Favor koko fila fali.')
     return render(request, 'auth/login.html', {'title': 'Pajina Login'})

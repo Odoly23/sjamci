@@ -85,7 +85,8 @@ INSTALLED_APPS = [
     'report',
     'users',
     'mpms',
-    'monitoring'
+    'monitoring',
+    'seguransa',
 ]
 
 MIDDLEWARE = [
@@ -98,6 +99,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'seguransa.middleware.CurrentRequestMiddleware',
+    'seguransa.middleware.ForcePasswordChangeMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'Asja.middleware.SecurityAndCacheMiddleware',
     'Asja.middleware.PreventDuplicatePostMiddleware',

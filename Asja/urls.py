@@ -29,6 +29,7 @@ urlpatterns = [
     path('login/', loginPage, name='login'),
     path('logout/', logout_view, name='logout'),
     path('', include('main.urls')),
+    path('', include('seguransa.urls')),
     path('summernote/', include('django_summernote.urls')),
     path('KNI-Home/', include('kni.urls')),
     path('Suave-Home/', include('suave.urls')),

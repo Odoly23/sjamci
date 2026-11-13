@@ -13,11 +13,14 @@ from django.test import TestCase, override_settings
 from django.urls import URLPattern, URLResolver, get_resolver, reverse
 
 from benefisiariu.models import Benefisiariu, BenefisiariuUser
+from seguransa import totp
+from seguransa.models import ActivityLog, UserSecurity
+from seguransa.utils import require_password_change
 from users.passwords import temporary_password
 
 BASE_DIR = Path(settings.BASE_DIR)
 LOCAL_APPS = ['main', 'custom', 'benefisiariu', 'kni', 'suave', 'manufatureira',
-              'notif', 'report', 'users', 'mpms', 'monitoring', 'config']
+              'notif', 'report', 'users', 'mpms', 'monitoring', 'config', 'seguransa']
 
 
 def _source_files(*suffixes):
@@ -116,7 +119,7 @@ class AccessControlTests(TestCase):
                 yield '/' + route
 
     def test_anonymous_never_gets_data(self):
-        public = {reverse('login'), reverse('password_reset'), reverse('password_reset_done'),
+        public = {reverse('login'), reverse('healthz'), reverse('password_reset'), reverse('password_reset_done'),
                   reverse('password_reset_complete')}
         leaked = []
         for url in self._routes_without_args():
@@ -198,3 +201,123 @@ class LoginSecurityTests(TestCase):
         offenders = [str(p.relative_to(BASE_DIR)) for p in _source_files('.py')
                      if re.search(r"MCI@#2026|Password_123", p.read_text(encoding='utf-8'))]
         self.assertEqual(offenders, [])
+
+
+class AccountSecurityFeatureTests(TestCase):
+    """Troka password obrigatóriu, verifikasaun pasu-2 no rejistu auditoria."""
+
+    PASSWORD = 'Loos-Password-2026!'
+
+    @classmethod
+    def setUpTestData(cls):
+        Group.objects.create(name='admin')
+        cls.user = User.objects.create_user('joao', password=cls.PASSWORD)
+        cls.user.groups.add(Group.objects.get(name='admin'))
+
+    def _login(self, password=None):
+        return self.client.post(reverse('login'), {'username': 'joao', 'password': password or self.PASSWORD})
+
+    def test_temporary_password_must_be_changed_before_using_system(self):
+        require_password_change(self.user)
+        self._login()
+        self.assertRedirects(self.client.get(reverse('home')), reverse('password-change'))
+        response = self.client.post(reverse('password-change'), {
+            'old_password': self.PASSWORD,
+            'new_password1': 'Foun-Password-2027!', 'new_password2': 'Foun-Password-2027!'})
+        self.assertRedirects(response, reverse('home'))
+        self.assertEqual(self.client.get(reverse('home')).status_code, 200)
+        self.assertFalse(UserSecurity.objects.get(user=self.user).must_change_password)
+
+    def test_weak_new_password_rejected(self):
+        self._login()
+        self.client.post(reverse('password-change'), {
+            'old_password': self.PASSWORD, 'new_password1': '12345', 'new_password2': '12345'})
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password(self.PASSWORD))
+
+    def _enable_two_factor(self):
+        self._login()
+        self.client.get(reverse('two-factor'))
+        security = UserSecurity.objects.get(user=self.user)
+        code = totp._code(security.totp_secret, totp.current_step())
+        self.client.post(reverse('two-factor'), {'code': code})
+        security.refresh_from_db()
+        self.assertTrue(security.totp_enabled)
+        self.client.post(reverse('logout'))
+        self.client.get(reverse('logout'))
+        return security
+
+    def test_two_factor_login_requires_valid_code(self):
+        security = self._enable_two_factor()
+        self.assertRedirects(self._login(), reverse('two-factor-verify'))
+        # password de'it la to'o
+        self.assertEqual(self.client.get(reverse('home')).status_code, 302)
+        self.assertNotIn('_auth_user_id', self.client.session)
+        self.client.post(reverse('two-factor-verify'), {'code': '000000'})
+        self.assertNotIn('_auth_user_id', self.client.session)
+        # kódigu ne'ebé uza tiha ona iha ativasaun la bele uza fali
+        used = totp._code(security.totp_secret, security.totp_last_step)
+        self.client.post(reverse('two-factor-verify'), {'code': used})
+        self.assertNotIn('_auth_user_id', self.client.session)
+        # kódigu foun válidu → login kompletu
+        UserSecurity.objects.filter(pk=security.pk).update(totp_last_step=0)
+        fresh = totp._code(security.totp_secret, totp.current_step())
+        # (ho espasu, hanesan aplikasaun balu hatudu: "123 456")
+        spaced = f'{fresh[:3]} {fresh[3:]}'
+        self.assertRedirects(self.client.post(reverse('two-factor-verify'), {'code': spaced}), reverse('home'))
+        self.assertIn('_auth_user_id', self.client.session)
+
+    def test_two_factor_locks_after_too_many_wrong_codes(self):
+        self._enable_two_factor()
+        self._login()
+        for i in range(5):
+            response = self.client.post(reverse('two-factor-verify'), {'code': f'00000{i}'})
+        self.assertRedirects(response, reverse('login'))
+        self.assertNotIn('pending_2fa', self.client.session)
+
+    def test_totp_matches_rfc6238_vector(self):
+        secret = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ'   # "12345678901234567890"
+        self.assertEqual(totp._code(secret, 59 // 30), '287082')
+        self.assertEqual(totp._code(secret, 1111111109 // 30), '081804')
+
+    def test_data_changes_are_audited(self):
+        self.client.force_login(self.user)
+        self.client.get(reverse('home'))
+        benef = Benefisiariu.objects.create(name='Ana Teste')
+        benef.name = 'Ana Teste Foun'
+        benef.save()
+        benef.delete()
+        logs = ActivityLog.objects.filter(model='Benefisiariu').order_by('id')
+        actions = list(logs.values_list('action', flat=True))
+        self.assertEqual((actions[0], actions[-1]), ('create', 'delete'))
+        renamed = [log for log in logs if 'name' in log.changes]
+        self.assertEqual(len(renamed), 1)
+        self.assertEqual(renamed[0].changes['name'], ['Ana Teste', 'Ana Teste Foun'])
+
+    def test_security_events_record_who_did_it(self):
+        self._login()
+        self.client.post(reverse('password-change'), {
+            'old_password': self.PASSWORD,
+            'new_password1': 'Foun-Password-2027!', 'new_password2': 'Foun-Password-2027!'})
+        event = ActivityLog.objects.get(action='security')
+        self.assertEqual((event.username, event.ip_address), ('joao', '127.0.0.1'))
+
+    def test_passwords_never_written_to_audit_log(self):
+        self.user.set_password('Seluk-Password-2028!')
+        self.user.save()
+        for log in ActivityLog.objects.filter(model='User'):
+            self.assertNotIn('password', log.changes)
+
+    def test_activity_log_admin_only(self):
+        self.assertEqual(self.client.get(reverse('activity-log')).status_code, 302)
+        other = User.objects.create_user('seluk', password=self.PASSWORD)
+        self.client.force_login(other)
+        self.assertEqual(self.client.get(reverse('activity-log')).status_code, 403)
+        self.client.force_login(self.user)
+        self.assertEqual(self.client.get(reverse('activity-log')).status_code, 200)
+        self.assertEqual(self.client.get(reverse('activity-log-export')).status_code, 200)
+
+    def test_health_check(self):
+        response = self.client.get(reverse('healthz'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['database'], 'ok')

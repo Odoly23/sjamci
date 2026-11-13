@@ -1,0 +1,41 @@
+{% extends "main/layout.html" %}
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+      <div class="card shadow-sm border-0">
+        <div class="card-header"><i class="fa fa-shield"></i> <strong>VERIFIKASAUN PASU-2 (2FA)</strong></div>
+        <div class="card-body">
+          {% if security.totp_enabled %}
+            <div class="alert alert-success"><i class="fa fa-check-circle"></i> Verifikasaun pasu-2 <strong>ativu</strong>. Kada login sei husu kódigu husi aplikasaun autentikadór.</div>
+            <form method="post" action="{% url 'two-factor-disable' %}" class="mt-3">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="id_password">Atu desativa, hatama ita-boot nia password</label>
+                <input type="password" name="password" id="id_password" class="form-control" autocomplete="current-password" required>
+              </div>
+              <button type="submit" class="btn btn-outline-danger"><i class="fa fa-times"></i> Desativa</button>
+            </form>
+          {% else %}
+            <p>Verifikasaun pasu-2 proteje konta maski ema seluk hatene ita-boot nia password.</p>
+            <ol>
+              <li>Instala aplikasaun autentikadór (Google Authenticator, Microsoft Authenticator ka seluk) iha telemovel.</li>
+              <li>Scan kódigu QR ne'e, ka hatama xave manuál.</li>
+              <li>Hatama kódigu dijitu 6 ne'ebé aplikasaun hatudu.</li>
+            </ol>
+            <div class="text-center my-3">
+              <img src="{{ qr }}" alt="Kódigu QR ba aplikasaun autentikadór" width="200" height="200">
+              <p class="mt-2 mb-0"><small class="text-muted">Xave manuál:</small><br><code style="font-size:1rem;letter-spacing:2px;">{{ secret }}</code></p>
+            </div>
+            <form method="post" class="form-inline justify-content-center">
+              {% csrf_token %}
+              <input type="text" name="code" class="form-control mr-2" placeholder="000000" inputmode="numeric" pattern="[0-9 ]*" maxlength="7" autocomplete="one-time-code" required aria-label="Kódigu dijitu 6">
+              <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Ativa</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

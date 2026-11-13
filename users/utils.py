@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group, User
 from users.models import EmpUser
 from django.db import transaction
 from users.passwords import temporary_password
+from seguransa.utils import require_password_change
 
 def tentukan_group(emp, position, division):
     if not position or not position.position:
@@ -54,6 +55,7 @@ def criar_ou_atualiza_user(emp):
                 user = User.objects.create_user(username=username, password=temp_password, email=emp.email, first_name=first_name, last_name=last_name)
                 # Hatudu dala ida de'it ba administradór (la rai iha baze-dadus)
                 user.temp_password = temp_password
+                require_password_change(user)
             empuser, created = EmpUser.objects.get_or_create(emp=emp, defaults={'user': user})
             if not created:
                 user = empuser.user

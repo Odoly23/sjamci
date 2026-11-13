@@ -1,0 +1,72 @@
+{% extends "main/layout.html" %}
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="card shadow-sm border-0">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div><i class="fa fa-history"></i> <strong>{{ legend|upper }}</strong></div>
+      <div>
+        <span class="badge badge-primary mr-2">TOTAL : {{ total }}</span>
+        <a href="{% url 'activity-log-export' %}?{{ query }}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> CSV</a>
+      </div>
+    </div>
+    <div class="card-body">
+      <form method="get" class="form-row mb-3">
+        <div class="col-md-2 mb-2"><input type="text" name="user" value="{{ request.GET.user }}" class="form-control form-control-sm" placeholder="Utilizador" aria-label="Utilizador"></div>
+        <div class="col-md-2 mb-2">
+          <select name="action" class="form-control form-control-sm" aria-label="Asaun">
+            <option value="">Asaun hotu</option>
+            {% for value, label in actions %}<option value="{{ value }}" {% if request.GET.action == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2 mb-2"><input type="text" name="model" value="{{ request.GET.model }}" class="form-control form-control-sm" placeholder="Tabela" aria-label="Tabela"></div>
+        <div class="col-md-2 mb-2"><input type="date" name="from" value="{{ request.GET.from }}" class="form-control form-control-sm" aria-label="Husi data"></div>
+        <div class="col-md-2 mb-2"><input type="date" name="to" value="{{ request.GET.to }}" class="form-control form-control-sm" aria-label="To'o data"></div>
+        <div class="col-md-2 mb-2">
+          <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-filter"></i> Filtra</button>
+          <a href="{% url 'activity-log' %}" class="btn btn-sm btn-secondary">Reset</a>
+        </div>
+      </form>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped table-sm" width="100%">
+          <thead class="thead-light">
+            <tr><th>Data</th><th>Utilizador</th><th>Asaun</th><th>Tabela</th><th>Dadus</th><th>Alterasaun</th><th>IP</th></tr>
+          </thead>
+          <tbody>
+            {% for log in page %}
+            <tr>
+              <td class="text-nowrap">{{ log.created_at|date:"d/m/Y H:i:s" }}</td>
+              <td>{{ log.username|default:"(sistema)" }}</td>
+              <td>
+                {% if log.action == 'create' %}<span class="badge badge-success">{{ log.get_action_display }}</span>
+                {% elif log.action == 'update' %}<span class="badge badge-warning">{{ log.get_action_display }}</span>
+                {% elif log.action == 'delete' %}<span class="badge badge-danger">{{ log.get_action_display }}</span>
+                {% else %}<span class="badge badge-info">{{ log.get_action_display }}</span>{% endif %}
+              </td>
+              <td>{{ log.model }}</td>
+              <td>{{ log.object_repr }}</td>
+              <td>
+                {% for name, values in log.changes.items %}
+                  <small class="d-block"><strong>{{ name }}</strong>: {{ values.0|default:"∅" }} → {{ values.1|default:"∅" }}</small>
+                {% endfor %}
+              </td>
+              <td>{{ log.ip_address|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" class="text-center text-muted py-4">La iha rejistu.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if page.has_other_pages %}
+      <nav aria-label="Pajinasaun">
+        <ul class="pagination pagination-sm justify-content-center mb-0">
+          {% if page.has_previous %}<li class="page-item"><a class="page-link" href="?{{ query }}&page={{ page.previous_page_number }}">&laquo; Uluk</a></li>{% endif %}
+          <li class="page-item disabled"><span class="page-link">Pajina {{ page.number }} / {{ page.paginator.num_pages }}</span></li>
+          {% if page.has_next %}<li class="page-item"><a class="page-link" href="?{{ query }}&page={{ page.next_page_number }}">Tuir mai &raquo;</a></li>{% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

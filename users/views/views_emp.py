@@ -11,6 +11,7 @@ from users.models import Emp, EmpPosition, EmpDivision, EmpUser, EmpPhoto
 from users.forms import EmpForm, EmpPositionForm, EmpDivisionForm
 from users.utils import criar_ou_atualiza_user
 from users.passwords import temporary_password
+from seguransa.utils import require_password_change, log_security_event
 import logging
 from django.urls import reverse
 
@@ -195,6 +196,8 @@ def reset_password(request, pk):
     new_password = temporary_password()
     empuser.user.set_password(new_password)
     empuser.user.save()
+    require_password_change(empuser.user)
+    log_security_event(request, 'Reset password', empuser.user)
     security_log.info('password reset: target=%s by=%s', empuser.user.username, request.user.username)
     messages.success(request, f"Password {empuser.user.username} reset ona. Password temporáriu: {new_password} (hatudu dala ida de'it)")
     return redirect('u-list')
