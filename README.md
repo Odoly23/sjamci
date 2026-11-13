@@ -29,6 +29,7 @@ manufatureira/      # Gestão manufatureira
 monitoring/         # Monitorizasaun impaktu negósiu
 mpms/               # Modulu MPMS
 notif/              # Sistema notifikasaun
+offline/            # Rejistu offline (PWA) ba KNI, KS, MPMS
 report/             # Relatóriu no dashboard
 seguransa/          # 2FA, troka password, auditoria, backup
 suave/              # Modulu suave
@@ -86,6 +87,22 @@ Ezemplu cron (backup kalan-kalan tuku 02:00):
 ```bash
 0 2 * * * cd /srv/sjamci && venv/bin/python manage.py backup_data --keep 30
 ```
+
+## 📱 Rejistu offline (PWA)
+
+Ofisiál KNI, Kreditu Suave no MPMS bele rejista benefisiáriu iha kampu maski la iha internet.
+
+1. Bainhira **online**, login no loke menu **Rejistu Offline** (dala ida, atu dispozitivu rai formuláriu). Bele *Instala iha dispozitivu* hanesan aplikasaun.
+2. Iha kampu (**offline**), loke aplikasaun → *Benefisiáriu KNI / Kreditu Suave / MPMS* → prienxe dadus benefisiáriu, negósiu, lokalizasaun (ho botaun GPS) no programa → *Rai rejistu*.
+3. Bainhira iha internet fali, rejistu haruka automátiku (ka *Sinkroniza agora*). Se sesaun remata, login fali — dadus iha dispozitivu la lakon.
+
+Regra:
+- Sinkronizasaun uza form no view online nian rasik, entaun validasaun no regra (ezemplu duplikadu naran/telefone, kria konta kliente KNI) hanesan.
+- Kada rejistu iha UUID; haruka dala rua la kria duplikadu. Se pasu ida falla, la iha dadus balun de'it mak rai.
+- Rejistu ne'ebé servidór rekuza hela iha dispozitivu ho razaun, no bele *Hadia*.
+- Dadus hein sinkroniza rai **iha dispozitivu** (la enkripta) — uza dispozitivu ofisiál ho xave ekran. Hafoin sinkroniza, dadus pesoál hasai husi dispozitivu.
+- PWA presiza **HTTPS** iha produsaun. Bainhira troka ficheiru iha `offline/static/`, aumenta `OFFLINE_CACHE_VERSION` iha `settings.py`.
+- DNDI seidauk iha formuláriu (módulu seidauk iha modelu dadus).
 
 ## 🚀 Produsaun
 

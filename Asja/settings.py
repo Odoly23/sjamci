@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'mpms',
     'monitoring',
     'seguransa',
+    'offline',
 ]
 
 MIDDLEWARE = [
@@ -204,6 +205,9 @@ STORAGES = {
 
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Versaun cache PWA offline — aumenta bainhira troka ficheiru offline/static
+OFFLINE_CACHE_VERSION = 'v2'
 
 # Limite upload (10 MB) — evita abuzu memoria/disku
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024

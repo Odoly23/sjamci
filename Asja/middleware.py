@@ -38,7 +38,8 @@ class PreventDuplicatePostMiddleware:
             if referer and request.get_host() in referer:
                 request.session['safe_previous_url'] = referer
 
-        if request.method == 'POST':
+        # Sinkronizasaun offline iha nia protesaun duplikadu rasik (UUID)
+        if request.method == 'POST' and not request.path.startswith('/offline/sync/'):
             # 1. Hitung struktur data kiriman untuk mendeteksi kesamaan konten
             file_info = ''
             if request.FILES:

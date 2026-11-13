@@ -302,7 +302,7 @@ def Program_Add_mpms(request, hashid):
         if form.is_valid():
             obj              = form.save(commit=False)
             obj.benefisiariu = emp
-            obj.program_type = TIpu_Programa.objects.get(name='MPMS')
+            obj.program_type, _ = TIpu_Programa.objects.get_or_create(name='MPMS')
             obj.status_id    = 1
             obj.save()
 
