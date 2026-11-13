@@ -499,7 +499,7 @@ def Lokalizasaun_Add_dnim(request, hashid):
         'title': 'Lokalizasaun Manufatur',
         'legend': 'Input Lokalizasaun',
     }
-    return render(request, 'shared/form_address.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ═══════════════════════════════════════════════════════
