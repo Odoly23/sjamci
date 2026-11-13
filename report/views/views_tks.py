@@ -3,16 +3,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from config.decorators import allowed_users
-from custom.models import Municipality, Year, Faze, TIpu_Programa
+from custom.models import Municipality, Year, Faze, TIpu_Programa, Status, AdministrativePost, Village, Sector, Bussines_size
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q, Sum
 from benefisiariu.models import Benefisiariu, AddressTL, AddressOrigin, Photo
 from kni.models import Business, LocBussiness, Program, Employee, Finance
 from manufatureira.models import  Manufatur, Lokalizasaun, Membro, Aktividade
-from config.decorators import allowed_users
-from custom.models import TIpu_Programa, Status, Municipality, AdministrativePost, Village, Sector, Bussines_size
-from django.core.paginator import Paginator
 from suave.models import CreditInfo
 
 

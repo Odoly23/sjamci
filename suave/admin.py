@@ -1,7 +1,7 @@
 from django.contrib import admin
+from config.admin_base import BaseAdmin
 
 # Register your models here.
-from django.contrib import admin
 from .models import (
     EkipaMember,
     ProductService,
@@ -12,23 +12,6 @@ from .models import (
     FixedAsset,
     CreditInfo,
 )
-
-
-# =========================
-# Base Admin
-# =========================
-class BaseAdmin(admin.ModelAdmin):
-    list_per_page = 25
-    ordering = ['-id']
-
-    readonly_fields = (
-        'created_at',
-        'updated_at',
-        'deleted_at',
-        'hashed',
-    )
-
-    list_filter = ['created_at']
 
 
 # =========================

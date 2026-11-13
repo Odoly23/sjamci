@@ -77,7 +77,7 @@ def add_benef_ks(request):
             {'link_name': 'geral-ks', 'link_text': 'Lista Benefisiariu'},
         ],
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -110,7 +110,7 @@ def edit_benef_ks(request, hashid):
             {'link_name': 'geral-ks', 'link_text': 'Lista Benefisiariu'},
         ],
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -169,7 +169,7 @@ def AddressOriginUpdate_ks(request, hashid):
         'title':      'Altera Enderesu Origin',
         'legend':     'Altera Enderesu Origin',
     }
-    return render(request, 'Dash/Forms/form_origin.html', context)
+    return render(request, 'shared/form_origin.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -199,7 +199,7 @@ def Localidade_Add_ks(request, hashid):
         'title':      'Lokasaun Negosiu',
         'legend':     'Lokasaun Negosiu',
     }
-    return render(request, 'Dash/Forms/form_address.html', context)
+    return render(request, 'shared/form_address.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -228,7 +228,7 @@ def Business_Add_ks(request, hashid):
         'title':      'Rejistu Negosiu',
         'legend':     'Rejistu Negosiu Kreditu Suave',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 # ══════════════════════════════════════════════════════════════
 #  7. PROGRAMA KS
 #     Otomatis sinkron total amount ke Finance setelah save
@@ -264,7 +264,7 @@ def Program_Add_ks(request, hashid):
         'legend': 'Programa Kreditu Suave Foun',
     }
 
-    return render(request,  'Dash/Forms/form.html',    context)
+    return render(request,  'shared/form.html',    context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -306,7 +306,7 @@ def Employee_Add_ks(request, hashid):
         'legend': 'Trabalhadores Foun',
     }
 
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -348,7 +348,7 @@ def Finance_Add_ks(request, hashid):
         'legend': 'Finansiamento Foun',
     }
 
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -378,7 +378,7 @@ def EkipaMember_Add(request, hashid):
         'title':      'Rejistu Ekipa Membru',
         'legend':     'Ekipa Membru Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -419,7 +419,7 @@ def ProductService_Add(request, hashid):
         'title': 'Rejistu Produto/Servisu',
         'legend': 'Produto/Servisu Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -460,7 +460,7 @@ def MainCustomer_Add(request, hashid):
         'title': 'Rejistu Kliente Prinsipal',
         'legend': 'Kliente Prinsipal Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -501,7 +501,7 @@ def Competitor_Add(request, hashid):
         'title': 'Rejistu Kompetitor',
         'legend': 'Kompetitor Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -548,7 +548,7 @@ def MarketAssessment_Add(request, hashid):
         'title': 'Avaliasaun Merkadu',
         'legend': 'Avaliasaun Merkadu Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -595,7 +595,7 @@ def FinancialAssessment_Add(request, hashid):
         'title': 'Avaliasaun Finanseiru',
         'legend': 'Avaliasaun Finanseiru Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 # ══════════════════════════════════════════════════════════════
 #  17. ASSET FIXU
@@ -656,7 +656,7 @@ def FixedAsset_Add(request, hashid):
         'legend': 'Asset Fixu Foun',
     }
 
-    return render(request,  'Dash/Forms/form.html',   context)
+    return render(request,  'shared/form.html',   context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -704,4 +704,4 @@ def CreditInfo_Add(request, hashid):
         'title': 'Informasaun Kreditu',
         'legend': 'Informasaun Kreditu Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)

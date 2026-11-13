@@ -45,7 +45,7 @@ def avalia_list(request):
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun/list.html', context)
+    return render(request, 'shared/avaliasaun/list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KNI'])
@@ -92,7 +92,7 @@ def benef_evaluation_list(request):
             },
         ],
     }
-    return render(request, 'avaliasaun/list2.html', context)
+    return render(request, 'shared/avaliasaun/list2.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KNI','dnim','mpms'])
@@ -134,7 +134,7 @@ def evaluate_benef(request, hashid):
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 
 
@@ -174,7 +174,7 @@ def monitoring_create(request, hashid):
         ],
     }
 
-    return render(request, 'avaliasaun/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KNI'])
@@ -222,7 +222,7 @@ def baseline_create(request, hashid):
             {'link_name': 'add-baseline', 'link_text': f'Baseline: {business.name}', 'link_param': business.hashed}
         ],
     }
-    return render(request, 'avaliasaun/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 
 @login_required
@@ -242,7 +242,7 @@ def baseline_list(request):
             {'link_name': 'baseline-list', 'link_text': 'Lista Avaliasaun Antes Apoiu'}
         ],
     }
-    return render(request, 'avaliasaun/baseline_list.html', context)
+    return render(request, 'shared/avaliasaun/baseline_list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KNI'])
@@ -270,4 +270,4 @@ def monitoring_list(request):
         ],
     }
 
-    return render(request, 'avaliasaun/monitoring_list.html', context)
+    return render(request, 'shared/avaliasaun/monitoring_list.html', context)

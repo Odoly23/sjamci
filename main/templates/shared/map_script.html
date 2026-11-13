@@ -1,6 +1,7 @@
-{# ── Include: kni/_map_script.html ───────────────────────────
+{# ── Include: shared/map_script.html ─────────────────────────
    Variabel yang dibutuhkan dari context:
      benef, local
+   Opsional: map_zoom (default 9)
    ──────────────────────────────────────────────────────────── #}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css">
@@ -79,7 +80,7 @@
   // ── Init Map ──────────────────────────────────────────────
   var map = L.map('mapid', {
     center: [-8.723574, 125.564654],
-    zoom: 9,
+    zoom: {{ map_zoom|default:9 }},
     layers: [peta9]
   });
 

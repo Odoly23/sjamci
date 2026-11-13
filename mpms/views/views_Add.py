@@ -65,7 +65,7 @@ def add_benef_mpms(request):
         'title':  'Registo Dados',
         'legend': 'Registo Dados Benefisiariu MPMS',
     }
-    return render(request, 'MPMS/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -98,7 +98,7 @@ def edit_benef_mpms(request, hashid):
         'title':  'Edit Dados Benefisiariu',
         'legend': 'Atualiza Dados Benefisiariu MPMS',
     }
-    return render(request, 'MPMS/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -160,7 +160,7 @@ def AddressOriginUpdate_mpms(request, hashid):
         'title':  'Altera Enderesu Origin',
         'legend': 'Altera Enderesu Origin',
     }
-    return render(request, 'MPMS/form_origin.html', context)
+    return render(request, 'shared/form_origin.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -253,7 +253,7 @@ def Business_Add_mpms(request, hashid):
         'title':  'Rejistu Negosiu',
         'legend': 'Rejistu Negosiu MPMS',
     }
-    return render(request, 'MPMS/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -284,7 +284,7 @@ def Business_Edit_mpms(request, hashid):
         'title':  'Altera Negosiu',
         'legend': 'Altera Negosiu MPMS',
     }
-    return render(request, 'MPMS/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -343,7 +343,7 @@ def Program_Add_mpms(request, hashid):
         'title':  'Rejistu Programa MPMS',
         'legend': 'Programa MPMS Foun',
     }
-    return render(request, 'MPMS/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -390,7 +390,7 @@ def Employee_Add_mpms(request, hashid):
         'title':  'Rejistu Trabalhadores',
         'legend': 'Trabalhadores Foun',
     }
-    return render(request, 'MPMS/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -421,35 +421,7 @@ def Finance_Add_mpms(request, hashid):
         'title':  'Rejistu Finansiamento',
         'legend': 'Finansiamento Foun',
     }
-    return render(request, 'MPMS/form.html', context)
-
-
-# ══════════════════════════════════════════════════════════════
-#  10. DETAIL PAGE
-# ══════════════════════════════════════════════════════════════
-
-@login_required
-@allowed_users(allowed_roles=['mpms'])
-def mpms_detail(request, hashid):
-    # Coba via Benefisiariu dulu (dari add_benef_mpms)
-    benef   = Benefisiariu.objects.filter(hashed=hashid).first()
-    empresa = None
-
-    if benef:
-        empresa = mpmsEmpresa.objects.filter(benefisiariu=benef).first()
-    else:
-        empresa = mpmsEmpresa.objects.filter(hashed=hashid).first()
-
-    if not empresa:
-        messages.warning(request, "Empresa seidauk hari, rai Negosiu uluk.")
-        return redirect('add-benef-mpms')
-
-    context = {
-        'empresa': empresa,
-        'title':   'Detail Empresa MPMS',
-        'legend':  'Detail Empresa',
-    }
-    return render(request, 'mpms/detail.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -504,7 +476,7 @@ def mpms_lisensamentu_create(request, hashid):
     else:
         form = MpmsLisensamentuForm(instance=instance)
  
-    return render(request, 'mpms/forms.html', {
+    return render(request, 'shared/form.html', {
         'form':    form,
         'empresa': empresa,
         'benef':   benef,
@@ -538,7 +510,7 @@ def mpms_empresa_edit(request, hashid):
         'title': 'Empresa MPMS',
         'legend': 'Atualiza Dadus Empresa',
     }
-    return render(request, 'mpms/forms.html', context)
+    return render(request, 'shared/form.html', context)
  
  
 # ══════════════════════════════════════════════════════════════
@@ -563,7 +535,7 @@ def mpms_kapital_create(request, hashid):
     else:
         form = MpmsKapitalForm(instance=instance)
  
-    return render(request, 'mpms/forms.html', {
+    return render(request, 'shared/form.html', {
         'form':    form,
         'empresa': empresa,
         'benef':   benef,
@@ -594,7 +566,7 @@ def mpms_empregador_create(request, hashid):
     else:
         form = MpmsEmpregadorForm(instance=instance)
  
-    return render(request, 'mpms/forms.html', {
+    return render(request, 'shared/form.html', {
         'form':    form,
         'empresa': empresa,
         'benef':   benef,
@@ -625,7 +597,7 @@ def mpms_materia_create(request, hashid):
     else:
         form = MpmsMateriaPrimaForm(instance=instance)
  
-    return render(request, 'mpms/forms.html', {
+    return render(request, 'shared/form.html', {
         'form':    form,
         'empresa': empresa,
         'benef':   benef,
@@ -663,4 +635,4 @@ def mpms_atividade_create(request, hashid):
         'title':   'Atividade',
         'legend':  'Input Atividade',
     }
-    return render(request, 'mpms/forms.html', context)
+    return render(request, 'shared/form.html', context)

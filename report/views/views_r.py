@@ -10,7 +10,6 @@ from django.db.models import Q
 from benefisiariu.models import Benefisiariu, AddressTL, AddressOrigin, Photo
 from kni.models import Business, LocBussiness, Program, Employee, Finance
 from manufatureira.models import  Manufatur, Lokalizasaun, Membro, Aktividade
-from config.decorators import allowed_users
 from django.conf import settings
 # Create your views here.
 

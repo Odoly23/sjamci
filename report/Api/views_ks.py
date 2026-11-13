@@ -18,8 +18,8 @@ class APIKPIKS(APIView):
 
     def get(self, request, format=None):
         total_benefisiariu = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").count()
-        total_business = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").count()
-        total_budget = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").aggregate(total=Sum('amount'))['total'] or 0
+        total_business = Business.objects.filter(benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM).distinct().count()
+        total_budget = Program.objects.filter(program_type__name=KS_PROGRAM).aggregate(total=Sum('amount'))['total'] or 0
         total_employee = Employee.objects.filter(business__benefisiariu__Pnegosiu__program_type__name="KREDITU SUAVE").aggregate(total=Sum('total'))['total'] or 0
         total_team = EkipaMember.objects.filter(benefisiariu__Pnegosiu__program_type__name="KREDITU SUAVE").count()
         total_revenue = FinancialAssessment.objects.filter(business__benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM).aggregate(total=Sum('annual_revenue'))['total'] or 0
@@ -513,45 +513,3 @@ class APITopSectorKS(APIView):
             'label': label,
             'obj': obj
         })
-
-
-# =========================================================
-# 14. GIS MAP
-# =========================================================
-
-class APIGISKS(APIView):
-
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
-
-    def get(self, request, format=None):
-
-        data = []
-
-        locations = LocBussiness.objects.filter(
-            benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM
-        ).exclude(
-            latitude__isnull=True
-        ).exclude(
-            longitude__isnull=True
-        )
-
-        for loc in locations:
-
-            data.append({
-
-                'name':
-                    str(loc.benefisiariu),
-
-                'municipality':
-                    str(loc.municipality),
-
-                'latitude':
-                    loc.latitude,
-
-                'longitude':
-                    loc.longitude,
-
-            })
-
-        return Response(data)

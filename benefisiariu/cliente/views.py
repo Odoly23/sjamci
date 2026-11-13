@@ -33,12 +33,6 @@ def _sync_fund_used(monitoring):
     monitoring.fund_balance = (monitoring.fund_received or 0) - total_out
     monitoring.save(update_fields=['fund_used', 'fund_balance'])
 
-def sync_monitoring_fund(monitoring):
-    total_used = monitoring.cashflows.filter(transaction_type='OUT').aggregate(total=Sum('amount'))['total'] or 0
-    monitoring.fund_used = total_used
-    monitoring.fund_balance = (monitoring.fund_received - total_used)
-    monitoring.save(update_fields=['fund_used', 'fund_balance'])
-
 
 kni_users =  User.objects.filter(groups__name='KNI').distinct()
 # ══════════════════════════════════════════════════════════════
@@ -128,36 +122,6 @@ def cliente_perfil_update(request):
         'benef':  benef,
         'title':  'Atualiza Perfil',
         'legend': 'Atualiza Dadus Pesoal',
-    })
-
-
-# ══════════════════════════════════════════════════════════════
-#  3. UPDATE FOTO
-# ══════════════════════════════════════════════════════════════
-
-@login_required
-@allowed_users(allowed_roles=['Cliente'])
-def cliente_photo_update(request):
-    benef = _get_my_benef(request)
-    if not benef:
-        return redirect('home')
-
-    photo, _ = Photo.objects.get_or_create(benefisiariu=benef)
-
-    if request.method == 'POST':
-        form = PhotoUploadForm(request.POST, request.FILES, instance=photo)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Foto atualiza ho susesu.')
-            return redirect('cliente-dashboard')
-    else:
-        form = PhotoUploadForm(instance=photo)
-
-    return render(request, 'clinte/form.html', {
-        'form':   form,
-        'benef':  benef,
-        'title':  'Atualiza Foto',
-        'legend': 'Upload Foto Foun',
     })
 
 
@@ -334,7 +298,7 @@ def cliente_fund_usage_add(request, business_id):
         'legend': f"Gastu sira ba negosiu {business.name if business.name else business.idea}",
 
     }
-    return render(request, 'clinte/form_fund_usage.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -365,7 +329,7 @@ def cliente_asset_add(request, business_id):
     else:
         form = BusinessAssetForm()
     
-    return render(request, 'clinte/form_fund_usage.html', {
+    return render(request, 'shared/form.html', {
         'form': form,
         'monitoring': monitoring,
         'business': business,
@@ -403,7 +367,7 @@ def cliente_cashflow_add(request, business_id):
                 and amount > monitoring.fund_balance
             ):
                 messages.error(request,f'Osan disponivel deit ${monitoring.fund_balance}')
-                return render(request,'clinte/form_cashflow.html',
+                return render(request,'shared/form.html',
                     {
                         'form': form,
                         'monitoring': monitoring,
@@ -424,7 +388,7 @@ def cliente_cashflow_add(request, business_id):
                     description=f"Auto husi CashFlow {obj.transaction_date}",
                     created_by=request.user
                 )
-            sync_monitoring_fund(monitoring)
+            _sync_fund_used(monitoring)
             for user in kni_users:
                 send_notification(
                     sender=request.user, receiver=user, title='Utilizasaun Fundus', message=f'{benef.name} submete Utilizasaun.', notif_type='CASHFLOW', link=f'KNI-Home/cashflow/{obj.id}/')
@@ -446,7 +410,7 @@ def cliente_cashflow_add(request, business_id):
         'legend': f'Gastu sira ba negosiu {business.name or business.idea}',
     }
 
-    return render(request, 'clinte/form_cashflow.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -514,7 +478,7 @@ def cliente_fund_usage_edit(request, pk):
     else:
         form = FundUsageForm(instance=obj)
     
-    return render(request, 'clinte/form_fund_usage.html', {
+    return render(request, 'shared/form.html', {
         'form': form,
         'obj': obj,
         'benef': benef,
@@ -565,7 +529,7 @@ def cliente_asset_edit(request, pk):
     else:
         form = BusinessAssetForm(instance=obj)
     
-    return render(request, 'clinte/form_fund_usage.html', {
+    return render(request, 'shared/form.html', {
         'form': form,
         'obj': obj,
         'benef': benef,
@@ -624,7 +588,7 @@ def cliente_cashflow_edit(request, business_id, pk):
     else:
         form = CashFlowForm(instance=obj)
  
-    return render(request, 'clinte/form_cashflow.html', {
+    return render(request, 'shared/form.html', {
         'form'      : form,
         'obj'       : obj,
         'monitoring': monitoring,

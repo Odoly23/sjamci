@@ -5,6 +5,12 @@ from crispy_forms.layout import Layout, Row, Column, HTML, Field
 from manufatureira.models import Manufatur, Lokalizasaun, Membro, Aktividade
 from custom.models import Municipality, AdministrativePost, Village, Year, Status, IndustryType, Tipu_Apoio, Faze
 from kni.models import Program, Business, LocBussiness, Employee, Finance
+# Form sira ne'e identiku ho versaun KNI — uza fali atu la duplika kodigu
+from kni.forms import (
+    LocBusinessKNIForm as LocBusinessDNIMForm,
+    EmployeeKNIForm as EmployeeDNIMForm,
+    FinanceKNIForm as FinanceDNIMForm,
+)
 
 
 _BTN = """
@@ -50,64 +56,6 @@ class BusinessDNIMForm(forms.ModelForm):
         )
 
 
-class LocBusinessDNIMForm(forms.ModelForm):
-    class Meta:
-        model  = LocBussiness
-        fields = [
-            'municipality', 'administrativepost', 'village','address',
-            'aldeia', 'latitude', 'longitude', 'area_polygon',
-        ]
-        widgets = {'area_polygon': forms.HiddenInput()}
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['area_polygon'].required       = False
-        self.fields['administrativepost'].queryset = AdministrativePost.objects.none()
-        self.fields['village'].queryset            = Village.objects.none()
-
-        if 'municipality' in self.data:
-            try:
-                mun_id = int(self.data.get('municipality'))
-                self.fields['administrativepost'].queryset = AdministrativePost.objects.filter(
-                    municipality_id=mun_id
-                ).order_by('name')
-            except (ValueError, TypeError):
-                pass
-        elif self.instance.pk and self.instance.municipality:
-            self.fields['administrativepost'].queryset = \
-                self.instance.municipality.administrativepost_set.order_by('name')
-
-        if 'administrativepost' in self.data:
-            try:
-                ap_id = int(self.data.get('administrativepost'))
-                self.fields['village'].queryset = Village.objects.filter(
-                    administrativepost_id=ap_id
-                ).order_by('name')
-            except (ValueError, TypeError):
-                pass
-        elif self.instance.pk and self.instance.administrativepost:
-            self.fields['village'].queryset = \
-                self.instance.administrativepost.village_set.order_by('name')
-
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-        self.helper.layout = Layout(
-            HTML(_ALERT),
-            Row(
-                Column('municipality',       css_class='col-md-4'),
-                Column('administrativepost', css_class='col-md-4'),
-                Column('village',            css_class='col-md-4'),
-            ),
-            Row(
-                Column('aldeia',    css_class='col-md-4'),
-                Column('latitude',  css_class='col-md-4'),
-                Column('longitude', css_class='col-md-4'),
-            ),
-            Field('area_polygon'),
-            HTML(_BTN),
-        )
-
-
 class ProgramDNIMForm(forms.ModelForm):
     class Meta:
         model  = Program
@@ -134,46 +82,6 @@ class ProgramDNIMForm(forms.ModelForm):
         )
 
 
-class EmployeeDNIMForm(forms.ModelForm):
-    class Meta:
-        model  = Employee
-        fields = ['business', 'male', 'female']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-        self.helper.form_tag = False
-        self.helper.layout = Layout(
-            HTML(_ALERT),
-            Row(
-                Column('business', css_class='col-md-12'),
-            ),
-            Row(
-                Column('male',   css_class='col-md-6'),
-                Column('female', css_class='col-md-6'),
-            ),
-            HTML(_BTN),
-        )
-
-
-class FinanceDNIMForm(forms.ModelForm):
-    class Meta:
-        model  = Finance
-        fields = ['business', 'budget']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-        self.helper.layout = Layout(
-            HTML(_ALERT),
-            Row(
-                Column('business', css_class='col-md-6'),
-                Column('budget',   css_class='col-md-6'),
-            ),
-            HTML(_BTN),
-        )
 # =========================
 # MANUFATUR FORM
 # =========================

@@ -5,7 +5,6 @@ from django.db import transaction
 from config.decorators import allowed_users
 from django.db.models import Count, Max, Q, Prefetch, Exists, OuterRef, Sum
 from django.contrib import messages
-from django.db import transaction
 from django.utils import timezone
 from django.http import JsonResponse
 from custom.models import Minister, Diresaun, Position, Municipality, AdministrativePost, Village, \

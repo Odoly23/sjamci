@@ -55,7 +55,7 @@ def add_benef_dnim(request):
             {'link_name': 'geral_man', 'link_text': 'Lista Benefisiariu'},
         ],
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -87,7 +87,7 @@ def edit_benef_dnim(request, hashid):
         ],
     }
 
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 # ══════════════════════════════════════════════════════════════
 #  2. ALTERA ENDERESU TL
@@ -150,7 +150,7 @@ def AddressOriginUpdate_dnim(request, hashid):
         'title':  'Altera Enderesu Origin',
         'legend': 'Altera Enderesu Origin',
     }
-    return render(request, 'DNIM/form_origin.html', context)
+    return render(request, 'shared/form_origin.html', context)
 
 # ══════════════════════════════════════════════════════════════
 #  4. LOKASAUN NEGOSIU
@@ -202,7 +202,7 @@ def Localidade_Add_dnim(request, hashid):
         'title':        'Lokasaun Negosiu',
         'legend':       'Lokasaun Negosiu',
     }
-    return render(request, 'DNIM/form_address.html', context)
+    return render(request, 'shared/form_address.html', context)
 # ══════════════════════════════════════════════════════════════
 #  5. REJISTU NEGOSIU No Edit
 # ══════════════════════════════════════════════════════════════
@@ -247,7 +247,7 @@ def Business_Add_dnim(request, hashid):
         'title':  'Rejistu Negosiu',
         'legend': 'Rejistu Negosiu Manufatureira',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -286,7 +286,7 @@ def Business_Edit_dnim(request, hashid):
         'title':  'Altera Negosiu',
         'legend': 'Altera Negosiu Manufatureira',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 # ══════════════════════════════════════════════════════════════
 #  6. REJISTU PROGRAMA KNI
 # ══════════════════════════════════════════════════════════════
@@ -338,7 +338,7 @@ def Program_Add_dnim(request, hashid):
         'title':  'Rejistu Programa Manufatureira',
         'legend': 'Programa Manufatureira Foun',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 # ══════════════════════════════════════════════════════════════
 #  7. TRABALHADORES
@@ -377,7 +377,7 @@ def Employee_Add_dnim(request, hashid):
         'title':  'Rejistu Trabalhadores',
         'legend': 'Trabalhadores Foun',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -406,7 +406,7 @@ def Finance_Add_dnim(request, hashid):
         'title':      'Rejistu Finansiamento',
         'legend':     'Finansiamento Foun',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 @login_required
 @allowed_users(allowed_roles=['admin', 'dnim'])
 @transaction.atomic
@@ -431,7 +431,7 @@ def Manufatur_Add_dnim(request, hashid):
         'title': 'Rejistu Manufatur',
         'legend': 'Rejistu Manufatur Foun',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ═══════════════════════════════════════════════════════
@@ -462,7 +462,7 @@ def Lokalizasaun_Add_dnim(request, manuf_id):
         'title': 'Lokalizasaun Manufatur',
         'legend': 'Input Lokalizasaun',
     }
-    return render(request, 'DNIM/form_address.html', context)
+    return render(request, 'shared/form_address.html', context)
 
 
 # ═══════════════════════════════════════════════════════
@@ -492,7 +492,7 @@ def Membro_Add_dnim(request, manuf_id):
         'title': 'Dados Membro',
         'legend': 'Input Membro',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ═══════════════════════════════════════════════════════
@@ -539,4 +539,4 @@ def Aktividade_Add_dnim(request, manuf_id):
         'title': 'Rejistu Aktividade',
         'legend': 'Aktividade Manufatur',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)

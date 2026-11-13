@@ -1,4 +1,6 @@
+import os
 from django import forms
+from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, HTML, Field
 from benefisiariu.models import Benefisiariu, AddressTL, Photo, AddressOrigin, BeneficiariuEvaluation, BenefisiariuUser
@@ -63,13 +65,6 @@ class UploadExcelForm(forms.Form):
             """)
         )
 
-import os
-from django import forms
-from django.core.exceptions import ValidationError
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Row, Column, HTML
-# Asumsi widget DateInput sudah di-import dari projek Anda
-# from .widgets import DateInput 
 
 class BenefisiariuForm(forms.ModelForm):
     dob = forms.DateField(label='Data Moris', required=False, widget=DateInput())

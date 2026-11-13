@@ -130,7 +130,7 @@ def evaluate_benef_ks(request, hashid):
         ],
     }
 
-    return render(request, 'avaliasaun_ks/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 
 @login_required
@@ -162,7 +162,7 @@ def monitoring_create_ks(request, hashid):
         'legend': 'Depois Apoiu Monitoring'
     }
 
-    return render(request, 'avaliasaun_ks/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KS','KNI'])
@@ -192,7 +192,7 @@ def baseline_create(request, hashid):
         'title': 'Input Baseline',
         'legend': 'Baseline Antes Apoiu',
     }
-    return render(request, 'avaliasaun_ks/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KS'])

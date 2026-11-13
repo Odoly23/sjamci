@@ -1,27 +1,11 @@
 from django.contrib import admin
+from config.admin_base import BaseAdmin
 from .models import (
     Manufatur,
     Lokalizasaun,
     Membro,
     Aktividade,
 )
-
-
-# =========================
-# Base Admin
-# =========================
-class BaseAdmin(admin.ModelAdmin):
-    list_per_page = 25
-    ordering = ['-id']
-
-    readonly_fields = (
-        'created_at',
-        'updated_at',
-        'deleted_at',
-        'hashed',
-    )
-
-    list_filter = ['created_at']
 
 
 # =========================

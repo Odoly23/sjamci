@@ -20,15 +20,6 @@ from django.utils import timezone
 # ══════════════════════════════════════════════════════════════
 #  HELPER
 # ══════════════════════════════════════════════════════════════
-def _sync_fund_used(monitoring):
-    total_out = monitoring.cashflows.filter(
-        transaction_type='OUT'
-    ).aggregate(total=Sum('amount'))['total'] or 0
- 
-    monitoring.fund_used    = total_out
-    monitoring.fund_balance = (monitoring.fund_received or 0) - total_out
-    monitoring.save(update_fields=['fund_used', 'fund_balance'])
-
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 @transaction.atomic
@@ -78,7 +69,7 @@ def add_benef_kni(request):
             {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
         ],
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -110,7 +101,7 @@ def edit_benef_kni(request, hashid):
         ],
     }
 
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 # ══════════════════════════════════════════════════════════════
 #  2. ALTERA ENDERESU TL
@@ -173,7 +164,7 @@ def AddressOriginUpdate_kni(request, hashid):
         'title':  'Altera Enderesu Origin',
         'legend': 'Altera Enderesu Origin',
     }
-    return render(request, 'Dash/Forms/form_origin.html', context)
+    return render(request, 'shared/form_origin.html', context)
 
 # ══════════════════════════════════════════════════════════════
 #  4. LOKASAUN NEGOSIU
@@ -203,7 +194,7 @@ def Localidade_Add(request, hashid):
         'title':        'Lokasaun Negosiu',
         'legend':       'Lokasaun Negosiu',
     }
-    return render(request, 'Dash/Forms/form_address.html', context)
+    return render(request, 'shared/form_address.html', context)
 
 # ══════════════════════════════════════════════════════════════
 #  5. REJISTU NEGOSIU
@@ -231,7 +222,7 @@ def Business_Add(request, hashid):
         'title':      'Rejistu Negosiu',
         'legend':     'Rejistu Negosiu KNI',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -281,7 +272,7 @@ def Program_Add(request, hashid):
         'title'  : 'Rejistu Programa KNI',
         'legend' : 'Programa KNI Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 # ══════════════════════════════════════════════════════════════
 #  7. TRABALHADORES
@@ -310,7 +301,7 @@ def Employee_Add(request, hashid):
         'title':      'Rejistu Trabalhadores',
         'legend':     'Trabalhadores Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -339,4 +330,4 @@ def Finance_Add(request, hashid):
         'title':      'Rejistu Finansiamento',
         'legend':     'Finansiamento Foun',
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)

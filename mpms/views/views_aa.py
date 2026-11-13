@@ -2,17 +2,12 @@ import csv, io, datetime, hashlib
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
 from kni.models import Business, LocBussiness, Program, Employee, Finance
 from mpms.models import mpmsEmpresa, mpmsLokalizasaun, mpmsLisensamentu,\
     mpmsKapital, mpmsEmpregador, mpmsMateriaPrima,  mpmsAtividade
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
 from custom.models import Year, Faze, Municipality
 from config.decorators import allowed_users
-from mpms.models import mpmsEmpresa, mpmsLokalizasaun,  mpmsLisensamentu, mpmsKapital,\
-    mpmsEmpregador, mpmsMateriaPrima, mpmsAtividade
 from benefisiariu.models import Benefisiariu, AddressTL, AddressOrigin, Photo
 from django.db.models import Q, Sum, Count
 

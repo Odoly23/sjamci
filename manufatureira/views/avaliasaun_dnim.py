@@ -44,7 +44,7 @@ def dnimvalia_list(request):
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun_dnim/list.html', context)
+    return render(request, 'shared/avaliasaun/list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])
@@ -93,7 +93,7 @@ def dnim_evaluation_list(request):
             },
         ],
     }
-    return render(request, 'avaliasaun_dnim/list2.html', context)
+    return render(request, 'shared/avaliasaun/list2.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])
@@ -128,7 +128,7 @@ def evaluate_benef(request, hashid):
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun_dnim/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 
 
@@ -161,7 +161,7 @@ def monitoring_create(request, hashid):
         'legend': 'Depois Apoiu Monitoring'
     }
 
-    return render(request, 'avaliasaun_dnim/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])
@@ -191,7 +191,7 @@ def baseline_create(request, hashid):
         'title': 'Input Baseline',
         'legend': 'Baseline Antes Apoiu',
     }
-    return render(request, 'avaliasaun_dnim/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])

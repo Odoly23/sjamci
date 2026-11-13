@@ -43,7 +43,7 @@ def avalia_list_mpms(request):
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'Avaliasaun_mpms/list.html', context)
+    return render(request, 'shared/avaliasaun/list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
@@ -132,7 +132,7 @@ def monitoring_create_mpms(request, hashid):
             {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'Avaliasaun_mpms/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 
 @login_required
@@ -168,7 +168,7 @@ def baseline_create_mpms(request, hashid):
             {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'Avaliasaun_mpms/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
@@ -186,7 +186,7 @@ def baseline_list_mpms(request):
             {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'Avaliasaun_mpms/baseline_list.html', context)
+    return render(request, 'shared/avaliasaun/baseline_list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
@@ -214,4 +214,4 @@ def monitoring_list_mpms(request):
             {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'Avaliasaun_mpms/monitoring_list.html', context)
+    return render(request, 'shared/avaliasaun/monitoring_list.html', context)

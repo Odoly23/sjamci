@@ -1,6 +1,4 @@
 import uuid
-from django.shortcuts import render
-from benefisiariu.models import BenefisiariuUser
 from django.shortcuts import render, redirect, get_object_or_404
 from benefisiariu.models import BenefisiariuUser
 from benefisiariu.forms import BenefisiariuUserForm

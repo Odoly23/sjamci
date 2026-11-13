@@ -182,7 +182,7 @@ def fund_usage_add(request, business_hashid, monitoring_pk):
         'title'     : 'Utilizasaun Fundus Foun',
         'legend'    : f"Gastu sira ba monitorizasaun loron {monitoring.monitoring_date}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -212,7 +212,7 @@ def fund_usage_edit(request, business_hashid, monitoring_pk, pk):
         'title'     : 'Edita Utilizasaun Fundus',
         'legend'    : f"Atualiza gastu {obj.item_name}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -265,7 +265,7 @@ def business_asset_add(request, business_hashid, monitoring_pk):
         'title'     : 'Asset Foun',
         'legend'    : f"Rejistu asset foun ba monitorizasaun loron {monitoring.monitoring_date}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -295,7 +295,7 @@ def business_asset_edit(request, business_hashid, monitoring_pk, pk):
         'title'     : 'Edita Asset',
         'legend'    : f"Atualiza asset {obj.asset_name}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -348,7 +348,7 @@ def cashflow_add(request, business_hashid, monitoring_pk):
         'title'     : 'Fluxu Osan Foun',
         'legend'    : f"Rejistu transasaun ba monitorizasaun loron {monitoring.monitoring_date}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -378,7 +378,7 @@ def cashflow_edit(request, business_hashid, monitoring_pk, pk):
         'title'     : 'Edita Fluxu Osan',
         'legend'    : f"Atualiza transasaun {obj.description}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -431,7 +431,7 @@ def financial_book_add(request, business_hashid, monitoring_pk):
         'title'     : 'Livru Kontabilidade Foun',
         'legend'    : f"Anexa dokumentu ba monitorizasaun loron {monitoring.monitoring_date}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -461,7 +461,7 @@ def financial_book_edit(request, business_hashid, monitoring_pk, pk):
         'title'     : 'Edita Livru Kontabilidade',
         'legend'    : f"Atualiza dokumentu {obj.title}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required

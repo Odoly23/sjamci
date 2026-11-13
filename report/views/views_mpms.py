@@ -10,11 +10,8 @@ from django.db.models import Q
 from benefisiariu.models import Benefisiariu, AddressTL, AddressOrigin, Photo
 from kni.models import Business, LocBussiness, Program, Employee, Finance
 from manufatureira.models import  Manufatur, Lokalizasaun, Membro, Aktividade
-from config.decorators import allowed_users
 from mpms.models import mpmsEmpresa, mpmsLokalizasaun,  mpmsLisensamentu, mpmsKapital,\
     mpmsEmpregador, mpmsMateriaPrima, mpmsAtividade
-from config.decorators import allowed_users
-from django.core.paginator import Paginator
 
 @login_required
 @allowed_users(allowed_roles=['mpms','admin','staff','xfd'])

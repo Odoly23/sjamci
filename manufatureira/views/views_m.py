@@ -84,7 +84,7 @@ def total_man(request, year):
         'legend': 'Lista Jeral Manufatura',
     }
 
-    return render(request, 'Dash_dnim/list_man.html', context)
+    return render(request, 'Dash_dnim/list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['admin', 'dnim'])
