@@ -42,7 +42,7 @@ kni_users =  User.objects.filter(groups__name='KNI').distinct()
 @login_required
 @allowed_users(allowed_roles=['Cliente'])
 def cliente_dashboard(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benef = _get_my_benef(request)
     if not benef:
         messages.error(request, 'Konta kliente la iha dadus. Kontaktu administrador.')
@@ -117,7 +117,7 @@ def cliente_perfil_update(request):
         if field in form.fields:
             form.fields.pop(field)
 
-    return render(request, 'clinte/form.html', {
+    return render(request, 'shared/form.html', {
         'form':   form,
         'benef':  benef,
         'title':  'Atualiza Perfil',
@@ -149,9 +149,10 @@ def cliente_address_update(request):
     else:
         form = AddressTLForm(instance=obj)
 
-    return render(request, 'clinte/form_address.html', {
+    return render(request, 'Dash/Forms/form_addressBnf.html', {
         'form':   form,
         'benef':  benef,
+        'group':  'Cliente',
         'title':  'Atualiza Enderesu',
         'legend': 'Atualiza Enderesu Moris',
     })
@@ -501,7 +502,7 @@ def cliente_fund_usage_delete(request, pk):
         messages.success(request, "Utilizasaun fundus hamoos ho susesu!")
         return redirect('cliente-dashboard')
     
-    return render(request, 'clinte/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj,
         'title': 'Hamoos Utilizasaun Fundus',
         'message': f"Boot hakarak hamoos gastu {obj.item_name} ($ {obj.amount})?",
@@ -552,7 +553,7 @@ def cliente_asset_delete(request, pk):
         messages.success(request, "Asset hamoos ho susesu!")
         return redirect('cliente-dashboard')
     
-    return render(request, 'clinte/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj,
         'title': 'Hamoos Asset',
         'message': f"Boot hakarak hamoos asset {obj.asset_name}?",
@@ -620,7 +621,7 @@ def cliente_cashflow_delete(request, business_id, pk):
         messages.success(request, "Fluxu osan hamoos ho susesu!")
         return redirect('cliente-dashboard')
  
-    return render(request, 'Dash/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj'    : obj,
         'title'  : 'Hamoos Fluxu Osan',
         'message': f"Boot hakarak hamoos transasaun {obj.description} ($ {obj.amount})?",
@@ -643,7 +644,7 @@ def cliente_financial_book_delete(request, pk):
         messages.success(request, "Livru kontabilidade hamoos ho susesu!")
         return redirect('cliente-dashboard')
     
-    return render(request, 'clinte/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj,
         'title': 'Hamoos Livru Kontabilidade',
         'message': f"Boot hakarak hamoos dokumentu {obj.title}?",

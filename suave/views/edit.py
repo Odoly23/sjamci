@@ -130,7 +130,7 @@ def EkipaMember_Delete(request, hashid, pk):
         messages.success(request, f"Ekipa Membru '{name}' hamoos ho sukses.")
         return _back(hashid)
  
-    return render(request, 'Dash/Forms/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj, 'emp': benef, 'hashid': hashid,
         'title': 'Hamoos Ekipa Membru',
         'legend': f'Konfirma Hamoos: {obj.name}',
@@ -177,7 +177,7 @@ def ProductService_Delete(request, hashid, pk):
         messages.success(request, f"Produto '{name}' hamoos ho sukses.")
         return _back(hashid)
  
-    return render(request, 'Dash/Forms/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj, 'emp': benef, 'hashid': hashid,
         'title': 'Hamoos Produto/Servisu',
         'legend': f'Konfirma Hamoos: {obj.name}',
@@ -224,7 +224,7 @@ def MainCustomer_Delete(request, hashid, pk):
         messages.success(request, f"Kliente '{name}' hamoos ho sukses.")
         return _back(hashid)
  
-    return render(request, 'Dash/Forms/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj, 'emp': benef, 'hashid': hashid,
         'title': 'Hamoos Kliente Prinsipal',
         'legend': f'Konfirma Hamoos: {obj.name}',
@@ -271,7 +271,7 @@ def Competitor_Delete(request, hashid, pk):
         messages.success(request, f"Kompetitor '{name}' hamoos ho sukses.")
         return _back(hashid)
  
-    return render(request, 'Dash/Forms/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj, 'emp': benef, 'hashid': hashid,
         'title': 'Hamoos Kompetitor',
         'legend': f'Konfirma Hamoos: {obj.name}',
@@ -372,7 +372,7 @@ def FixedAsset_Delete(request, hashid, pk):
         messages.success(request, f"Asset Fixu '{name}' hamoos ho sukses.")
         return _back(hashid)
  
-    return render(request, 'Dash/Forms/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj, 'emp': benef, 'hashid': hashid,
         'title': 'Hamoos Asset Fixu',
         'legend': f'Konfirma Hamoos: {obj.name}',

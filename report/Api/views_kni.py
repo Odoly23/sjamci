@@ -20,8 +20,8 @@ from collections import defaultdict
 # =========================================================
 
 class APISexu(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -51,8 +51,8 @@ class APISexu(APIView):
 # =========================================================
 
 class APIMunicipiu(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -82,8 +82,8 @@ class APIMunicipiu(APIView):
 # =========================================================
 
 class APIStatusPrograma(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -113,8 +113,8 @@ class APIStatusPrograma(APIView):
 # =========================================================
 
 class APIApoiuTinan(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -146,8 +146,8 @@ class APIApoiuTinan(APIView):
 # =========================================================
 
 class APIFaze(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -177,8 +177,8 @@ class APIFaze(APIView):
 # =========================================================
 
 class APISector(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -208,8 +208,8 @@ class APISector(APIView):
 # =========================================================
 
 class APIEmployee(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -244,8 +244,8 @@ class APIEmployee(APIView):
 # =========================================================
 
 class APICreditRepayment(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -282,8 +282,8 @@ class APICreditRepayment(APIView):
 # =========================================================
 
 class APIKPI(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -316,7 +316,7 @@ class APIKPI(APIView):
 
 
 class APIMun(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         muns = Municipality.objects.all().order_by('name')
         beneficiary_stats = (
@@ -371,8 +371,8 @@ class APIMun(APIView):
 # =========================================================
 
 class APIBusinessSize(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -402,8 +402,8 @@ class APIBusinessSize(APIView):
 # =========================================================
 
 class APICategoryEmp(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 

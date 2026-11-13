@@ -9,7 +9,7 @@ from manufatureira.models import Manufatur, Lokalizasaun, Membro, Aktividade
 @login_required
 @allowed_users(allowed_roles=['admin', 'dnim'])
 def tab_dnim(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     total_grupu  = Manufatur.active_objects.count()
     total_mane   = Membro.active_objects.aggregate(total=Sum('male'))['total'] or 0
     total_feto   = Membro.active_objects.aggregate(total=Sum('female'))['total'] or 0
@@ -152,7 +152,7 @@ def tab_dnim(request):
 @allowed_users(allowed_roles=['admin', 'dnim'])
 def manufatura_detail_dnim(request):
 
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
 
     tipo = request.GET.get('tipo')
     municipio = request.GET.get('municipio')

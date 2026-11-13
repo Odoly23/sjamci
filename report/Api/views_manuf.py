@@ -19,8 +19,8 @@ from manufatureira.models import Manufatur, Lokalizasaun, Membro, Aktividade
 # =========================================================
 
 class APIGrupuStatusPerMunicipiu(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         labels = []
@@ -57,8 +57,8 @@ class APIGrupuStatusPerMunicipiu(APIView):
 # =========================================================
 
 class APIDistribusiTipuIndustria(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         labels = []
@@ -93,8 +93,8 @@ class APIDistribusiTipuIndustria(APIView):
 # =========================================================
 
 class APITotalValorPerMunicipiu(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         labels = []
@@ -123,8 +123,8 @@ class APITotalValorPerMunicipiu(APIView):
 # =========================================================
 
 class APITotalValorPerTinan(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         labels = []
@@ -151,8 +151,8 @@ class APITotalValorPerTinan(APIView):
 # =========================================================
 
 class APITop10GrupuValor(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         labels = []
@@ -180,8 +180,8 @@ class APITop10GrupuValor(APIView):
 # =========================================================
 
 class APIDistribusiTipuApoio(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         labels = []
@@ -207,8 +207,8 @@ class APIDistribusiTipuApoio(APIView):
 # =========================================================
 
 class APIJumlahMembroPerMunicipiu(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         labels = []
@@ -243,8 +243,8 @@ class APIJumlahMembroPerMunicipiu(APIView):
 # =========================================================
 
 class APIRasioManeFeto(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         labels = []
@@ -281,8 +281,8 @@ class APIRasioManeFeto(APIView):
 # =========================================================
 
 class APIStatusOverall(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         total_ativo = Manufatur.objects.filter(status='Ativo').count()
@@ -322,8 +322,8 @@ class APIStatusOverall(APIView):
 # =========================================================
 
 class APITopMunicipiu(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         labels = []
@@ -351,8 +351,8 @@ class APITopMunicipiu(APIView):
 # =========================================================
 
 class APIKPIDnim(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         total_grupu = Manufatur.objects.filter(

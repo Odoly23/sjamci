@@ -29,9 +29,10 @@
                                 <td>{{ obj.emp.name }}</td>
                                 <td>{{ obj.user }} ({{ obj.user.groups.all.0.name }})</td>
                                 <td>
-                                <a href="{% url 'reset-password' obj.id %}" class="btn btn-warning btn-sm" onclick="return confirm('Reset password utilizador ida ne?')">
-                                   Reset Password
-                                </a>
+                                <form method="post" action="{% url 'reset-password' obj.id %}" class="d-inline" onsubmit="return confirm('Reset password utilizador ida ne?')">
+                                   {% csrf_token %}
+                                   <button type="submit" class="btn btn-warning btn-sm">Reset Password</button>
+                                </form>
                                 </td>
                                 <td>
                                 <a class="btn btn-sm btn-info" href="{% url 'emp-detail' obj.emp.pk %}">

@@ -402,7 +402,7 @@ def export_page_mpms(request):
     context = {
         "title":   "Export Dados MPMS",
         "legend":  "Export Dados MPMS (Excel / PDF)",
-        "group":   request.user.groups.all()[0].name,
+        "group":   getattr(request.user.groups.first(), 'name', None),
         "total":   qs.count(),
         "label":   label,
         "params":  params.urlencode(),

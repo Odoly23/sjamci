@@ -107,7 +107,7 @@ def impact_monitoring_delete(request, business_hashid, pk):
         'title'   : 'Hamoos Monitorizasaun',
         'message' : f"Boot hakarak hamoos monitorizasaun loron {obj.monitoring_date} ba negosiu {business.name or business.idea}?",
     }
-    return render(request, 'Dash/confirm_delete.html', context)
+    return render(request, 'shared/confirm_delete.html', context)
 
 
 @login_required
@@ -127,10 +127,10 @@ def impact_monitoring_detail(request, business_hashid, pk):
         'title'          : 'Detallu Monitorizasaun Impaktu',
         'link_antes'     : [
             {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'benef-detail-kni', 'link_text': 'Benefisiariu', 'params': {'hashid': business.benefisiariu.hashed}},
+            {'link_name': 'benef-detail-kni', 'link_text': 'Benefisiariu', 'link_param': business.benefisiariu.hashed},
         ],
     }
-    return render(request, 'Dash/impact_monitoring_detail.html', context)
+    return render(request, 'moni/impact_detail.html', context)
 
 
 @login_required
@@ -146,10 +146,10 @@ def impact_monitoring_list(request, business_hashid):
         'title'      : 'Lista Monitorizasaun Impaktu',
         'link_antes' : [
             {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'benef-detail-kni', 'link_text': 'Benefisiariu', 'params': {'hashid': business.benefisiariu.hashed}},
+            {'link_name': 'benef-detail-kni', 'link_text': 'Benefisiariu', 'link_param': business.benefisiariu.hashed},
         ],
     }
-    return render(request, 'Dash/impact_monitoring_list.html', context)
+    return render(request, 'moni/impact_list.html', context)
 
 
 # ============================================================
@@ -232,7 +232,7 @@ def fund_usage_delete(request, business_hashid, monitoring_pk, pk):
         'title'  : 'Hamoos Utilizasaun Fundus',
         'message': f"Boot hakarak hamoos gastu {obj.item_name} ($ {obj.amount})?",
     }
-    return render(request, 'Dash/confirm_delete.html', context)
+    return render(request, 'shared/confirm_delete.html', context)
 
 
 # ============================================================
@@ -315,7 +315,7 @@ def business_asset_delete(request, business_hashid, monitoring_pk, pk):
         'title'  : 'Hamoos Asset',
         'message': f"Boot hakarak hamoos asset {obj.asset_name}?",
     }
-    return render(request, 'Dash/confirm_delete.html', context)
+    return render(request, 'shared/confirm_delete.html', context)
 
 
 # ============================================================
@@ -398,7 +398,7 @@ def cashflow_delete(request, business_hashid, monitoring_pk, pk):
         'title'  : 'Hamoos Fluxu Osan',
         'message': f"Boot hakarak hamoos transasaun {obj.description} ($ {obj.amount})?",
     }
-    return render(request, 'Dash/confirm_delete.html', context)
+    return render(request, 'shared/confirm_delete.html', context)
 
 
 # ============================================================
@@ -483,4 +483,4 @@ def financial_book_delete(request, business_hashid, monitoring_pk, pk):
         'title'  : 'Hamoos Livru Kontabilidade',
         'message': f"Boot hakarak hamoos dokumentu {obj.title}?",
     }
-    return render(request, 'Dash/confirm_delete.html', context)
+    return render(request, 'shared/confirm_delete.html', context)

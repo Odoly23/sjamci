@@ -50,7 +50,7 @@ def APIGISKS(request):
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def add_benef_ks(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     if request.method == 'POST':
         form = BenefisiariuForm(request.POST, request.FILES)
         if form.is_valid():
@@ -87,7 +87,7 @@ def add_benef_ks(request):
 @allowed_users(allowed_roles=['KS'])
 @transaction.atomic
 def edit_benef_ks(request, hashid):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     obj   = get_object_or_404(Benefisiariu, hashed=hashid)
     if request.method == 'POST':
         form = BenefisiariuForm(request.POST, request.FILES, instance=obj)

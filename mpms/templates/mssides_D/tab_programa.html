@@ -33,7 +33,7 @@
     <th colspan="4">
       ATIVIDADE APOIO
       {% if group == 'mpms' and empresa %}
-        <a href="{% url 'mpms-atividade-add' empresa.hashed %}" class="btn btn-xs btn-success ml-1">
+        <a href="{% if empresa %}{% url 'mpms-atividade-add' empresa.hashed %}{% else %}{% url 'mpms-business-add' benef.hashed %}{% endif %}" class="btn btn-xs btn-success ml-1">
           <i class="fa fa-plus"></i>
         </a>
       {% endif %}

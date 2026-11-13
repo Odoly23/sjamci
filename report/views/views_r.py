@@ -16,7 +16,7 @@ from django.conf import settings
 @login_required
 @allowed_users(allowed_roles=['admin','KS','KNI','XFD','dnim','mpms'])
 def Sumario(request):
-	group = request.user.groups.all()[0].name
+	group = getattr(request.user.groups.first(), 'name', None)
 	kni = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KNI").count()
 	ks = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").count()
 	mpms = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="MPMS").count()
@@ -31,7 +31,7 @@ def Sumario(request):
 @login_required
 @allowed_users(allowed_roles=['admin','KNI','XFD','dnim'])
 def grafiku_kni(request):
-	group = request.user.groups.all()[0].name
+	group = getattr(request.user.groups.first(), 'name', None)
 	context = {
 		'title':"Sumario Geral",
 		'legend':"Sumario Geral",
@@ -42,7 +42,7 @@ def grafiku_kni(request):
 @login_required
 @allowed_users(allowed_roles=['admin', 'KS', 'XFD', 'dnim'])
 def grafiku_ks(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     municipalities = Municipality.objects.all()
     selected_municipality_id = request.GET.get('municipality')
     mapobjects = LocBussiness.objects.filter(benefisiariu__in=Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE")).select_related('benefisiariu', 'benefisiariu__photo','municipality', 'administrativepost', 'village',).distinct()
@@ -69,7 +69,7 @@ def grafiku_ks(request):
 @login_required
 @allowed_users(allowed_roles=['admin','KS','XFD','dnim'])
 def grafiku_dnim(request):
-	group = request.user.groups.all()[0].name
+	group = getattr(request.user.groups.first(), 'name', None)
 	context = {
 		'title':"Sumario Geral",
 		'legend':"Sumario Geral",
@@ -80,7 +80,7 @@ def grafiku_dnim(request):
 @login_required
 @allowed_users(allowed_roles=['admin','KS','KNI','XFD','dnim'])
 def tab_knies(request):
-	group = request.user.groups.all()[0].name
+	group = getattr(request.user.groups.first(), 'name', None)
 	objects1, objects2, objects3, objects4 = [],[],[],[]
 	mun = Municipality.active_objects.all()
 	fun = Tipu_Fundus_Kapital.active_objects.all()
@@ -138,7 +138,7 @@ def tab_knies(request):
 @login_required
 @allowed_users(allowed_roles=['admin','KS','KNI','XFD','dnim'])
 def tab_kni(request):
-	group = request.user.groups.all()[0].name
+	group = getattr(request.user.groups.first(), 'name', None)
 	objects1, objects2, objects3, objects4 = [],[],[],[]
 	mun = Municipality.active_objects.all()
 	cat = Category_Emp.active_objects.all()

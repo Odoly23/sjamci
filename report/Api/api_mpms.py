@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Count, Sum
 from mpms.models import  mpmsEmpresa, mpmsLokalizasaun, mpmsLisensamentu,\
                          mpmsKapital, mpmsEmpregador, mpmsMateriaPrima, mpmsAtividade
@@ -12,8 +12,8 @@ from benefisiariu.models import Benefisiariu
 #  1. TOTAL EMPRESA TUIR MUNISIPIU
 # ══════════════════════════════════════════════════════════════
 class APIMpmsPerMunisipiu(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes     = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes     = [IsAuthenticated]
 
     def get(self, request, format=None):
         data = (
@@ -32,8 +32,8 @@ class APIMpmsPerMunisipiu(APIView):
 #  2. TIPU FUNDUS (Ukuran Usaha) TUIR MUNISIPIU — Stacked Bar
 # ══════════════════════════════════════════════════════════════
 class APIMpmsTipuFundus(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes     = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes     = [IsAuthenticated]
 
     def get(self, request, format=None):
         from mpms.models import TIPU_FUNDUS_CHOICES
@@ -80,8 +80,8 @@ class APIMpmsTipuFundus(APIView):
 #  3. JENERU EMPRESARIU (Mane/Feto) TUIR MUNISIPIU
 # ══════════════════════════════════════════════════════════════
 class APIMpmsJeneru(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes     = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes     = [IsAuthenticated]
 
     def get(self, request, format=None):
         mane = (
@@ -104,8 +104,8 @@ class APIMpmsJeneru(APIView):
 #  4. TIPO ATIVIDADE
 # ══════════════════════════════════════════════════════════════
 class APIMpmsTipoAtividade(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes     = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes     = [IsAuthenticated]
 
     def get(self, request, format=None):
         data = (
@@ -124,8 +124,8 @@ class APIMpmsTipoAtividade(APIView):
 #  5. LISENSAMENTU (Iha/Laiha/Sei iha Prosesu)
 # ══════════════════════════════════════════════════════════════
 class APIMpmsLisensamentu(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes     = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes     = [IsAuthenticated]
 
     def get(self, request, format=None):
         from mpms.models import LISENSAMENTU_CHOICES
@@ -143,8 +143,8 @@ class APIMpmsLisensamentu(APIView):
 #  6. KAPITAL INVESTIMENTO
 # ══════════════════════════════════════════════════════════════
 class APIMpmsKapital(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes     = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes     = [IsAuthenticated]
 
     def get(self, request, format=None):
         from mpms.models import KAPITAL_RANGE_CHOICES
@@ -162,8 +162,8 @@ class APIMpmsKapital(APIView):
 #  7. EMPREGADOR — Nasional vs Internasional per Munisipiu
 # ══════════════════════════════════════════════════════════════
 class APIMpmsEmpregador(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes     = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes     = [IsAuthenticated]
 
     def get(self, request, format=None):
         muns = (
@@ -205,8 +205,8 @@ class APIMpmsEmpregador(APIView):
 #  8. MATERIA PRIMA ORIGEM
 # ══════════════════════════════════════════════════════════════
 class APIMpmsMateria(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes     = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes     = [IsAuthenticated]
 
     def get(self, request, format=None):
         from mpms.models import MATERIA_ORIGEM_CHOICES

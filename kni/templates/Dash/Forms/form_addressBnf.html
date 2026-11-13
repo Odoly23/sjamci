@@ -24,6 +24,8 @@
             <div class="button-row d-flex">
               {% if group == "KNI" %}
                   <a class="btn btn-secondary" href="{% url 'benef-detail-kni' hashid=hashid %}" title="Cancela"><i class="fa fa-close"></i> Cancela</a>
+              {% elif group == "Cliente" %}
+                <a class="btn btn-secondary" href="{% url 'cliente-dashboard' %}" title="Cancela"><i class="fa fa-close"></i> Cancela</a>
               {% elif group == "mpms" %}
                 <a class="btn btn-secondary" href="{% url 'mpms-detail' hashid=hashid %}" title="Cancela"><i class="fa fa-close"></i> Cancela</a>
               {% endif %}

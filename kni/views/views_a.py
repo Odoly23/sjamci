@@ -17,6 +17,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
+from users.passwords import temporary_password
 # ══════════════════════════════════════════════════════════════
 #  HELPER
 # ══════════════════════════════════════════════════════════════
@@ -25,7 +26,7 @@ from django.utils import timezone
 @transaction.atomic
 def add_benef_kni(request):
     group   = request.user.groups.first().name
-    u_group = Group.objects.get(name='Cliente')
+    u_group, _ = Group.objects.get_or_create(name='Cliente')
     if request.method == 'POST':
         form = BenefisiariuForm(request.POST, request.FILES)
         if form.is_valid():
@@ -49,12 +50,13 @@ def add_benef_kni(request):
                 first_name = first_name,
                 last_name  = last_name,
             )
-            user.set_password('MCI@#2026')
+            temp_password = temporary_password()
+            user.set_password(temp_password)
             user.save()
             user.groups.add(u_group)
             BenefisiariuUser.objects.create( benefisiariu = benef, user= user,)
 
-            messages.success(request, f"Dadus Benefisiariu Rejistado ho Suseso. Username: {username}")
+            messages.success(request, f"Dadus Benefisiariu Rejistado ho Suseso. Username: {username} — Password temporáriu: {temp_password} (hatudu dala ida de'it; entrega ba benefisiáriu)")
             return redirect('kni-business-add', hashid=benef.hashed)
     else:
         form = BenefisiariuForm()
@@ -76,7 +78,7 @@ def add_benef_kni(request):
 @allowed_users(allowed_roles=['KNI'])
 @transaction.atomic
 def edit_benef_kni(request, hashid):
-    group = request.user.groups.all()[0].name if request.user.groups.exists() else None
+    group = getattr(request.user.groups.first(), 'name', None) if request.user.groups.exists() else None
     obj = get_object_or_404(Benefisiariu, hashed=hashid)
     if request.method == 'POST':
         form = BenefisiariuForm(request.POST, request.FILES, instance=obj)

@@ -32,8 +32,9 @@ def calculate_progress(empresa):
 
 
 @login_required
+@allowed_users(allowed_roles=['mpms', 'admin'])
 def dash_mpms(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     mun = Municipality.active_objects.all().order_by('code')
     faze = Faze.active_objects.filter(name="mpms").all()
     tinan = Year.active_objects.all().order_by('-year')
@@ -79,7 +80,7 @@ def dash_mpms(request):
 @login_required
 @allowed_users(allowed_roles=['mpms'])
 def mpms_detail(request, hashid):
-    group  = request.user.groups.all()[0].name
+    group  = getattr(request.user.groups.first(), 'name', None)
     benef  = get_object_or_404(Benefisiariu, hashed=hashid)
 
     businesses     = Business.objects.filter(benefisiariu=benef)
@@ -141,7 +142,7 @@ def mpms_detail(request, hashid):
 @login_required
 @allowed_users(allowed_roles=['mpms'])
 def mpms_empresa_list(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     data = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="MPMS").distinct().order_by('name')
     year = request.GET.get('year')
     faze = request.GET.get('faze')

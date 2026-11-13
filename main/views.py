@@ -96,7 +96,7 @@ def home(request):
         logout(request)
         return redirect('login')
 
-    group = request.user.groups.all()[0].name if request.user.groups.exists() else None
+    group = getattr(request.user.groups.first(), 'name', None) if request.user.groups.exists() else None
 
     context = {
         'group':      group,
@@ -110,8 +110,11 @@ def home(request):
 #  ERROR PAGES
 # ══════════════════════════════════════════════════════════════
 
-def error_404(request, exception):
-    return render(request, 'auth/404.html', {})
+def error_403(request, exception=None):
+    return render(request, 'auth/403.html', status=403)
+
+def error_404(request, exception=None):
+    return render(request, 'auth/404.html', status=404)
 
 def error_500(request):
-    return render(request, 'auth/500.html', {})
+    return render(request, 'auth/500.html', status=500)

@@ -16,7 +16,7 @@ from suave.models import CreditInfo
 @login_required
 @allowed_users(allowed_roles=['admin','KS','XFD'])
 def tab_ks(request):
-	group = request.user.groups.all()[0].name
+	group = getattr(request.user.groups.first(), 'name', None)
 	objects1, objects2, objects3, objects4, objects5 = [],[],[],[],[]
 	totalp = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").count()
 	totm = Benefisiariu.active_objects.filter(sex="Mane", Pnegosiu__program_type__name="KREDITU SUAVE").count()
@@ -93,7 +93,7 @@ def tab_ks(request):
 @login_required
 @allowed_users(allowed_roles=['admin', 'KS', 'XFD'])
 def ks_benef_list(request, filter_type):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     objects = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").distinct()
     title = "Lista Benefisiariu KS"
     legend_parts = []

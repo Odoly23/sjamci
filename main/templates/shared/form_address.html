@@ -60,7 +60,7 @@
 
             <!-- BUTTONS -->
             <div class="button-row d-flex mt-3">
-              <a class="btn btn-secondary" href="{% url 'benef-detail-kni' hashid=hashid %}">
+              <a class="btn btn-secondary" href="{% if cancel_url %}{{ cancel_url }}{% else %}{% url 'benef-detail-kni' hashid=hashid %}{% endif %}">
                 <i class="fa fa-close"></i> Cancela
               </a>
               <button class="btn btn-primary ml-1" type="submit">

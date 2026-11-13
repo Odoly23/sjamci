@@ -37,7 +37,7 @@ def _get_empresa_and_benef(hashid):
 @allowed_users(allowed_roles=['mpms'])
 @transaction.atomic
 def add_benef_mpms(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
 
     if request.method == 'POST':
         form = BenefisiariuForm(request.POST, request.FILES)
@@ -47,7 +47,7 @@ def add_benef_mpms(request):
 
             if phone and Benefisiariu.objects.filter(phone=phone).exists():
                 messages.warning(request, "Benefisiariu ho telefone hanesan iha ona.")
-                return redirect('add-benef-mpms')
+                return redirect('add-bf-mpms')
 
             obj            = form.save(commit=False)
             obj.created_by = request.user
@@ -76,7 +76,7 @@ def add_benef_mpms(request):
 @allowed_users(allowed_roles=['mpms'])
 @transaction.atomic
 def edit_benef_mpms(request, hashid):
-    group = request.user.groups.all()[0].name if request.user.groups.exists() else None
+    group = getattr(request.user.groups.first(), 'name', None) if request.user.groups.exists() else None
     obj   = get_object_or_404(Benefisiariu, hashed=hashid)
 
     if request.method == 'POST':
@@ -488,7 +488,7 @@ def mpms_lisensamentu_create(request, hashid):
 @allowed_users(allowed_roles=['mpms'])
 @transaction.atomic
 def mpms_empresa_edit(request, hashid):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     empresa, benef = _get_empresa_and_benef(hashid)
     if request.method == 'POST':
         form = MpmsEmpresaForm(request.POST, instance=empresa)
@@ -613,7 +613,7 @@ def mpms_materia_create(request, hashid):
 @allowed_users(allowed_roles=['mpms'])
 @transaction.atomic
 def mpms_atividade_create(request, hashid):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     empresa, benef = _get_empresa_and_benef(hashid)
     if request.method == 'POST':
         form = MpmsAtividadeForm(request.POST, benef=benef)

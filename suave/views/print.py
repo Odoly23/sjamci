@@ -502,7 +502,7 @@ def export_page_ks(request):
     context = {
         "title":   "Export Dados Kreditu Suave",
         "legend":  "Export Dados Kreditu Suave (Excel / PDF)",
-        "group":   request.user.groups.all()[0].name,
+        "group":   getattr(request.user.groups.first(), 'name', None),
         "total":   qs.count(),
         "label":   label,
         "params":  params.urlencode(),

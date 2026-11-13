@@ -114,7 +114,7 @@ def _parse_kni(kni_value):
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def import_kni_excel(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     if request.method == 'POST':
         excel_file = request.FILES.get('excel_file')
         if not excel_file:

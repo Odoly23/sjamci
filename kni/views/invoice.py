@@ -415,7 +415,7 @@ def export_page_kni(request):
     context = {
         "title":   "Export Dados KNI",
         "legend":  "Export Dados KNI (Excel / PDF)",
-        "group":   request.user.groups.all()[0].name,
+        "group":   getattr(request.user.groups.first(), 'name', None),
         "total":   qs.count(),
         "label":   label,
         "params":  params.urlencode(),

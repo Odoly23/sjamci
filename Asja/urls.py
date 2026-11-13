@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.conf.urls import handler404, handler500
 from main.views import logout_view, loginPage
 from decouple import config
 from django.contrib.auth import views as auth_views
@@ -57,5 +56,6 @@ admin.site.site_header = "SISTEMA MANAJEMENTU APOIU MCI - SUPER USER"
 admin.site.site_title = "SISTEMA MANAJEMENTU APOIU MCI - SUPER USER"
 admin.site.index_title = "Portal Super User"
 
+handler403 = 'main.views.error_403'
 handler404 = 'main.views.error_404'
 handler500 = 'main.views.error_500'

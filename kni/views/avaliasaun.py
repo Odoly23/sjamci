@@ -16,7 +16,7 @@ from django.utils import timezone
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def avaliasaun(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     context ={
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
@@ -32,7 +32,7 @@ def avaliasaun(request):
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def avalia_list(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benefs = Benefisiariu.objects.prefetch_related('negosiu', 'Pnegosiu').all()
     context ={
         'benefs': benefs,
@@ -50,7 +50,7 @@ def avalia_list(request):
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def avalia_list2(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benefs = Benefisiariu.objects.prefetch_related('negosiu', 'Pnegosiu','negosiu__monitorings','negosiu__baseline',).all()
     context ={
         'benefs': benefs,
@@ -98,7 +98,7 @@ def benef_evaluation_list(request):
 @allowed_users(allowed_roles=['KNI','dnim','mpms'])
 @transaction.atomic
 def evaluate_benef(request, hashid):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benef = get_object_or_404(Benefisiariu, hashed=hashid)
     if request.method == 'POST':
         form = BeneficiariuEvaluationForm(request.POST)
@@ -186,7 +186,7 @@ def baseline_create(request, hashid):
         return redirect('baseline-list')
     if not business.benefisiariu:
         messages.error(request, "Benefisiariu la iha dadus kompletu. Favor kompleta dadus benefisiariu uluk.")
-        return redirect('benefisiariu-update', hashed=business.benefisiariu.hashed)
+        return redirect('baseline-list')
     if request.method == 'POST':
         form = BusinessBaselineForm(request.POST)
         if form.is_valid():
@@ -228,7 +228,7 @@ def baseline_create(request, hashid):
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def baseline_list(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     baselines = BusinessBaseline.objects.select_related('business', 'business__benefisiariu')
     context = {
         'group':group,
