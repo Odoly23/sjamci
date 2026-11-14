@@ -11,7 +11,7 @@ from suave.models import ProductService, EkipaMember, Competitor, MainCustomer, 
 @login_required
 @allowed_users(allowed_roles=['admin', 'KS', 'XFD'])
 def dash_ks(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     mun = Municipality.active_objects.all().order_by('code')
     faze = Faze.active_objects.filter(name="KREDITU")
     tinan = Year.active_objects.all().order_by('-year')
@@ -58,7 +58,7 @@ def dash_ks(request):
 @login_required
 @allowed_users(allowed_roles=['admin', 'KS', 'XFD'])
 def list_ks(request, year, faze, mun):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     data = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE", Pnegosiu__year__year=year,
                 Pnegosiu__faze__name=faze, locnegosiu__municipality__name=mun).distinct()
     context = {
@@ -76,7 +76,7 @@ def list_ks(request, year, faze, mun):
 @login_required
 @allowed_users(allowed_roles=['admin', 'KS', 'XFD'])
 def total_ks(request, year, faze):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     data = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE",
            Pnegosiu__year__year=year, Pnegosiu__faze__name=faze).distinct()
     context = {
@@ -94,7 +94,7 @@ def total_ks(request, year, faze):
 @login_required
 @allowed_users(allowed_roles=['admin', 'KS', 'XFD'])
 def geral_ks(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     data = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").distinct().order_by('name')
     year = request.GET.get('year')
     faze = request.GET.get('faze')
@@ -123,7 +123,7 @@ def geral_ks(request):
 @login_required
 @allowed_users(allowed_roles=['admin', 'staff', 'KS'])
 def benef_detail_ks(request, hashid):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benef = get_object_or_404(Benefisiariu, hashed=hashid)
     addtl = getattr(benef, 'addresstl', None)
     addori = getattr(benef, 'addressorigin', None)

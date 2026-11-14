@@ -107,7 +107,7 @@ def impact_monitoring_delete(request, business_hashid, pk):
         'title'   : 'Hamoos Monitorizasaun',
         'message' : f"Boot hakarak hamoos monitorizasaun loron {obj.monitoring_date} ba negosiu {business.name or business.idea}?",
     }
-    return render(request, 'Dash/confirm_delete.html', context)
+    return render(request, 'shared/confirm_delete.html', context)
 
 
 @login_required
@@ -127,10 +127,10 @@ def impact_monitoring_detail(request, business_hashid, pk):
         'title'          : 'Detallu Monitorizasaun Impaktu',
         'link_antes'     : [
             {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'benef-detail-kni', 'link_text': 'Benefisiariu', 'params': {'hashid': business.benefisiariu.hashed}},
+            {'link_name': 'benef-detail-kni', 'link_text': 'Benefisiariu', 'link_param': business.benefisiariu.hashed},
         ],
     }
-    return render(request, 'Dash/impact_monitoring_detail.html', context)
+    return render(request, 'moni/impact_detail.html', context)
 
 
 @login_required
@@ -146,10 +146,10 @@ def impact_monitoring_list(request, business_hashid):
         'title'      : 'Lista Monitorizasaun Impaktu',
         'link_antes' : [
             {'link_name': 'kni-dash', 'link_text': 'Painel KNI'},
-            {'link_name': 'benef-detail-kni', 'link_text': 'Benefisiariu', 'params': {'hashid': business.benefisiariu.hashed}},
+            {'link_name': 'benef-detail-kni', 'link_text': 'Benefisiariu', 'link_param': business.benefisiariu.hashed},
         ],
     }
-    return render(request, 'Dash/impact_monitoring_list.html', context)
+    return render(request, 'moni/impact_list.html', context)
 
 
 # ============================================================
@@ -182,7 +182,7 @@ def fund_usage_add(request, business_hashid, monitoring_pk):
         'title'     : 'Utilizasaun Fundus Foun',
         'legend'    : f"Gastu sira ba monitorizasaun loron {monitoring.monitoring_date}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -212,7 +212,7 @@ def fund_usage_edit(request, business_hashid, monitoring_pk, pk):
         'title'     : 'Edita Utilizasaun Fundus',
         'legend'    : f"Atualiza gastu {obj.item_name}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -232,7 +232,7 @@ def fund_usage_delete(request, business_hashid, monitoring_pk, pk):
         'title'  : 'Hamoos Utilizasaun Fundus',
         'message': f"Boot hakarak hamoos gastu {obj.item_name} ($ {obj.amount})?",
     }
-    return render(request, 'Dash/confirm_delete.html', context)
+    return render(request, 'shared/confirm_delete.html', context)
 
 
 # ============================================================
@@ -265,7 +265,7 @@ def business_asset_add(request, business_hashid, monitoring_pk):
         'title'     : 'Asset Foun',
         'legend'    : f"Rejistu asset foun ba monitorizasaun loron {monitoring.monitoring_date}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -295,7 +295,7 @@ def business_asset_edit(request, business_hashid, monitoring_pk, pk):
         'title'     : 'Edita Asset',
         'legend'    : f"Atualiza asset {obj.asset_name}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -315,7 +315,7 @@ def business_asset_delete(request, business_hashid, monitoring_pk, pk):
         'title'  : 'Hamoos Asset',
         'message': f"Boot hakarak hamoos asset {obj.asset_name}?",
     }
-    return render(request, 'Dash/confirm_delete.html', context)
+    return render(request, 'shared/confirm_delete.html', context)
 
 
 # ============================================================
@@ -348,7 +348,7 @@ def cashflow_add(request, business_hashid, monitoring_pk):
         'title'     : 'Fluxu Osan Foun',
         'legend'    : f"Rejistu transasaun ba monitorizasaun loron {monitoring.monitoring_date}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -378,7 +378,7 @@ def cashflow_edit(request, business_hashid, monitoring_pk, pk):
         'title'     : 'Edita Fluxu Osan',
         'legend'    : f"Atualiza transasaun {obj.description}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -398,7 +398,7 @@ def cashflow_delete(request, business_hashid, monitoring_pk, pk):
         'title'  : 'Hamoos Fluxu Osan',
         'message': f"Boot hakarak hamoos transasaun {obj.description} ($ {obj.amount})?",
     }
-    return render(request, 'Dash/confirm_delete.html', context)
+    return render(request, 'shared/confirm_delete.html', context)
 
 
 # ============================================================
@@ -431,7 +431,7 @@ def financial_book_add(request, business_hashid, monitoring_pk):
         'title'     : 'Livru Kontabilidade Foun',
         'legend'    : f"Anexa dokumentu ba monitorizasaun loron {monitoring.monitoring_date}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -461,7 +461,7 @@ def financial_book_edit(request, business_hashid, monitoring_pk, pk):
         'title'     : 'Edita Livru Kontabilidade',
         'legend'    : f"Atualiza dokumentu {obj.title}",
     }
-    return render(request, 'Dash/Forms/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
@@ -483,4 +483,4 @@ def financial_book_delete(request, business_hashid, monitoring_pk, pk):
         'title'  : 'Hamoos Livru Kontabilidade',
         'message': f"Boot hakarak hamoos dokumentu {obj.title}?",
     }
-    return render(request, 'Dash/confirm_delete.html', context)
+    return render(request, 'shared/confirm_delete.html', context)

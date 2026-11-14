@@ -17,8 +17,8 @@ from suave.models import CreditInfo
 from collections import defaultdict
 
 class APISumarioProgram(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         selected_municipality_id = request.GET.get('municipality')
         program_names = ['KNI', 'KREDITU SUAVE', 'MPMS', 'MANUFATUREIRA', 'DNDI']

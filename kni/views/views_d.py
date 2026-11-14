@@ -5,7 +5,6 @@ from django.db import transaction
 from config.decorators import allowed_users
 from django.db.models import Count, Max, Q, Prefetch, Exists, OuterRef, Sum
 from django.contrib import messages
-from django.db import transaction
 from django.utils import timezone
 from django.http import JsonResponse
 from custom.models import Minister, Diresaun, Position, Municipality, AdministrativePost, Village, \
@@ -28,7 +27,7 @@ from monitoring.models import (
 @login_required
 @allowed_users(allowed_roles=['admin', 'KNI', 'XFD'])
 def dash_kni(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     mun = Municipality.active_objects.all().order_by('code')
     faze = Faze.active_objects.exclude(name__in=["KREDITU", "mpms",'manufatur'])
     tinan = Year.active_objects.all().order_by('-year')
@@ -68,7 +67,7 @@ def dash_kni(request):
 @login_required
 @allowed_users(allowed_roles=['admin', 'KNI', 'XFD'])
 def list_kni(request, year, faze, mun):
-	group = request.user.groups.all()[0].name
+	group = getattr(request.user.groups.first(), 'name', None)
 	data = Benefisiariu.active_objects.filter( Pnegosiu__program_type__name="KNI", 
 		Pnegosiu__year__year=year, Pnegosiu__faze__name=faze, locnegosiu__municipality__name=mun).distinct()
 	context = {
@@ -85,7 +84,7 @@ def list_kni(request, year, faze, mun):
 @login_required
 @allowed_users(allowed_roles=['admin', 'KNI', 'XFD'])
 def total_kni(request, year, faze):
-	group = request.user.groups.all()[0].name
+	group = getattr(request.user.groups.first(), 'name', None)
 	data = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KNI", 
 		Pnegosiu__year__year=year, Pnegosiu__faze__name=faze).distinct()
 	context = {
@@ -100,7 +99,7 @@ def total_kni(request, year, faze):
 @login_required
 @allowed_users(allowed_roles=['admin', 'KNI', 'XFD'])
 def geral_kni(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     data = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KNI").distinct().order_by('name')
     year = request.GET.get('year')
     faze = request.GET.get('faze')
@@ -134,7 +133,7 @@ def geral_kni(request):
 @login_required
 @allowed_users(allowed_roles=['admin', 'staff', 'KNI'])
 def benef_detail_kni(request, hashid):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benef = get_object_or_404(Benefisiariu, hashed=hashid)
     addtl  = getattr(benef, 'addresstl',     None)
     addori = getattr(benef, 'addressorigin', None)

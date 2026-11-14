@@ -13,6 +13,7 @@ from manufatureira.forms import ManufaturForm, LokalizasaunForm, MembroForm, Akt
 from custom.models import Status,Tipu_Apoio, TIpu_Programa, Faze
 from config.decorators import allowed_users
 from django.conf import settings
+from django.urls import reverse
 
 
 # ═══════════════════════════════════════════════════════
@@ -23,7 +24,7 @@ from django.conf import settings
 @allowed_users(allowed_roles=['dnim'])
 @transaction.atomic
 def add_benef_dnim(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     if request.method == 'POST':
         form = BenefisiariuForm(request.POST, request.FILES)
         if form.is_valid():
@@ -55,14 +56,14 @@ def add_benef_dnim(request):
             {'link_name': 'geral_man', 'link_text': 'Lista Benefisiariu'},
         ],
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])
 @transaction.atomic
 def edit_benef_dnim(request, hashid):
-    group = request.user.groups.all()[0].name if request.user.groups.exists() else None
+    group = getattr(request.user.groups.first(), 'name', None) if request.user.groups.exists() else None
     obj = get_object_or_404(Benefisiariu, hashed=hashid)
     if request.method == 'POST':
         form = BenefisiariuForm(request.POST, request.FILES, instance=obj)
@@ -87,7 +88,7 @@ def edit_benef_dnim(request, hashid):
         ],
     }
 
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 # ══════════════════════════════════════════════════════════════
 #  2. ALTERA ENDERESU TL
@@ -150,7 +151,7 @@ def AddressOriginUpdate_dnim(request, hashid):
         'title':  'Altera Enderesu Origin',
         'legend': 'Altera Enderesu Origin',
     }
-    return render(request, 'DNIM/form_origin.html', context)
+    return render(request, 'shared/form_origin.html', context)
 
 # ══════════════════════════════════════════════════════════════
 #  4. LOKASAUN NEGOSIU
@@ -196,13 +197,14 @@ def Localidade_Add_dnim(request, hashid):
 
     context = {
         'hashid':       hashid,
+        'cancel_url':   reverse('manuf-detail-dnim', args=[hashid]),
         'form':         form,
         'emp':          emp,
         'MAPBOX_TOKEN': settings.MAPBOX_TOKEN,
         'title':        'Lokasaun Negosiu',
         'legend':       'Lokasaun Negosiu',
     }
-    return render(request, 'DNIM/form_address.html', context)
+    return render(request, 'shared/form_address.html', context)
 # ══════════════════════════════════════════════════════════════
 #  5. REJISTU NEGOSIU No Edit
 # ══════════════════════════════════════════════════════════════
@@ -247,7 +249,7 @@ def Business_Add_dnim(request, hashid):
         'title':  'Rejistu Negosiu',
         'legend': 'Rejistu Negosiu Manufatureira',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -286,7 +288,7 @@ def Business_Edit_dnim(request, hashid):
         'title':  'Altera Negosiu',
         'legend': 'Altera Negosiu Manufatureira',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 # ══════════════════════════════════════════════════════════════
 #  6. REJISTU PROGRAMA KNI
 # ══════════════════════════════════════════════════════════════
@@ -338,7 +340,7 @@ def Program_Add_dnim(request, hashid):
         'title':  'Rejistu Programa Manufatureira',
         'legend': 'Programa Manufatureira Foun',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 # ══════════════════════════════════════════════════════════════
 #  7. TRABALHADORES
@@ -377,7 +379,7 @@ def Employee_Add_dnim(request, hashid):
         'title':  'Rejistu Trabalhadores',
         'legend': 'Trabalhadores Foun',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -406,7 +408,7 @@ def Finance_Add_dnim(request, hashid):
         'title':      'Rejistu Finansiamento',
         'legend':     'Finansiamento Foun',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 @login_required
 @allowed_users(allowed_roles=['admin', 'dnim'])
 @transaction.atomic
@@ -421,7 +423,7 @@ def Manufatur_Add_dnim(request, hashid):
             obj.save()
 
             messages.success(request, "Manufatur rai ho susesu.")
-            return redirect('benef-detail', hashid=hashid)
+            return redirect('manuf-detail-dnim', hashid=hashid)
     else:
         form = ManufaturForm()
 
@@ -431,7 +433,40 @@ def Manufatur_Add_dnim(request, hashid):
         'title': 'Rejistu Manufatur',
         'legend': 'Rejistu Manufatur Foun',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
+
+
+def _manuf_back(manuf):
+    """Fila ba pajina detallu benefisiáriu ne'ebé na'in ba manufatur."""
+    if manuf.benefisiariu_id:
+        return redirect('manuf-detail-dnim', hashid=manuf.benefisiariu.hashed)
+    return redirect('geral_man')
+
+
+@login_required
+@allowed_users(allowed_roles=['admin', 'dnim'])
+@transaction.atomic
+def Manufatur_Edit_dnim(request, hashid):
+    manuf = get_object_or_404(Manufatur, hashed=hashid)
+    back = _manuf_back(manuf)
+
+    if request.method == 'POST':
+        form = ManufaturForm(request.POST, instance=manuf)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Manufatur atualiza ho susesu.")
+            return back
+    else:
+        form = ManufaturForm(instance=manuf)
+
+    context = {
+        'form': form,
+        'manuf': manuf,
+        'cancel_url': back.url,
+        'title': 'Atualiza Manufatur',
+        'legend': 'Atualiza Dadus Manufatur',
+    }
+    return render(request, 'shared/form.html', context)
 
 
 # ═══════════════════════════════════════════════════════
@@ -439,8 +474,9 @@ def Manufatur_Add_dnim(request, hashid):
 # ═══════════════════════════════════════════════════════
 @login_required
 @allowed_users(allowed_roles=['admin', 'dnim'])
-def Lokalizasaun_Add_dnim(request, manuf_id):
-    manuf = get_object_or_404(Manufatur, id=manuf_id)
+def Lokalizasaun_Add_dnim(request, hashid):
+    manuf = get_object_or_404(Manufatur, hashed=hashid)
+    back = _manuf_back(manuf)
     obj = Lokalizasaun.objects.filter(manufatur=manuf).first()
 
     if request.method == 'POST':
@@ -452,17 +488,18 @@ def Lokalizasaun_Add_dnim(request, manuf_id):
             instance.save()
 
             messages.success(request, "Lokalizasaun rai ho susesu.")
-            return redirect('manuf-detail', id=manuf_id)
+            return back
     else:
         form = LokalizasaunForm(instance=obj)
 
     context = {
         'form': form,
         'manuf': manuf,
+        'cancel_url': back.url,
         'title': 'Lokalizasaun Manufatur',
         'legend': 'Input Lokalizasaun',
     }
-    return render(request, 'DNIM/form_address.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ═══════════════════════════════════════════════════════
@@ -470,8 +507,9 @@ def Lokalizasaun_Add_dnim(request, manuf_id):
 # ═══════════════════════════════════════════════════════
 @login_required
 @allowed_users(allowed_roles=['admin', 'dnim'])
-def Membro_Add_dnim(request, manuf_id):
-    manuf = get_object_or_404(Manufatur, id=manuf_id)
+def Membro_Add_dnim(request, hashid):
+    manuf = get_object_or_404(Manufatur, hashed=hashid)
+    back = _manuf_back(manuf)
     obj = Membro.objects.filter(manufatur=manuf).first()
 
     if request.method == 'POST':
@@ -482,17 +520,18 @@ def Membro_Add_dnim(request, manuf_id):
             instance.save()
 
             messages.success(request, "Dados membro rai ho susesu.")
-            return redirect('manuf-detail', id=manuf_id)
+            return back
     else:
         form = MembroForm(instance=obj)
 
     context = {
         'form': form,
         'manuf': manuf,
+        'cancel_url': back.url,
         'title': 'Dados Membro',
         'legend': 'Input Membro',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)
 
 
 # ═══════════════════════════════════════════════════════
@@ -501,8 +540,9 @@ def Membro_Add_dnim(request, manuf_id):
 @login_required
 @allowed_users(allowed_roles=['admin', 'dnim'])
 @transaction.atomic
-def Aktividade_Add_dnim(request, manuf_id):
-    manuf = get_object_or_404(Manufatur, id=manuf_id)
+def Aktividade_Add_dnim(request, hashid):
+    manuf = get_object_or_404(Manufatur, hashed=hashid)
+    back = _manuf_back(manuf)
 
     if request.method == 'POST':
         form = AktividadeForm(request.POST)
@@ -528,7 +568,7 @@ def Aktividade_Add_dnim(request, manuf_id):
                 )
 
             messages.success(request, "Aktividade rai ho susesu.")
-            return redirect('manuf-detail', id=manuf_id)
+            return back
 
     else:
         form = AktividadeForm()
@@ -536,7 +576,8 @@ def Aktividade_Add_dnim(request, manuf_id):
     context = {
         'form': form,
         'manuf': manuf,
+        'cancel_url': back.url,
         'title': 'Rejistu Aktividade',
         'legend': 'Aktividade Manufatur',
     }
-    return render(request, 'DNIM/form.html', context)
+    return render(request, 'shared/form.html', context)

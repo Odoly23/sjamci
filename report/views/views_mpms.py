@@ -10,16 +10,13 @@ from django.db.models import Q
 from benefisiariu.models import Benefisiariu, AddressTL, AddressOrigin, Photo
 from kni.models import Business, LocBussiness, Program, Employee, Finance
 from manufatureira.models import  Manufatur, Lokalizasaun, Membro, Aktividade
-from config.decorators import allowed_users
 from mpms.models import mpmsEmpresa, mpmsLokalizasaun,  mpmsLisensamentu, mpmsKapital,\
     mpmsEmpregador, mpmsMateriaPrima, mpmsAtividade
-from config.decorators import allowed_users
-from django.core.paginator import Paginator
 
 @login_required
 @allowed_users(allowed_roles=['mpms','admin','staff','xfd'])
 def tab_mpms(request):
-	group = request.user.groups.all()[0].name
+	group = getattr(request.user.groups.first(), 'name', None)
 	objects1, objects2, objects3, objects4 = [],[],[],[]
 	mun = Municipality.active_objects.all()
 	fun = Tipu_Fundus_Kapital.active_objects.all()
@@ -100,7 +97,7 @@ def tab_mpms(request):
 @login_required
 @allowed_users(allowed_roles=['admin','XFD','mpms'])
 def grafiku_mpms(request):
-	group = request.user.groups.all()[0].name
+	group = getattr(request.user.groups.first(), 'name', None)
 	context = {
 		'title':"Sumario Geral",
 		'legend':"Sumario Geral",

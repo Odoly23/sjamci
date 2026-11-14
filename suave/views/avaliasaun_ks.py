@@ -16,7 +16,7 @@ from config.decorators import allowed_users
 @login_required
 @allowed_users(allowed_roles=['KS'])
 def ks_avaliasaun(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     context ={
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
@@ -32,7 +32,7 @@ def ks_avaliasaun(request):
 @login_required
 @allowed_users(allowed_roles=['KS'])
 def avalia_list_ks(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benefs = Benefisiariu.objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").all()
     context ={
         'benefs': benefs,
@@ -50,7 +50,7 @@ def avalia_list_ks(request):
 @login_required
 @allowed_users(allowed_roles=['KS'])
 def avalia_list2_ks(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benefs = Benefisiariu.objects.prefetch_related('negosiu', 'Pnegosiu','negosiu__monitorings','negosiu__baseline',).all()
     context ={
         'benefs': benefs,
@@ -130,7 +130,7 @@ def evaluate_benef_ks(request, hashid):
         ],
     }
 
-    return render(request, 'avaliasaun_ks/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 
 @login_required
@@ -162,7 +162,7 @@ def monitoring_create_ks(request, hashid):
         'legend': 'Depois Apoiu Monitoring'
     }
 
-    return render(request, 'avaliasaun_ks/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KS','KNI'])
@@ -192,7 +192,7 @@ def baseline_create(request, hashid):
         'title': 'Input Baseline',
         'legend': 'Baseline Antes Apoiu',
     }
-    return render(request, 'avaliasaun_ks/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KS'])
@@ -211,14 +211,14 @@ def baseline_list(request):
 
     return render(
         request,
-        'avaliasaun_ks/baseline_list.html',
+        'shared/avaliasaun/baseline_list.html',
         context
     )
 
 @login_required
 @allowed_users(allowed_roles=['KS'])
 def monitoring_list(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     monitorings = BusinessMonitoring.objects.select_related('business', 'business__benefisiariu')
     pending = monitorings.filter(verification_status='Pending').count()
     verified = monitorings.filter(verification_status='Verified').count()
@@ -237,4 +237,4 @@ def monitoring_list(request):
         'legend': 'Dadus Monitoring',
     }
 
-    return render(request, 'avaliasaun_ks/monitoring_list.html', context)
+    return render(request, 'shared/avaliasaun/monitoring_list.html', context)

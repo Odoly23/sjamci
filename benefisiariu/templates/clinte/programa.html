@@ -1,0 +1,47 @@
+{% extends "main/layout.html" %}
+{% load humanize %}
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="card shadow-sm border-0">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div><i class="fa fa-briefcase"></i> <strong>{{ legend|upper }}</strong></div>
+      <span class="badge badge-primary">TOTAL APOIU : $ {{ total_program|floatformat:2|intcomma }}</span>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped table-sm" width="100%">
+          <thead class="thead-light">
+            <tr>
+              <th width="5%">#</th>
+              <th>Tipu Programa</th>
+              <th>Tipu Apoiu</th>
+              <th>Faze</th>
+              <th>Tinan</th>
+              <th class="text-right">Montante Aprova ($)</th>
+              <th class="text-right">Montante Apoiu ($)</th>
+              <th>Estadu</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in programs %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ p.program_type|default:"-" }}</td>
+              <td>{{ p.t_apoiu|default:"-" }}</td>
+              <td>{{ p.faze|default:"-" }}</td>
+              <td>{{ p.year|default:"-" }}</td>
+              <td class="text-right">{{ p.approved_amount|default:0|floatformat:2|intcomma }}</td>
+              <td class="text-right">{{ p.amount|default:0|floatformat:2|intcomma }}</td>
+              <td>{{ p.status|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" class="text-center text-muted py-4">Ita-boot seidauk iha programa rejistadu.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <a href="{% url 'cliente-dashboard' %}" class="btn btn-secondary btn-sm mt-2"><i class="fa fa-arrow-left"></i> Fila</a>
+    </div>
+  </div>
+</div>
+{% endblock content %}

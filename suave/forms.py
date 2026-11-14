@@ -4,6 +4,8 @@ from crispy_forms.layout import Layout, Row, Column, HTML, Field
 from suave.models import  EkipaMember, ProductService, MainCustomer,Competitor, FixedAsset, MarketAssessment, FinancialAssessment, CreditInfo
 from kni.models import  Business, LocBussiness, Program, Employee, Finance
 from custom.models import AdministrativePost, Village, TIpu_Programa, Year, Faze
+# Form ne'e identiku ho versaun KNI — uza fali atu la duplika kodigu
+from kni.forms import FinanceKNIForm as FinanceKSForm
 
 
 _BTN = """
@@ -154,24 +156,6 @@ class EmployeeKSForm(forms.ModelForm):
             HTML(_BTN),
         )
 
-
-class FinanceKSForm(forms.ModelForm):
-    class Meta:
-        model  = Finance
-        fields = ['business', 'budget']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-        self.helper.layout = Layout(
-            HTML(_ALERT),
-            Row(
-                Column('business', css_class='col-md-6'),
-                Column('budget',   css_class='col-md-6'),
-            ),
-            HTML(_BTN),
-        )
 
 class EkipaMemberForm(forms.ModelForm):
     class Meta:

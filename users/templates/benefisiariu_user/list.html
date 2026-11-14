@@ -32,12 +32,13 @@
                     {{ item.user.username }} ({{item.user.groups.first}})
                 </td>
                 <td>
-                                        <a href="{% url 'benefisiariu-user-reset-password' item.id %}"
-                       class="btn btn-warning btn-sm"
-                       title="Reset Password"
-                       onclick="return confirm('Ita hakarak reset password ba user ida ne\'e?')"> Altera 
-                        <i class="fa fa-key"></i>
-                    </a>
+                    <form method="post" action="{% url 'benefisiariu-user-reset-password' item.id %}" class="d-inline"
+                          onsubmit="return confirm('Ita hakarak reset password ba user ida ne\'e?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning btn-sm" title="Reset Password">
+                            Altera <i class="fa fa-key"></i>
+                        </button>
+                    </form>
                 </td>
                 <td>
                     {{ item.user.email }}
@@ -48,8 +49,7 @@
                         <i class="fa fa-edit"></i>
                     </a>
                     <a href="{% url 'benefisiariu-user-delete' item.id %}"
-                       class="btn btn-danger btn-sm"
-                       onclick="return confirm('Ita hakarak hamoos dadus ida ne\'e?')">
+                       class="btn btn-danger btn-sm">
                         <i class="fa fa-trash"></i>
                     </a>
                 </td>

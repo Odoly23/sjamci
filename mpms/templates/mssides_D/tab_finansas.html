@@ -18,7 +18,7 @@
     <th colspan="2">
       KAPITAL
       {% if group == 'mpms' %}
-        <a href="{% url 'mpms-kapital-add' empresa.hashed %}" class="btn btn-xs btn-warning ml-1">
+        <a href="{% if empresa %}{% url 'mpms-kapital-add' empresa.hashed %}{% else %}{% url 'mpms-business-add' benef.hashed %}{% endif %}" class="btn btn-xs btn-warning ml-1">
           <i class="fa fa-edit"></i>
         </a>
       {% endif %}

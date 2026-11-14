@@ -1,4 +1,4 @@
-fetch("/Api/sumario/grafiku/sexu/")
+fetch("/Api/sumario/grafiku/ks/sexu/")
 .then(response => response.json())
 .then(data => {
 

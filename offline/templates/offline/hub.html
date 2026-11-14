@@ -1,0 +1,54 @@
+{% load static %}<!DOCTYPE html>
+<html lang="tet">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1f3864">
+  <title>Rejistu Offline — SJAMCI</title>
+  <link rel="manifest" href="{% url 'pwa-manifest' %}">
+  <link rel="icon" href="{% static 'offline/icon-192.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'offline/icon-192.png' %}">
+  <link rel="stylesheet" href="{% static 'offline/app.css' %}">
+</head>
+<body>
+  <header class="bar">
+    <h1>SJAMCI — Rejistu Offline</h1>
+    <span id="net" class="net" role="status"></span>
+  </header>
+  <main id="hub" data-username="{{ username }}">
+    <div id="login-needed" class="notice warn" hidden>
+      Sesaun remata. <a href="{% url 'login' %}">Login fali</a> atu haruka rejistu ne'ebé hein hela — dadus iha dispozitivu la lakon.
+    </div>
+
+    <section class="card">
+      <h2>Rejistu foun</h2>
+      {% if modules %}
+        <p class="muted">Formuláriu ne'e la'o maski la iha internet. Dadus rai iha dispozitivu no haruka automátiku bainhira online.</p>
+        <div class="modules">
+          {% for module in modules %}
+            <a class="btn" href="{% url 'offline-form' module.key %}">Benefisiáriu {{ module.label }}</a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted">Ita-boot nia grupu la iha formuláriu rejistu offline. Disponivel ba KNI, Kreditu Suave no MPMS.</p>
+      {% endif %}
+      <div class="actions">
+        <a class="btn alt" href="{% url 'home' %}">Fila ba sistema</a>
+        <button id="install" class="btn alt" type="button" hidden>Instala iha dispozitivu</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Rejistu iha dispozitivu <small>(<span id="pending-count">0</span> hein sinkroniza)</small></h2>
+      <div class="actions" style="margin-top:0;margin-bottom:8px">
+        <button id="sync-now" class="btn" type="button" disabled>Sinkroniza agora</button>
+      </div>
+      <p id="sync-status" class="muted" role="status" aria-live="polite"></p>
+      <ul id="queue" class="queue"></ul>
+      <p id="empty" class="muted">Seidauk iha rejistu iha dispozitivu ida-ne'e.</p>
+    </section>
+  </main>
+  <script src="{% static 'offline/store.js' %}"></script>
+  <script src="{% static 'offline/hub.js' %}"></script>
+</body>
+</html>

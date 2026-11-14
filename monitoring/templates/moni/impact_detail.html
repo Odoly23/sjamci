@@ -1,0 +1,163 @@
+{% extends "main/layout.html" %}
+{% load humanize %}
+{% block content %}
+<div class="container-fluid mt-3">
+
+  <div class="card shadow-sm border-0 mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div>
+        <i class="fa fa-line-chart"></i>
+        <strong>{{ title|upper }}</strong>
+        <span class="text-muted ml-2">{{ business.name|default:business.idea }} — {{ obj.monitoring_date|date:"d/m/Y" }}</span>
+      </div>
+      <div>
+        <a href="{% url 'business_impact_list' business.hashed %}" class="btn btn-sm btn-secondary"><i class="fa fa-list"></i> Lista</a>
+        {% if group == "KNI" %}
+        <a href="{% url 'business_impact_edit' business.hashed obj.id %}" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i> Edita</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <table class="table table-sm table-bordered">
+            <tr><th width="45%">Estadu</th><td>{{ obj.status|default:"-" }}</td></tr>
+            <tr><th>Fundus Simu ($)</th><td>{{ obj.fund_received|floatformat:2|intcomma }}</td></tr>
+            <tr><th>Fundus Uza Ona ($)</th><td>{{ obj.fund_used|floatformat:2|intcomma }}</td></tr>
+            <tr><th>Saldo Restante ($)</th><td>{{ obj.fund_balance|floatformat:2|intcomma }}</td></tr>
+            <tr><th>Rendimentu Fulan Ida ($)</th><td>{{ obj.monthly_income|floatformat:2|intcomma }}</td></tr>
+            <tr><th>Despeza Fulan Ida ($)</th><td>{{ obj.monthly_expense|floatformat:2|intcomma }}</td></tr>
+            <tr><th>Lukru Fulan Ida ($)</th><td>{{ obj.monthly_profit|floatformat:2|intcomma }}</td></tr>
+          </table>
+        </div>
+        <div class="col-md-6">
+          <table class="table table-sm table-bordered">
+            <tr><th width="45%">Total Trabalhador</th><td>{{ obj.total_employee }}</td></tr>
+            <tr><th>Uza Livru Kontabilidade</th><td>{{ obj.use_accounting_book|yesno:"Sin,Lae" }}</td></tr>
+            <tr><th>Iha Rendimentu</th><td>{{ obj.has_income|yesno:"Sin,Lae" }}</td></tr>
+            <tr><th>Selu Impostu</th><td>{{ obj.paid_tax|yesno:"Sin,Lae" }}{% if obj.tax_amount %} ($ {{ obj.tax_amount|floatformat:2|intcomma }}){% endif %}</td></tr>
+            <tr><th>Planu Atu Simu Kreditu</th><td>{{ obj.plan_credit|yesno:"Sin,Lae" }}{% if obj.credit_source %} — {{ obj.credit_source }}{% endif %}</td></tr>
+            <tr><th>Planu Negósiu Foun</th><td>{{ obj.plan_new_business|yesno:"Sin,Lae" }}{% if obj.new_business_idea %} — {{ obj.new_business_idea }}{% endif %}</td></tr>
+            <tr><th>Observasaun</th><td>{{ obj.observation|default:"-"|linebreaksbr }}</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <strong><i class="fa fa-money"></i> Utilizasaun Fundus</strong>
+          {% if group == "KNI" %}<a href="{% url 'fund_usage_add' business.hashed obj.id %}" class="btn btn-xs btn-success"><i class="fa fa-plus"></i></a>{% endif %}
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-sm table-striped mb-0">
+            <thead class="thead-light"><tr><th>Naran Gastu</th><th class="text-right">Montante ($)</th><th width="20%"></th></tr></thead>
+            <tbody>
+              {% for f in fund_usages %}
+              <tr>
+                <td>{{ f.item_name }}</td>
+                <td class="text-right">{{ f.amount|floatformat:2|intcomma }}</td>
+                <td class="text-center">{% if group == "KNI" %}
+                  <a href="{% url 'fund_usage_edit' business.hashed obj.id f.id %}" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                  <a href="{% url 'fund_usage_delete' business.hashed obj.id f.id %}" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></a>{% endif %}
+                </td>
+              </tr>
+              {% empty %}<tr><td colspan="3" class="text-center text-muted">La iha dadus.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <strong><i class="fa fa-cubes"></i> Asset Negósiu</strong>
+          {% if group == "KNI" %}<a href="{% url 'business_asset_add' business.hashed obj.id %}" class="btn btn-xs btn-success"><i class="fa fa-plus"></i></a>{% endif %}
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-sm table-striped mb-0">
+            <thead class="thead-light"><tr><th>Asset</th><th class="text-center">Qtd</th><th class="text-right">Valor ($)</th><th>Kondisaun</th><th width="20%"></th></tr></thead>
+            <tbody>
+              {% for a in assets %}
+              <tr>
+                <td>{{ a.asset_name }}</td>
+                <td class="text-center">{{ a.quantity }}</td>
+                <td class="text-right">{{ a.value|floatformat:2|intcomma }}</td>
+                <td>{{ a.get_condition_display }}</td>
+                <td class="text-center">{% if group == "KNI" %}
+                  <a href="{% url 'business_asset_edit' business.hashed obj.id a.id %}" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                  <a href="{% url 'business_asset_delete' business.hashed obj.id a.id %}" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></a>{% endif %}
+                </td>
+              </tr>
+              {% empty %}<tr><td colspan="5" class="text-center text-muted">La iha dadus.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <strong><i class="fa fa-exchange"></i> Fluxu Osan</strong>
+          {% if group == "KNI" %}<a href="{% url 'cashflow_add' business.hashed obj.id %}" class="btn btn-xs btn-success"><i class="fa fa-plus"></i></a>{% endif %}
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-sm table-striped mb-0">
+            <thead class="thead-light"><tr><th>Data</th><th>Tipu</th><th>Deskrisaun</th><th class="text-right">Montante ($)</th><th width="16%"></th></tr></thead>
+            <tbody>
+              {% for c in cashflows %}
+              <tr>
+                <td>{{ c.transaction_date|date:"d/m/Y" }}</td>
+                <td>{{ c.get_transaction_type_display }}</td>
+                <td>{{ c.description }}</td>
+                <td class="text-right">{{ c.amount|floatformat:2|intcomma }}</td>
+                <td class="text-center">{% if group == "KNI" %}
+                  <a href="{% url 'cashflow_edit' business.hashed obj.id c.id %}" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                  <a href="{% url 'cashflow_delete' business.hashed obj.id c.id %}" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></a>{% endif %}
+                </td>
+              </tr>
+              {% empty %}<tr><td colspan="5" class="text-center text-muted">La iha dadus.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <strong><i class="fa fa-book"></i> Livru Kontabilidade</strong>
+          {% if group == "KNI" %}<a href="{% url 'financial_book_add' business.hashed obj.id %}" class="btn btn-xs btn-success"><i class="fa fa-plus"></i></a>{% endif %}
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-sm table-striped mb-0">
+            <thead class="thead-light"><tr><th>Dokumentu</th><th width="30%"></th></tr></thead>
+            <tbody>
+              {% for b in financial_books %}
+              <tr>
+                <td>{{ b.title }}</td>
+                <td class="text-center">
+                  {% if b.file %}<a href="{{ b.file.url }}" target="_blank" rel="noopener" class="btn btn-xs btn-info"><i class="fa fa-download"></i></a>{% endif %}
+                  {% if group == "KNI" %}
+                  <a href="{% url 'financial_book_edit' business.hashed obj.id b.id %}" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                  <a href="{% url 'financial_book_delete' business.hashed obj.id b.id %}" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></a>{% endif %}
+                </td>
+              </tr>
+              {% empty %}<tr><td colspan="2" class="text-center text-muted">La iha dadus.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

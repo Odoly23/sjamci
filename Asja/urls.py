@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.conf.urls import handler404, handler500
 from main.views import logout_view, loginPage
 from decouple import config
 from django.contrib.auth import views as auth_views
@@ -29,7 +28,10 @@ urlpatterns = [
     path(ADMIN_URL, admin.site.urls), 
     path('login/', loginPage, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('', include('website.urls')),
     path('', include('main.urls')),
+    path('', include('seguransa.urls')),
+    path('', include('offline.urls')),
     path('summernote/', include('django_summernote.urls')),
     path('KNI-Home/', include('kni.urls')),
     path('Suave-Home/', include('suave.urls')),
@@ -50,8 +52,6 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view( template_name='auth/password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='auth/password_reset_complete.html'), name='password_reset_complete'),
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -59,5 +59,6 @@ admin.site.site_header = "SISTEMA MANAJEMENTU APOIU MCI - SUPER USER"
 admin.site.site_title = "SISTEMA MANAJEMENTU APOIU MCI - SUPER USER"
 admin.site.index_title = "Portal Super User"
 
+handler403 = 'main.views.error_403'
 handler404 = 'main.views.error_404'
 handler500 = 'main.views.error_500'

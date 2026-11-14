@@ -113,7 +113,7 @@
                          title="Detail">
                         <i class="fa fa-eye"></i>
                       </a>
-                      <a href="{% url 'cashflow-edit' c.id %}" 
+                      <a href="{% url 'cashflow_edit' c.monitoring.business.hashed c.monitoring.id c.id %}" 
                          class="btn btn-warning" 
                          title="Editar">
                         <i class="fa fa-edit"></i>
@@ -139,7 +139,7 @@
                             Ita boot hakarak hamoos transaction ida ne'e?
                           </div>
                           <div class="modal-footer">
-                            <form method="POST" action="{% url 'cashflow-delete' c.id %}">
+                            <form method="POST" action="{% url 'cashflow_delete' c.monitoring.business.hashed c.monitoring.id c.id %}">
                               {% csrf_token %}
                               <button type="submit" class="btn btn-danger btn-sm">Hamoos</button>
                               <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Kansela</button>

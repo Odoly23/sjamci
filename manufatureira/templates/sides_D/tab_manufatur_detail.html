@@ -4,8 +4,17 @@
       <div class="card-header bg-info text-white">
         <strong><i class="fa fa-cogs"></i> {{ manuf.business.name|default:"Manufatur" }}</strong>
         {% if group == 'dnim' %}
-          <a href="{% url 'dn-manuf-edit' manuf.pk %}" class="btn btn-xs btn-warning float-right ml-1">
+          <a href="{% url 'dn-manuf-edit' manuf.hashed %}" class="btn btn-xs btn-warning float-right ml-1" title="Atualiza Manufatur">
             <i class="fa fa-edit"></i>
+          </a>
+          <a href="{% url 'manuf-aktividade-add' manuf.hashed %}" class="btn btn-xs btn-light float-right ml-1" title="Aumenta Atividade">
+            <i class="fa fa-calendar"></i>
+          </a>
+          <a href="{% url 'manuf-membro-add' manuf.hashed %}" class="btn btn-xs btn-light float-right ml-1" title="Dadus Membru">
+            <i class="fa fa-users"></i>
+          </a>
+          <a href="{% url 'manuf-lokal-add' manuf.hashed %}" class="btn btn-xs btn-light float-right ml-1" title="Lokalizasaun">
+            <i class="fa fa-map-marker"></i>
           </a>
         {% endif %}
       </div>
@@ -113,7 +122,7 @@
     <i class="fa fa-exclamation-triangle"></i>
     La iha dadus Manufatur ba benefisiariu ida ne'e.
     {% if group == 'dnim' %}
-      <a href="#" class="btn btn-sm btn-success ml-2">
+      <a href="{% url 'manuf-add-dnim' benef.hashed %}" class="btn btn-sm btn-success ml-2">
         <i class="fa fa-plus"></i> Aumenta Manufatur
       </a>
     {% endif %}

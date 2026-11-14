@@ -16,7 +16,7 @@ from django.utils import timezone
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def avaliasaun(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     context ={
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
@@ -32,7 +32,7 @@ def avaliasaun(request):
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def avalia_list(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benefs = Benefisiariu.objects.prefetch_related('negosiu', 'Pnegosiu').all()
     context ={
         'benefs': benefs,
@@ -45,12 +45,12 @@ def avalia_list(request):
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun/list.html', context)
+    return render(request, 'shared/avaliasaun/list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def avalia_list2(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benefs = Benefisiariu.objects.prefetch_related('negosiu', 'Pnegosiu','negosiu__monitorings','negosiu__baseline',).all()
     context ={
         'benefs': benefs,
@@ -92,13 +92,13 @@ def benef_evaluation_list(request):
             },
         ],
     }
-    return render(request, 'avaliasaun/list2.html', context)
+    return render(request, 'shared/avaliasaun/list2.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KNI','dnim','mpms'])
 @transaction.atomic
 def evaluate_benef(request, hashid):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benef = get_object_or_404(Benefisiariu, hashed=hashid)
     if request.method == 'POST':
         form = BeneficiariuEvaluationForm(request.POST)
@@ -134,7 +134,7 @@ def evaluate_benef(request, hashid):
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 
 
@@ -174,7 +174,7 @@ def monitoring_create(request, hashid):
         ],
     }
 
-    return render(request, 'avaliasaun/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KNI'])
@@ -186,7 +186,7 @@ def baseline_create(request, hashid):
         return redirect('baseline-list')
     if not business.benefisiariu:
         messages.error(request, "Benefisiariu la iha dadus kompletu. Favor kompleta dadus benefisiariu uluk.")
-        return redirect('benefisiariu-update', hashed=business.benefisiariu.hashed)
+        return redirect('baseline-list')
     if request.method == 'POST':
         form = BusinessBaselineForm(request.POST)
         if form.is_valid():
@@ -222,13 +222,13 @@ def baseline_create(request, hashid):
             {'link_name': 'add-baseline', 'link_text': f'Baseline: {business.name}', 'link_param': business.hashed}
         ],
     }
-    return render(request, 'avaliasaun/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def baseline_list(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     baselines = BusinessBaseline.objects.select_related('business', 'business__benefisiariu')
     context = {
         'group':group,
@@ -242,7 +242,7 @@ def baseline_list(request):
             {'link_name': 'baseline-list', 'link_text': 'Lista Avaliasaun Antes Apoiu'}
         ],
     }
-    return render(request, 'avaliasaun/baseline_list.html', context)
+    return render(request, 'shared/avaliasaun/baseline_list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['KNI'])
@@ -270,4 +270,4 @@ def monitoring_list(request):
         ],
     }
 
-    return render(request, 'avaliasaun/monitoring_list.html', context)
+    return render(request, 'shared/avaliasaun/monitoring_list.html', context)

@@ -41,6 +41,15 @@
         </li>
 
         <!-- LOGOUT -->
+        <li class="nav-item ml-4 mr-2">
+          {% include "main/_lang_switch.html" %}
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'two-factor' %}" class="nav-link" title="Verifikasaun Pasu-2"><i class="fa fa-shield"></i> 2FA</a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'password-change' %}" class="nav-link" title="Troka Password"><i class="fa fa-key"></i> Password</a>
+        </li>
         <li class="nav-item">
           <a href="{% url 'logout' %}" class="nav-link logout">
             Logout <i class="fa fa-sign-out"></i>

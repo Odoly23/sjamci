@@ -13,13 +13,13 @@ KS_PROGRAM = "KREDITU SUAVE"
 
 class APIKPIKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         total_benefisiariu = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").count()
-        total_business = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").count()
-        total_budget = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="KREDITU SUAVE").aggregate(total=Sum('amount'))['total'] or 0
+        total_business = Business.objects.filter(benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM).distinct().count()
+        total_budget = Program.objects.filter(program_type__name=KS_PROGRAM).aggregate(total=Sum('amount'))['total'] or 0
         total_employee = Employee.objects.filter(business__benefisiariu__Pnegosiu__program_type__name="KREDITU SUAVE").aggregate(total=Sum('total'))['total'] or 0
         total_team = EkipaMember.objects.filter(benefisiariu__Pnegosiu__program_type__name="KREDITU SUAVE").count()
         total_revenue = FinancialAssessment.objects.filter(business__benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM).aggregate(total=Sum('annual_revenue'))['total'] or 0
@@ -41,8 +41,8 @@ class APIKPIKS(APIView):
 
 class APISexuKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -71,8 +71,8 @@ class APISexuKS(APIView):
 
 class APIMunicipiuKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -103,8 +103,8 @@ class APIMunicipiuKS(APIView):
 
 class APISectorKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -135,10 +135,7 @@ class APISectorKS(APIView):
 
 class APITeamKS(APIView):
 
-    authentication_classes = [
-        SessionAuthentication,
-        BasicAuthentication
-    ]
+    authentication_classes = [SessionAuthentication]
 
     permission_classes = [
         IsAuthenticated
@@ -179,8 +176,8 @@ class APITeamKS(APIView):
 
 class APIEmployeeKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -216,8 +213,8 @@ class APIEmployeeKS(APIView):
 
 class APIStatusProgramaKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -248,8 +245,8 @@ class APIStatusProgramaKS(APIView):
 
 class APIBudgetMunicipiuKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -282,8 +279,8 @@ class APIBudgetMunicipiuKS(APIView):
 
 class APICreditRepaymentKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -321,8 +318,8 @@ class APICreditRepaymentKS(APIView):
 
 class APIRiskKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -358,8 +355,8 @@ class APIRiskKS(APIView):
 
 class APIRevenueGrowthKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -390,8 +387,8 @@ class APIRevenueGrowthKS(APIView):
 
 class APIRevenueSectorKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -427,8 +424,8 @@ class APIRevenueSectorKS(APIView):
 
 class APITopMunicipalityKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -474,8 +471,8 @@ class APITopMunicipalityKS(APIView):
 
 class APITopSectorKS(APIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
 
@@ -513,45 +510,3 @@ class APITopSectorKS(APIView):
             'label': label,
             'obj': obj
         })
-
-
-# =========================================================
-# 14. GIS MAP
-# =========================================================
-
-class APIGISKS(APIView):
-
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [AllowAny]
-
-    def get(self, request, format=None):
-
-        data = []
-
-        locations = LocBussiness.objects.filter(
-            benefisiariu__Pnegosiu__program_type__name=KS_PROGRAM
-        ).exclude(
-            latitude__isnull=True
-        ).exclude(
-            longitude__isnull=True
-        )
-
-        for loc in locations:
-
-            data.append({
-
-                'name':
-                    str(loc.benefisiariu),
-
-                'municipality':
-                    str(loc.municipality),
-
-                'latitude':
-                    loc.latitude,
-
-                'longitude':
-                    loc.longitude,
-
-            })
-
-        return Response(data)

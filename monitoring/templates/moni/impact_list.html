@@ -1,0 +1,65 @@
+{% extends "main/layout.html" %}
+{% load humanize %}
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="card shadow-sm border-0">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div>
+        <i class="fa fa-line-chart"></i>
+        <strong>{{ title|upper }}</strong>
+        <span class="text-muted ml-2">{{ business.name|default:business.idea }}</span>
+      </div>
+      <div>
+        <span class="badge badge-primary mr-2">TOTAL : {{ monitorings|length }}</span>
+        {% if group == "KNI" %}
+        <a href="{% url 'business_impact_add' business.hashed %}" class="btn btn-sm btn-success">
+          <i class="fa fa-plus"></i> Aumenta Monitorizasaun
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped table-sm" id="example1" width="100%">
+          <thead class="thead-light">
+            <tr>
+              <th width="5%">#</th>
+              <th>Data</th>
+              <th>Estadu</th>
+              <th class="text-right">Fundus Simu ($)</th>
+              <th class="text-right">Fundus Uza ($)</th>
+              <th class="text-right">Saldo ($)</th>
+              <th class="text-right">Lukru Fulan ($)</th>
+              <th class="text-center">Trabalhador</th>
+              <th class="text-center" width="14%">Asaun</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in monitorings %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ m.monitoring_date|date:"d/m/Y" }}</td>
+              <td>{{ m.status|default:"-" }}</td>
+              <td class="text-right">{{ m.fund_received|floatformat:2|intcomma }}</td>
+              <td class="text-right">{{ m.fund_used|floatformat:2|intcomma }}</td>
+              <td class="text-right">{{ m.fund_balance|floatformat:2|intcomma }}</td>
+              <td class="text-right">{{ m.monthly_profit|floatformat:2|intcomma }}</td>
+              <td class="text-center">{{ m.total_employee }}</td>
+              <td class="text-center">
+                <a href="{% url 'business_impact_detail' business.hashed m.id %}" class="btn btn-info btn-sm" title="Detallu"><i class="fa fa-eye"></i></a>
+                {% if group == "KNI" %}
+                <a href="{% url 'business_impact_edit' business.hashed m.id %}" class="btn btn-warning btn-sm" title="Edita"><i class="fa fa-edit"></i></a>
+                <a href="{% url 'business_impact_delete' business.hashed m.id %}" class="btn btn-danger btn-sm" title="Hamoos"><i class="fa fa-trash"></i></a>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="9" class="text-center text-muted py-4">Seidauk iha dadus monitorizasaun.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -5,7 +5,6 @@ from django.db import transaction
 from config.decorators import allowed_users
 from django.db.models import Count, Max, Q, Prefetch, Exists, OuterRef, Sum
 from django.contrib import messages
-from django.db import transaction
 from django.utils import timezone
 from django.http import JsonResponse
 from custom.models import Minister, Diresaun, Position, Municipality, AdministrativePost, Village, \
@@ -22,7 +21,7 @@ from monitoring.models import   BusinessImpactMonitoring, FundUsage,  BusinessAs
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def pedidu_list(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     status = request.GET.get('status')
     pedidus = Pedidu.objects.all().select_related('benefisiariu')
     if status:
@@ -37,8 +36,9 @@ def pedidu_list(request):
     return render(request, 'infos/pedidu_list.html', context)
 
 @login_required
+@allowed_users(allowed_roles=['KNI'])
 def pedidu_detail(request, hashed):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     pedidu = get_object_or_404(Pedidu, hashed=hashed)
     context =  {
         'pedidu': pedidu,
@@ -51,7 +51,7 @@ def pedidu_detail(request, hashed):
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def pedidu_update_status(request, pk):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     pedidu = get_object_or_404(Pedidu, id=pk)
     if request.method == 'POST':
         status = request.POST.get('status')
@@ -73,7 +73,7 @@ def pedidu_update_status(request, pk):
 @login_required
 @allowed_users(allowed_roles=['KNI'])
 def cashflow_list(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     status = request.GET.get('type')
     qs = CashFlow.objects.select_related('monitoring', 'monitoring__business')
     if status:
@@ -88,8 +88,9 @@ def cashflow_list(request):
     return render(request, 'infos/cashflow_list.html', context)
 
 @login_required
+@allowed_users(allowed_roles=['KNI'])
 def cashflow_detail(request, pk):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     obj = get_object_or_404(CashFlow, id=pk)
     context = {
         'cashflow': obj,
@@ -112,8 +113,9 @@ def financial_book_list(request):
     return render(request, 'infos/financial_book_list.html', context)
 
 @login_required
+@allowed_users(allowed_roles=['KNI'])
 def financial_book_detail(request, pk):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     obj = get_object_or_404(FinancialBook, id=pk)
     context = {
         'book': obj,

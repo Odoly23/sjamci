@@ -1,0 +1,9 @@
+{# Bandeira 4 atu troka lian; fila ba pajina atuál #}
+<span class="lang-switch" role="group" aria-label="Lian / Idioma / Language / Bahasa" style="display:inline-flex;gap:4px;align-items:center;">
+  {% for code, name, flag in ui_languages %}
+  <a href="{% url 'set-lang' code %}?next={{ request.get_full_path|urlencode }}" title="{{ name }}" lang="{{ code }}"
+     style="display:inline-flex;padding:2px;border-radius:3px;line-height:0;border:2px solid {% if code == ui_lang %}#ffd35c{% else %}transparent{% endif %};"{% if code == ui_lang %} aria-current="true"{% endif %}>
+    {% include "website/_flag.html" with flag=flag %}<span class="sr-only">{{ name }}</span>
+  </a>
+  {% endfor %}
+</span>

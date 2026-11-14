@@ -63,7 +63,7 @@ def Employee_Edit_ks(request, hashid, pk):
         form = EmployeeKSForm(instance=obj)
         form.fields['business'].queryset = businesses
  
-    return render(request, 'Dash/Forms/form.html',
+    return render(request, 'shared/form.html',
         _ctx(hashid, benef, form, 'Edit Trabalhadores', f'Edit Trabalhadores — {obj.business.name}'))
  
  
@@ -89,7 +89,7 @@ def Finance_Edit_ks(request, hashid, pk):
         form = FinanceKSForm(instance=obj)
         form.fields['business'].queryset = businesses
  
-    return render(request, 'Dash/Forms/form.html',
+    return render(request, 'shared/form.html',
         _ctx(hashid, benef, form, 'Edit Finansiamento', f'Edit Finansiamento — {obj.business.name}'))
  
  
@@ -113,7 +113,7 @@ def EkipaMember_Edit(request, hashid, pk):
     else:
         form = EkipaMemberForm(instance=obj)
  
-    return render(request, 'Dash/Forms/form.html',
+    return render(request, 'shared/form.html',
         _ctx(hashid, benef, form, 'Edit Ekipa Membru', f'Edit Ekipa Membru — {obj.name}'))
  
  
@@ -130,7 +130,7 @@ def EkipaMember_Delete(request, hashid, pk):
         messages.success(request, f"Ekipa Membru '{name}' hamoos ho sukses.")
         return _back(hashid)
  
-    return render(request, 'Dash/Forms/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj, 'emp': benef, 'hashid': hashid,
         'title': 'Hamoos Ekipa Membru',
         'legend': f'Konfirma Hamoos: {obj.name}',
@@ -159,7 +159,7 @@ def ProductService_Edit(request, hashid, pk):
         form = ProductServiceForm(instance=obj)
         form.fields['business'].queryset = businesses
  
-    return render(request, 'Dash/Forms/form.html',
+    return render(request, 'shared/form.html',
         _ctx(hashid, benef, form, 'Edit Produto/Servisu', f'Edit Produto — {obj.name}'))
  
  
@@ -177,7 +177,7 @@ def ProductService_Delete(request, hashid, pk):
         messages.success(request, f"Produto '{name}' hamoos ho sukses.")
         return _back(hashid)
  
-    return render(request, 'Dash/Forms/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj, 'emp': benef, 'hashid': hashid,
         'title': 'Hamoos Produto/Servisu',
         'legend': f'Konfirma Hamoos: {obj.name}',
@@ -206,7 +206,7 @@ def MainCustomer_Edit(request, hashid, pk):
         form = MainCustomerForm(instance=obj)
         form.fields['business'].queryset = businesses
  
-    return render(request, 'Dash/Forms/form.html',
+    return render(request, 'shared/form.html',
         _ctx(hashid, benef, form, 'Edit Kliente Prinsipal', f'Edit Kliente — {obj.name}'))
  
  
@@ -224,7 +224,7 @@ def MainCustomer_Delete(request, hashid, pk):
         messages.success(request, f"Kliente '{name}' hamoos ho sukses.")
         return _back(hashid)
  
-    return render(request, 'Dash/Forms/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj, 'emp': benef, 'hashid': hashid,
         'title': 'Hamoos Kliente Prinsipal',
         'legend': f'Konfirma Hamoos: {obj.name}',
@@ -253,7 +253,7 @@ def Competitor_Edit(request, hashid, pk):
         form = CompetitorForm(instance=obj)
         form.fields['business'].queryset = businesses
  
-    return render(request, 'Dash/Forms/form.html',
+    return render(request, 'shared/form.html',
         _ctx(hashid, benef, form, 'Edit Kompetitor', f'Edit Kompetitor — {obj.name}'))
  
  
@@ -271,7 +271,7 @@ def Competitor_Delete(request, hashid, pk):
         messages.success(request, f"Kompetitor '{name}' hamoos ho sukses.")
         return _back(hashid)
  
-    return render(request, 'Dash/Forms/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj, 'emp': benef, 'hashid': hashid,
         'title': 'Hamoos Kompetitor',
         'legend': f'Konfirma Hamoos: {obj.name}',
@@ -300,7 +300,7 @@ def MarketAssessment_Edit(request, hashid, pk):
         form = MarketAssessmentForm(instance=obj)
         form.fields['business'].queryset = businesses
  
-    return render(request, 'Dash/Forms/form.html',
+    return render(request, 'shared/form.html',
         _ctx(hashid, benef, form, 'Edit Avaliasaun Merkadu', f'Edit Avaliasaun Merkadu — {obj.business}'))
  
  
@@ -326,7 +326,7 @@ def FinancialAssessment_Edit(request, hashid, pk):
         form = FinancialAssessmentForm(instance=obj)
         form.fields['business'].queryset = businesses
  
-    return render(request, 'Dash/Forms/form.html',
+    return render(request, 'shared/form.html',
         _ctx(hashid, benef, form, 'Edit Avaliasaun Finanseiru', f'Edit Avaliasaun Finanseiru — {obj.business}'))
  
  
@@ -353,7 +353,7 @@ def FixedAsset_Edit(request, hashid, pk):
         form = FixedAssetForm(instance=obj)
         form.fields['financial'].queryset = financials
  
-    return render(request, 'Dash/Forms/form.html',
+    return render(request, 'shared/form.html',
         _ctx(hashid, benef, form, 'Edit Asset Fixu', f'Edit Asset Fixu — {obj.name}'))
  
  
@@ -372,7 +372,7 @@ def FixedAsset_Delete(request, hashid, pk):
         messages.success(request, f"Asset Fixu '{name}' hamoos ho sukses.")
         return _back(hashid)
  
-    return render(request, 'Dash/Forms/confirm_delete.html', {
+    return render(request, 'shared/confirm_delete.html', {
         'obj': obj, 'emp': benef, 'hashid': hashid,
         'title': 'Hamoos Asset Fixu',
         'legend': f'Konfirma Hamoos: {obj.name}',
@@ -401,7 +401,7 @@ def CreditInfo_Edit(request, hashid, pk):
         form = CreditInfoForm(instance=obj)
         form.fields['business'].queryset = businesses
  
-    return render(request, 'Dash/Forms/form.html',
+    return render(request, 'shared/form.html',
         _ctx(hashid, benef, form, 'Edit Informasaun Kreditu', f'Edit Kreditu — {obj.business}'))
  
  

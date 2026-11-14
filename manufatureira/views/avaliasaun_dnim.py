@@ -15,7 +15,7 @@ from config.decorators import allowed_users
 @login_required
 @allowed_users(allowed_roles=['dnim'])
 def avaliasaun_dnim(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     context ={
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
@@ -31,7 +31,7 @@ def avaliasaun_dnim(request):
 @login_required
 @allowed_users(allowed_roles=['dnim'])
 def dnimvalia_list(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benefs = Benefisiariu.objects.filter(Pnegosiu__program_type__name="MANUFATUREIRA").all()
     context ={
         'benefs': benefs,
@@ -44,30 +44,13 @@ def dnimvalia_list(request):
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun_dnim/list.html', context)
+    return render(request, 'shared/avaliasaun/list.html', context)
 
-@login_required
-@allowed_users(allowed_roles=['dnim'])
-def avalia_list2(request):
-    group = request.user.groups.all()[0].name
-    benefs = Benefisiariu.objects.prefetch_related('negosiu', 'Pnegosiu','negosiu__monitorings','negosiu__baseline',).all()
-    context ={
-        'benefs': benefs,
-        'group':group,
-        'title': 'Avaliasaun Benefisiariu Geral',
-        'legend': 'Avaliasaun Geral KNI',
-        'link_antes': [
-            {'link_name': 'dash-man', 'link_text': 'Painel Manufatureira'},
-            {'link_name': 'geral_man', 'link_text': 'Lista Benefisiariu'},
-            {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
-        ],
-    }
-    return render(request, 'avaliasaun_dnim/listm.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])
 def dnim_evaluation_list(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     filter_status = request.GET.get('status')
     benefs = Benefisiariu.objects.select_related('status').prefetch_related('evaluations').filter(Pnegosiu__program_type__name="MANUFATUREIRA").all()
     if filter_status:
@@ -93,7 +76,7 @@ def dnim_evaluation_list(request):
             },
         ],
     }
-    return render(request, 'avaliasaun_dnim/list2.html', context)
+    return render(request, 'shared/avaliasaun/list2.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])
@@ -128,7 +111,7 @@ def evaluate_benef(request, hashid):
             {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'avaliasaun_dnim/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 
 
@@ -161,7 +144,7 @@ def monitoring_create(request, hashid):
         'legend': 'Depois Apoiu Monitoring'
     }
 
-    return render(request, 'avaliasaun_dnim/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])
@@ -191,7 +174,7 @@ def baseline_create(request, hashid):
         'title': 'Input Baseline',
         'legend': 'Baseline Antes Apoiu',
     }
-    return render(request, 'avaliasaun_dnim/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['dnim'])
@@ -210,7 +193,7 @@ def baseline_list(request):
 
     return render(
         request,
-        'avaliasaun_dnim/baseline_list.html',
+        'shared/avaliasaun/baseline_list.html',
         context
     )
 
@@ -250,6 +233,6 @@ def monitoring_list(request):
 
     return render(
         request,
-        'avaliasaun_dnim/monitoring_list.html',
+        'shared/avaliasaun/monitoring_list.html',
         context
     )

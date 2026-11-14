@@ -9,7 +9,7 @@
   <tr><th>Tipo Atividade</th>   <td>: {{ empresa.tipo_atividade }}</td></tr>
   <tr><th>Tinan Hari</th>       <td>: {{ empresa.tinan_hari }}</td></tr>
   <tr><th>#</th>                <td>:  {% if group == 'mpms' %}
-      <a href="{% url 'mpms-empresa-edit' empresa.hashed %}"
+      <a href="{% if empresa %}{% url 'mpms-empresa-edit' empresa.hashed %}{% else %}{% url 'mpms-business-add' benef.hashed %}{% endif %}"
          class="btn btn-sm btn-warning ">
           <i class="fa fa-edit"></i>
       </a>
@@ -22,7 +22,7 @@
     <th colspan="4">
       EMPREGADOR MPMS
       {% if group == 'mpms' %}
-        <a href="{% url 'mpms-empregador-add' empresa.hashed %}" class="btn btn-xs btn-{% if empregador %}warning{% else %}success{% endif %} ml-1">
+        <a href="{% if empresa %}{% url 'mpms-empregador-add' empresa.hashed %}{% else %}{% url 'mpms-business-add' benef.hashed %}{% endif %}" class="btn btn-xs btn-{% if empregador %}warning{% else %}success{% endif %} ml-1">
           <i class="fa fa-{% if empregador %}edit{% else %}plus{% endif %}"></i>
         </a>
       {% endif %}

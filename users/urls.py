@@ -22,5 +22,7 @@ urlpatterns = [
     path('emp/<str:pk>/division/',  views.empdivision_update,   name='empdivision-update'),
     path('emp/<int:pk>/upload-photo/', views.upload_photo, name='emp-upload-photo'),
     path('user/reset-password/<int:pk>/', views.reset_password, name='reset-password'),
+    path('emp/<str:pk>/delete/', views.emp_delete, name='emp-delete'),
+    path('audit/login/', views.audit_login_list, name='audit-login-list'),
 
 ]

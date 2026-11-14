@@ -48,7 +48,6 @@ urlpatterns = [
 
     # BASELINE
     path('Adisiona-Baseline/<str:hashid>/.html',  views.baseline_create,   name='add-baseline'),
-    path('Adisiona-Avalisaun/<str:hashid>/.html', views.monitoring_create, name='add-monits'),
     # LIST BASELINE
     path('Lista-Baseline/', views.baseline_list, name='baseline-list'),
     path('Lista-Monitoring/', views.monitoring_list, name='monitoring-list'),

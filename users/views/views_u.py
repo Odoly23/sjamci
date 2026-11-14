@@ -5,6 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from users.models import Emp, EmpDivision, EmpPosition, EmpUser,  EmpPhoto, AuditLogin
 from django.http import JsonResponse
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from seguransa.utils import password_was_changed, log_security_event
 
 @login_required
 def UserProfile(request):
@@ -69,8 +73,16 @@ def manage_account_ajax(request):
         user.email = request.POST.get('email')
         password = request.POST.get('password')
         if password:
+            try:
+                validate_password(password, user)
+            except ValidationError as exc:
+                return JsonResponse({'status': 'error', 'message': ' '.join(exc.messages)})
             user.set_password(password)
         user.save()
+        if password:
+            update_session_auth_hash(request, user)
+            password_was_changed(user)
+            log_security_event(request, 'Troka password', user)
         return JsonResponse({
             'status': 'success'
         })

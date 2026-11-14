@@ -1,7 +1,7 @@
 {% extends "main/layout.html" %}
-{% load static %}
+{% load static ui_i18n %}
 
-{% block content %}
+{% block content %}{% uitranslate %}
 <section class="content mb-5">
   <div class="container-fluid">
     <div class="row justify-content-center">
@@ -62,4 +62,4 @@
     </div>
   </div>
 </section>
-{% endblock content %}
+{% enduitranslate %}{% endblock content %}

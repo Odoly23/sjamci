@@ -10,6 +10,12 @@ from config.decorators import allowed_users
 from users.models import Emp, EmpPosition, EmpDivision, EmpUser, EmpPhoto
 from users.forms import EmpForm, EmpPositionForm, EmpDivisionForm
 from users.utils import criar_ou_atualiza_user
+from users.passwords import temporary_password
+from seguransa.utils import require_password_change, log_security_event
+import logging
+from django.urls import reverse
+
+security_log = logging.getLogger('sjamci.security')
 
 @login_required
 @allowed_users(allowed_roles=['admin'])
@@ -26,6 +32,7 @@ def PList(request):
     return render(request, 'users/list.html', context)
 
 @login_required
+@allowed_users(allowed_roles=['admin'])
 def emp_detail(request, pk):
     emp = get_object_or_404(Emp.objects.select_related('created_by'),pk=pk)
     position = emp.positions.filter(is_active=True).first()
@@ -99,7 +106,8 @@ def emp_delete(request, pk):
         'legend': 'Halakon Funcionariu',
         'emp': emp,
     }
-    return render(request, 'users/emp_confirm_delete.html', context)
+    context.update(title='Halakon Funcionariu', obj=emp, cancel_url=reverse('emp-detail', args=[emp.pk]))
+    return render(request, 'shared/confirm_delete.html', context)
 
 
 @login_required
@@ -114,6 +122,8 @@ def empposition_update(request, pk):
         position_obj.employee = emp
         position_obj.save()
         user, group_name = criar_ou_atualiza_user(emp)
+        if getattr(user, 'temp_password', None):
+            messages.info(request, f"Konta foun: {user.username} — Password temporáriu: {user.temp_password} (hatudu dala ida de'it)")
         messages.success(request, f"Pozisaun atualiza. User: {user.username} Group: {group_name}")
         return redirect('emp-detail', pk=emp.pk)
     else:
@@ -138,6 +148,8 @@ def empdivision_update(request, pk):
         obj.employee = emp
         obj.save()
         user, group_name = criar_ou_atualiza_user(emp)
+        if getattr(user, 'temp_password', None):
+            messages.info(request, f"Konta foun: {user.username} — Password temporáriu: {user.temp_password} (hatudu dala ida de'it)")
         messages.success(request, f"Divizaun atualiza. Group: {group_name}")
         messages.success(request, 'Divizaun atualiza ho susesu!')
         return redirect('emp-detail', pk=emp.pk)
@@ -150,6 +162,7 @@ def empdivision_update(request, pk):
     return render(request, 'users/form.html', context)
 
 @login_required
+@allowed_users(allowed_roles=['admin'])
 @require_POST
 def upload_photo(request, pk):
     emp = get_object_or_404(Emp, pk=pk)
@@ -165,7 +178,7 @@ def upload_photo(request, pk):
 @login_required
 @allowed_users(allowed_roles=['admin'])
 def audit_login_list(request):
-    from.models import AuditLogin
+    from users.models import AuditLogin
     logs = AuditLogin.objects.select_related('user').all().order_by('-login_time')
     context = {
         'legend': 'Audit Login',
@@ -177,10 +190,14 @@ def audit_login_list(request):
 
 @login_required
 @allowed_users(allowed_roles=['admin'])
+@require_POST
 def reset_password(request, pk):
     empuser = get_object_or_404(EmpUser, pk=pk)
-    default_password = "MCI@#2026"
-    empuser.user.set_password(default_password)
+    new_password = temporary_password()
+    empuser.user.set_password(new_password)
     empuser.user.save()
-    messages.success(request,f'Password {empuser.user.username} Sesuso Altera ona.')
+    require_password_change(empuser.user)
+    log_security_event(request, 'Reset password', empuser.user)
+    security_log.info('password reset: target=%s by=%s', empuser.user.username, request.user.username)
+    messages.success(request, f"Password {empuser.user.username} reset ona. Password temporáriu: {new_password} (hatudu dala ida de'it)")
     return redirect('u-list')

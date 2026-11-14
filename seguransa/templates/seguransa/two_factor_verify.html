@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} — Sistema MCI</title>
+  <style>
+    body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f4f6f9;color:#2c3e50;display:flex;min-height:100vh;align-items:center;justify-content:center}
+    .box{background:#fff;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.08);padding:40px;max-width:380px;width:100%;text-align:center;margin:16px;box-sizing:border-box}
+    h1{font-size:20px;margin:0 0 8px}
+    p{color:#6c757d;line-height:1.5;margin:0 0 20px}
+    input{width:100%;box-sizing:border-box;font-size:28px;letter-spacing:8px;text-align:center;padding:10px;border:1px solid #ced4da;border-radius:6px}
+    button{margin-top:16px;width:100%;background:#1f3864;color:#fff;border:0;padding:12px;border-radius:6px;font-size:16px;cursor:pointer}
+    .msg{background:#fdecea;color:#b71c1c;border-radius:6px;padding:10px;margin-bottom:16px;font-size:14px}
+    a{display:inline-block;margin-top:16px;color:#1f3864;font-size:14px}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Verifikasaun Pasu-2</h1>
+    <p>Hatama kódigu dijitu 6 husi ita-boot nia aplikasaun autentikadór.</p>
+    {% for msg in messages %}<div class="msg">{{ msg }}</div>{% endfor %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="text" name="code" inputmode="numeric" pattern="[0-9 ]*" maxlength="7" autocomplete="one-time-code" autofocus required aria-label="Kódigu dijitu 6">
+      <button type="submit">Verifika</button>
+    </form>
+    <a href="{% url 'login' %}">Fila ba login</a>
+  </div>
+</body>
+</html>

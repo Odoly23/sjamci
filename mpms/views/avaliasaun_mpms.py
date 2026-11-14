@@ -14,7 +14,7 @@ from config.decorators import allowed_users
 @login_required
 @allowed_users(allowed_roles=['mpms'])
 def avaliasaun_mpms(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     context ={
         'group':group,
         'title': 'Avaliasaun Benefisiariu Geral',
@@ -30,7 +30,7 @@ def avaliasaun_mpms(request):
 @login_required
 @allowed_users(allowed_roles=['mpms'])
 def avalia_list_mpms(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benefs = Benefisiariu.active_objects.filter(Pnegosiu__program_type__name="MPMS").all()
     context ={
         'benefs': benefs,
@@ -39,16 +39,16 @@ def avalia_list_mpms(request):
         'legend': 'Avaliasaun Geral MPMS',
         'link_antes': [
             {'link_name': 'dash-mpms', 'link_text': 'Painel MPMS'},
-            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
-            {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
+            {'link_name': 'mpms-list', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'ava-mpms-list', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'Avaliasaun_mpms/list.html', context)
+    return render(request, 'shared/avaliasaun/list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
 def avalia_list2_mpms(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     benefs = Benefisiariu.objects.filter(Pnegosiu__program_type__name="MPMS").prefetch_related('negosiu', 'Pnegosiu','negosiu__monitorings','negosiu__baseline',).all()
     context ={
         'benefs': benefs,
@@ -57,8 +57,8 @@ def avalia_list2_mpms(request):
         'legend': 'Avaliasaun Geral MPMS',
         'link_antes': [
             {'link_name': 'dash-mpms', 'link_text': 'Painel MPMS'},
-            {'link_name': 'geral-kni', 'link_text': 'Lista Benefisiariu'},
-            {'link_name': 'list-ava', 'link_text':'Lista avaliasaun Benefisiariu'}
+            {'link_name': 'mpms-list', 'link_text': 'Lista Benefisiariu'},
+            {'link_name': 'ava-mpms-list', 'link_text':'Lista avaliasaun Benefisiariu'}
         ],
     }
     return render(request, 'Avaliasaun_mpms/listm.html', context)
@@ -90,21 +90,21 @@ def benef_evaluation_list(request):
             },
         ],
     }
-    return render(request, 'Avaliasaun_mpms/list2.html', context)
+    return render(request, 'shared/avaliasaun/list2.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['Employee', 'mpms'])
 @transaction.atomic
 def monitoring_create_mpms(request, hashid):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     business = get_object_or_404(Business, hashed=hashid)
     if not BusinessBaseline.objects.filter(business=business).exists():
         messages.warning(request, "Presiza halo Avaliasaun Antes.")
-        return redirect('avalia-list2-mpms')
+        return redirect('ava-mpms-list2')
     tinan = Year.active_objects.filter(is_active=True).first()
     if not tinan:
         messages.error(request, "Tinan ativu la ejiste! Favor ativa tinan ida iha admin antes.")
-        return redirect('avalia-list2-mpms')
+        return redirect('ava-mpms-list2')
     if request.method == 'POST':
         form = BusinessMonitoringForm(request.POST, request.FILES)
         if form.is_valid():
@@ -116,7 +116,7 @@ def monitoring_create_mpms(request, hashid):
             obj.year = tinan
             obj.save()            
             messages.success(request, "Avaliasaun Depois Susesu Hein Konfirmasaun")
-            return redirect('avalia-list2-mpms')
+            return redirect('ava-mpms-list2')
     else:
         form = BusinessMonitoringForm()
         
@@ -132,18 +132,18 @@ def monitoring_create_mpms(request, hashid):
             {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'Avaliasaun_mpms/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
 @transaction.atomic
 def baseline_create_mpms(request, hashid):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     business = get_object_or_404(Business, hashed=hashid)
     if BusinessBaseline.objects.filter(business=business).exists():
         messages.warning(request, "Baseline ba negósiu ida ne'e iha ona.")
-        return redirect('avalia-list2-mpms')        
+        return redirect('ava-mpms-list2')        
     if request.method == 'POST':
         form = BusinessBaselineForm(request.POST)
         if form.is_valid():
@@ -153,7 +153,7 @@ def baseline_create_mpms(request, hashid):
                 obj.created_by = request.user
             obj.save()            
             messages.success(request, "Avaliasaun Antes Susesu.")
-            return redirect('avalia-list2-mpms')
+            return redirect('ava-mpms-list2')
     else:
         form = BusinessBaselineForm()
     context = {
@@ -168,12 +168,12 @@ def baseline_create_mpms(request, hashid):
             {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'Avaliasaun_mpms/forms.html', context)
+    return render(request, 'shared/avaliasaun/forms.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
 def baseline_list_mpms(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     baselines = BusinessBaseline.objects.filter(business__benefisiariu__Pnegosiu__program_type__name="MPMS").select_related('business', 'business__benefisiariu').distinct()
     context = {
         'baselines': baselines,
@@ -186,12 +186,12 @@ def baseline_list_mpms(request):
             {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'Avaliasaun_mpms/baseline_list.html', context)
+    return render(request, 'shared/avaliasaun/baseline_list.html', context)
 
 @login_required
 @allowed_users(allowed_roles=['mpms'])
 def monitoring_list_mpms(request):
-    group = request.user.groups.all()[0].name
+    group = getattr(request.user.groups.first(), 'name', None)
     monitorings = BusinessMonitoring.objects.filter(business__benefisiariu__Pnegosiu__program_type__name="MPMS").select_related('business', 'business__benefisiariu').distinct()
     pending = monitorings.filter(verification_status='Pending').count()
     verified = monitorings.filter(verification_status='Verified').count()
@@ -214,4 +214,4 @@ def monitoring_list_mpms(request):
             {'link_name': 'ava-mpms', 'link_text':'Avaliasaun Benefisiariu'}
         ],
     }
-    return render(request, 'Avaliasaun_mpms/monitoring_list.html', context)
+    return render(request, 'shared/avaliasaun/monitoring_list.html', context)

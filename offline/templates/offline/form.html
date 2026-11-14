@@ -1,0 +1,52 @@
+{% load static %}<!DOCTYPE html>
+<html lang="tet">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1f3864">
+  <title>Rejistu {{ label }} — SJAMCI Offline</title>
+  <link rel="manifest" href="{% url 'pwa-manifest' %}">
+  <link rel="icon" href="{% static 'offline/icon-192.png' %}">
+  <link rel="stylesheet" href="{% static 'offline/app.css' %}">
+</head>
+<body>
+  <header class="bar">
+    <h1>Rejistu Benefisiáriu {{ label }}</h1>
+    <span id="net" class="net" role="status"></span>
+  </header>
+  <main>
+    <div class="notice info">Kampu ho <strong>*</strong> obrigatóriu. Dadus rai uluk iha dispozitivu, depois haruka ba servidór bainhira iha internet.</div>
+    <div id="server-errors" class="notice bad" role="alert" hidden></div>
+
+    <form id="offline-form" data-module="{{ module }}" data-username="{{ username }}" data-hub="{% url 'offline-hub' %}">
+      {% for step in steps %}
+      <fieldset class="card" data-step="{{ step.key }}" style="border:1px solid var(--line)">
+        <h2>{{ forloop.counter }}. {{ step.label }}{% if step.optional %} <small>(opsionál)</small>{% endif %}</h2>
+        <div class="grid">
+          {% for field in step.fields %}
+          <div class="field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="req" aria-hidden="true">*</span>{% endif %}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        {% if step.key == 'location' %}
+        <div class="actions">
+          <button id="gps" class="btn alt small" type="button">Uza pozisaun GPS agora</button>
+          <span id="gps-status" class="muted" role="status" aria-live="polite"></span>
+        </div>
+        {% endif %}
+      </fieldset>
+      {% endfor %}
+      <div class="actions">
+        <button class="btn" type="submit">Rai rejistu</button>
+        <a class="btn alt" href="{% url 'offline-hub' %}">Kansela</a>
+      </div>
+    </form>
+  </main>
+  {{ geo|json_script:"geo-data" }}
+  <script src="{% static 'offline/store.js' %}"></script>
+  <script src="{% static 'offline/form.js' %}"></script>
+</body>
+</html>

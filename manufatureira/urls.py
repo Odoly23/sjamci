@@ -6,7 +6,6 @@ urlpatterns = [
     path('Manufatura/List/<str:year>/<str:mun>/', views.list_man, name='list_man'),
     path('Manufatura/Total/<str:year>/', views.total_man, name='total_man'),
     path('Manufatura/Lista-Jeral/', views.geral_man, name='geral_man'),
-    #path('Manufatura/Detail/<str:hashid>/', views.detail_man, name='detail_man'),
 
     # BENEF
     path('dnim/benef/add/', views.add_benef_dnim, name='add-benef-dnim'),
@@ -24,21 +23,10 @@ urlpatterns = [
     path('dnim/manuf/add/<str:hashid>/', views.Manufatur_Add_dnim, name='manuf-add-dnim'),
     path('dnim/manuf/detail/<str:hashid>/', views.manuf_detail_dnim, name='manuf-detail-dnim'),
 
-    path('manuf-edit/<str:hashid>/',  views.Manufatur_Add_dnim,    name='dn-manuf-edit'),
-    path('manuf-lok/<str:hashid>/',   views.Lokalizasaun_Add_dnim,  name='dn-manuf-lok'),
-    path('membro/<str:hashid>/',      views.Membro_Add_dnim,        name='dn-membro'),
-    path('atividade/<str:hashid>/',   views.Aktividade_Add_dnim,    name='dn-atividade'),
-
-    # LOKAL
-    path('dnim/manuf/lokal/<str:hashid>/', views.Lokalizasaun_Add_dnim, name='manuf-lokal-add'),
-
-    # MEMBRO
-    path('dnim/manuf/membro/<str:hashid>/', views.Membro_Add_dnim, name='manuf-membro-add'),
-
-    # AKTIVIDADE
-    path('dnim/manuf/aktividade/<str:hashid>/', views.Aktividade_Add_dnim, name='manuf-aktividade-add'),
-
-
+    path('dnim/manuf/edit/<str:hashid>/',       views.Manufatur_Edit_dnim,   name='dn-manuf-edit'),
+    path('dnim/manuf/lokal/<str:hashid>/',      views.Lokalizasaun_Add_dnim, name='manuf-lokal-add'),
+    path('dnim/manuf/membro/<str:hashid>/',     views.Membro_Add_dnim,       name='manuf-membro-add'),
+    path('dnim/manuf/aktividade/<str:hashid>/', views.Aktividade_Add_dnim,   name='manuf-aktividade-add'),
 
     #Avaliasaun
     path('Pajina-Avaliasaun/.html/', views.avaliasaun_dnim, name='dmin-ava'),

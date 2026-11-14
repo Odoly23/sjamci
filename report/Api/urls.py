@@ -24,21 +24,20 @@ urlpatterns = [
     # KPI
     # =====================================================
 
-    path('grafiku/kpi/',    views_ks.APIKPIKS.as_view(),  name='api-kpi-ks'),
-    path('grafiku/sexu/', views_ks.APISexuKS.as_view(), name='api-sexu-ks'),
+    path('grafiku/ks/kpi/', views_ks.APIKPIKS.as_view(),  name='api-kpi-ks'),
+    path('grafiku/ks/sexu/', views_ks.APISexuKS.as_view(), name='api-sexu-ks'),
     path('grafiku/team/', views_ks.APITeamKS.as_view(), name='api-team-ks'),
-    path('grafiku/municipiu/', views_ks.APIMunicipiuKS.as_view(), name='api-municipiu-ks'),
-    path('grafiku/sector/', views_ks.APISectorKS.as_view(), name='api-sector-ks'),
+    path('grafiku/ks/municipiu/', views_ks.APIMunicipiuKS.as_view(), name='api-municipiu-ks'),
+    path('grafiku/ks/sector/', views_ks.APISectorKS.as_view(), name='api-sector-ks'),
     path('grafiku/employee/', views_ks.APIEmployeeKS.as_view(), name='api-employee-ks'),
-    path('grafiku/status/', views_ks.APIStatusProgramaKS.as_view(), name='api-status-ks'),
+    path('grafiku/ks/status/', views_ks.APIStatusProgramaKS.as_view(), name='api-status-ks'),
     path('grafiku/budget-municipiu/', views_ks.APIBudgetMunicipiuKS.as_view(), name='api-budget-municipiu-ks'),
-    path('grafiku/credit/', views_ks.APICreditRepaymentKS.as_view(), name='api-credit-ks'),
+    path('grafiku/ks/credit/', views_ks.APICreditRepaymentKS.as_view(), name='api-credit-ks'),
     path('grafiku/risk/', views_ks.APIRiskKS.as_view(), name='api-risk-ks'),
     path('grafiku/growth/', views_ks.APIRevenueGrowthKS.as_view(), name='api-growth-ks'),
     path('grafiku/revenue-sector/', views_ks.APIRevenueSectorKS.as_view(), name='api-revenue-sector-ks'),
     path('grafiku/top-municipality/', views_ks.APITopMunicipalityKS.as_view(), name='api-top-municipality-ks'),
     path('grafiku/top-sector/', views_ks.APITopSectorKS.as_view(), name='api-top-sector-ks'),
-    path('map/benefisiariu/', views_ks.APIGISKS.as_view(), name='api-gis-ks'),
 
 
 
