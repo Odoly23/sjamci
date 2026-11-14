@@ -70,7 +70,9 @@ class Membro(BaseModel):
         return f"{self.manufatur} - {self.members}"
 
     def save(self, *args, **kwargs):
-        self.members = (self.male or 0) + (self.female or 0)
+        # Se iha mane/feto, totál mak soma; se la iha, mantein totál ne'ebé hatama
+        if self.male or self.female or self.members is None:
+            self.members = (self.male or 0) + (self.female or 0)
         is_new = self.pk is None
         super().save(*args, **kwargs)
         if is_new and not self.hashed:

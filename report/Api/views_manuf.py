@@ -285,10 +285,10 @@ class APIStatusOverall(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        total_ativo = Manufatur.objects.filter(status='Ativo').count()
+        total_ativo = Manufatur.objects.filter(status__in=['Ativu', 'Ativo']).count()
         total_parado = Manufatur.objects.filter(status='Parado').count()
         total_outro = Manufatur.objects.exclude(
-            status__in=['Ativo', 'Parado']
+            status__in=['Ativu', 'Ativo', 'Parado']
         ).exclude(status__isnull=True).count()
         total_tidak_diketahui = Manufatur.objects.filter(status__isnull=True).count()
 
@@ -356,7 +356,7 @@ class APIKPIDnim(APIView):
 
     def get(self, request, format=None):
         total_grupu = Manufatur.objects.filter(
-            status='Ativo'
+            status__in=['Ativu', 'Ativo']
         ).count()
 
         total_parado = Manufatur.objects.filter(

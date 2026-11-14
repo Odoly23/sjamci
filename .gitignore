@@ -26,3 +26,8 @@ media/
 
 # Backup
 backups/
+
+# Dadus importasaun (iha dadus pesoál) — labele komete
+import_data/
+*.xlsx
+*.xls

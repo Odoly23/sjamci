@@ -36,9 +36,29 @@ def available_years():
     return sorted({y for y in years if y}, reverse=True)
 
 
+def _groups(year):
+    """Grupu indústria manufatureira (DNIM) ne'ebé simu apoiu."""
+    from manufatureira.models import Manufatur
+    groups = Manufatur.objects.all()
+    if year:
+        groups = groups.filter(atividades__year__year=year)
+    return groups.distinct().count()
+
+
+def _enterprises(year):
+    """Empreza rejistadu iha MPMS (tuir tinan hari, se filtra)."""
+    from mpms.models import mpmsEmpresa
+    enterprises = mpmsEmpresa.objects.all()
+    if year:
+        enterprises = enterprises.filter(tinan_hari=str(year))
+    return enterprises.count()
+
+
 def compute(year=None):
     programs = Program.objects.exclude(benefisiariu=None)
-    benefs = Benefisiariu.objects.all()
+    # Benefisiáriu = ema ne'ebé simu apoiu (iha programa); empreza MPMS ne'ebé
+    # rejista de'it no grupu DNIM konta ketak iha kraik.
+    benefs = Benefisiariu.objects.filter(Pnegosiu__isnull=False)
     if year:
         programs = programs.filter(year__year=year)
         benefs = benefs.filter(Pnegosiu__year__year=year)
@@ -86,6 +106,8 @@ def compute(year=None):
             'businesses': Business.objects.filter(benefisiariu__in=benef_ids).count(),
             'municipalities': len([m for m in municipalities if m['count']]),
             'programs': programs.count(),
+            'groups': _groups(year),
+            'enterprises': _enterprises(year),
         },
         'municipalities': municipalities,
         'unlocated': unlocated,
