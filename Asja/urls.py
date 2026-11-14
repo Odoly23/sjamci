@@ -28,6 +28,7 @@ urlpatterns = [
     path(ADMIN_URL, admin.site.urls), 
     path('login/', loginPage, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('', include('landing.urls')),
     path('', include('main.urls')),
     path('', include('seguransa.urls')),
     path('', include('offline.urls')),

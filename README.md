@@ -24,6 +24,7 @@ benefisiariu/       # Gestão benefisiáriu
 config/             # Utility, decorators, auth utils
 custom/             # Custom configurations/models
 kni/                # Modulu KNI
+landing/            # Pajina públiku (lian 4, mapa, gráfiku)
 main/               # Main application
 manufatureira/      # Gestão manufatureira
 monitoring/         # Monitorizasaun impaktu negósiu
@@ -87,6 +88,21 @@ Ezemplu cron (backup kalan-kalan tuku 02:00):
 ```bash
 0 2 * * * cd /srv/sjamci && venv/bin/python manage.py backup_data --keep 30
 ```
+
+## 🌐 Pajina públiku (landing page)
+
+Pajina inisiál `/` loke ba públiku (utilizador ne'ebé login ona ba direta `/painel/`):
+
+- **Barra leten**: telefone, lokalizasaun no email (karuk); bandeira 4 (loos) atu troka lian — Tetun, Português, English, Bahasa Indonesia.
+- **Navbar no menu**, **slider**, kartaun númeru, programa, informasaun importante, funsionalidade, pergunta no kontaktu.
+- **Mapa Timor-Leste** ho totál benefisiáriu tuir munisípiu, filtru **tinan**, tabela no **gráfiku** (tuir tinan, programa, seksu), no download CSV.
+- Estatístika públiku hatudu de'it númeru agregadu (la iha naran, telefone ka dadus pesoál) no rai iha cache minutu 10.
+
+Konfigurasaun:
+- Kontaktu: `LANDING_PHONE`, `LANDING_EMAIL`, `LANDING_ADDRESS` iha `.env`.
+- Slide no informasaun importante: painel admin → *Pajina Públiku* (ho tradusaun opsionál; se la iha slide, sistema uza slide default).
+- Tradusaun testu fixu: `landing/i18n.py`.
+- Limite munisípiu: geoBoundaries / © OpenStreetMap contributors (ODbL 1.0), iha `landing/static/landing/tl-adm1.geojson`.
 
 ## 📱 Rejistu offline (PWA)
 

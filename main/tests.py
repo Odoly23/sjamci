@@ -20,7 +20,7 @@ from users.passwords import temporary_password
 
 BASE_DIR = Path(settings.BASE_DIR)
 LOCAL_APPS = ['main', 'custom', 'benefisiariu', 'kni', 'suave', 'manufatureira',
-              'notif', 'report', 'users', 'mpms', 'monitoring', 'config', 'seguransa', 'offline']
+              'notif', 'report', 'users', 'mpms', 'monitoring', 'config', 'seguransa', 'offline', 'landing']
 
 
 def _source_files(*suffixes):
@@ -119,7 +119,8 @@ class AccessControlTests(TestCase):
                 yield '/' + route
 
     def test_anonymous_never_gets_data(self):
-        public = {reverse('login'), reverse('healthz'), reverse('pwa-manifest'), reverse('pwa-sw'), reverse('password_reset'), reverse('password_reset_done'),
+        public = {reverse('login'), reverse('healthz'), reverse('pwa-manifest'), reverse('pwa-sw'),
+                  reverse('landing'), reverse('public-stats'), reverse('public-stats-csv'), reverse('password_reset'), reverse('password_reset_done'),
                   reverse('password_reset_complete')}
         leaked = []
         for url in self._routes_without_args():

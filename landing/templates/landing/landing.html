@@ -1,0 +1,219 @@
+{% load static humanize %}<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SJAMCI — {{ t.ministry }}</title>
+  <meta name="description" content="{{ t.slide1_sub }}">
+  <meta property="og:title" content="SJAMCI — {{ t.ministry }}">
+  <meta property="og:description" content="{{ t.slide1_sub }}">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#1f3864">
+  <link rel="icon" href="{% static 'offline/icon-192.png' %}">
+  <link rel="manifest" href="{% url 'pwa-manifest' %}">
+  <link rel="stylesheet" href="{% static 'landing/landing.css' %}">
+</head>
+<body>
+  <a class="skip" href="#main">{{ t.skip }}</a>
+
+  <!-- ── Barra leten: kontaktu (karuk) + lian (loos) ── -->
+  <div class="topbar">
+    <div class="wrap topbar-in">
+      <ul class="contact-list">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg><a href="tel:{{ contact.phone|cut:' ' }}">{{ contact.phone }}</a></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span>{{ contact.address }}</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z"/></svg><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></li>
+      </ul>
+      <nav class="flags" aria-label="{{ t.lang_label }}">
+        {% for code, name, flag in languages %}
+        <a href="{% url 'landing-lang' code %}?next=/" class="flag{% if code == lang %} on{% endif %}" lang="{{ code }}" hreflang="{{ code }}" title="{{ name }}"{% if code == lang %} aria-current="true"{% endif %}>
+          {% include "landing/_flag.html" with flag=flag %}<span class="sr">{{ name }}</span>
+        </a>
+        {% endfor %}
+      </nav>
+    </div>
+  </div>
+
+  <!-- ── Navbar ── -->
+  <header class="nav" id="top">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top">
+        <img src="{% static 'Image/logomci.png' %}" alt="" width="96" height="34">
+        <span><strong>SJAMCI</strong><small>{{ t.ministry }}</small></span>
+      </a>
+      <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="{{ t.menu }}"><span></span><span></span><span></span></button>
+      <nav id="menu" class="menu" aria-label="{{ t.menu }}">
+        <a href="#top">{{ t.nav_home }}</a>
+        <a href="#programa">{{ t.nav_programs }}</a>
+        <a href="#estatistika">{{ t.nav_stats }}</a>
+        <a href="#informasaun">{{ t.nav_info }}</a>
+        <a href="#funsionalidade">{{ t.nav_features }}</a>
+        <a href="#pergunta">{{ t.nav_faq }}</a>
+        <a href="#kontaktu">{{ t.nav_contact }}</a>
+        <a class="btn-login" href="{% url 'login' %}">{{ t.login }}</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ── Slider ── -->
+    <section class="slider" aria-roledescription="carousel" aria-label="{{ t.system_name }}">
+      <div class="slides">
+        {% for slide in slides %}
+        <div class="slide{% if forloop.first %} on{% endif %}" data-tone="{{ forloop.counter0 }}" role="group" aria-roledescription="slide" aria-label="{{ forloop.counter }} / {{ slides|length }}"{% if slide.image %} style="background-image:linear-gradient(90deg,rgba(13,27,52,.88),rgba(13,27,52,.45)),url('{{ slide.image }}')"{% endif %}>
+          <div class="wrap slide-in">
+            <p class="eyebrow">{{ t.system_name }}</p>
+            <h1>{{ slide.title }}</h1>
+            {% if slide.subtitle %}<p class="lead">{{ slide.subtitle }}</p>{% endif %}
+            <div class="cta">
+              <a class="btn primary" href="#estatistika">{{ t.cta_stats }}</a>
+              <a class="btn ghost" href="{% url 'login' %}">{{ t.login }}</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% if slides|length > 1 %}
+      <div class="slider-ui wrap">
+        <button type="button" class="sl-btn" data-dir="-1" aria-label="{{ t.slide_prev }}">&#8249;</button>
+        <div class="dots">{% for slide in slides %}<button type="button" class="dot{% if forloop.first %} on{% endif %}" data-go="{{ forloop.counter0 }}" aria-label="{{ forloop.counter }}"></button>{% endfor %}</div>
+        <button type="button" class="sl-btn" data-dir="1" aria-label="{{ t.slide_next }}">&#8250;</button>
+        <button type="button" class="sl-btn pause" data-pause aria-label="{{ t.slide_pause }}">&#10074;&#10074;</button>
+      </div>
+      {% endif %}
+    </section>
+
+    <!-- ── Kartaun númeru ── -->
+    <section class="kpis wrap" aria-label="{{ t.stats_title }}">
+      <div class="kpi"><span class="num" data-count="{{ totals.beneficiaries }}">{{ totals.beneficiaries|intcomma }}</span><span class="lbl">{{ t.kpi_benef }}</span></div>
+      <div class="kpi"><span class="num" data-count="{{ totals.businesses }}">{{ totals.businesses|intcomma }}</span><span class="lbl">{{ t.kpi_business }}</span></div>
+      <div class="kpi"><span class="num" data-count="{{ totals.municipalities }}">{{ totals.municipalities }}</span><span class="lbl">{{ t.kpi_mun }}</span></div>
+      <div class="kpi"><span class="num" data-count="{{ totals.programs }}">{{ totals.programs|intcomma }}</span><span class="lbl">{{ t.kpi_programs }}</span></div>
+    </section>
+
+    <!-- ── Programa ── -->
+    <section id="programa" class="section wrap">
+      <h2>{{ t.programs_title }}</h2>
+      <p class="section-lead">{{ t.programs_lead }}</p>
+      <div class="cards four">
+        <article class="card"><span class="badge b1">KNI</span><h3>KNI</h3><p>{{ t.prog_kni }}</p></article>
+        <article class="card"><span class="badge b2">KS</span><h3>{{ t.prog_ks_name }}</h3><p>{{ t.prog_ks }}</p></article>
+        <article class="card"><span class="badge b3">DNIM</span><h3>{{ t.prog_dnim_name }}</h3><p>{{ t.prog_dnim }}</p></article>
+        <article class="card"><span class="badge b4">MPMS</span><h3>MPMS</h3><p>{{ t.prog_mpms }}</p></article>
+      </div>
+    </section>
+
+    <!-- ── Estatístika: mapa + gráfiku ── -->
+    <section id="estatistika" class="section alt">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>{{ t.stats_title }}</h2>
+            <p class="section-lead">{{ t.stats_lead }}</p>
+          </div>
+          <div class="filter">
+            <label for="year">{{ t.year_label }}</label>
+            <select id="year">
+              <option value="">{{ t.all_years }}</option>
+              {% for y in years %}<option value="{{ y }}">{{ y }}</option>{% endfor %}
+            </select>
+            <a id="csv" class="btn outline small" href="{% url 'public-stats-csv' %}">{{ t.download_csv }}</a>
+          </div>
+        </div>
+        <p id="stats-msg" class="msg" role="status" aria-live="polite" hidden></p>
+
+        <div class="map-grid">
+          <figure class="panel map-panel">
+            <figcaption><h3>{{ t.map_title }}</h3><span class="hint">{{ t.map_hint }}</span></figcaption>
+            <div id="map" class="map" data-geo="{% static 'landing/tl-adm1.geojson' %}"></div>
+            <div class="legend" aria-hidden="true"><span>{{ t.fewer }}</span><i class="ramp"></i><span>{{ t.more }}</span></div>
+            <p class="attr">{{ t.map_attr }}: geoBoundaries · © OpenStreetMap contributors (ODbL)</p>
+          </figure>
+          <div class="panel">
+            <div class="table-wrap">
+              <table id="mun-table">
+                <thead><tr><th scope="col">{{ t.municipality }}</th><th scope="col" class="r">{{ t.beneficiaries }}</th></tr></thead>
+                <tbody></tbody>
+                <tfoot><tr><th scope="row">{{ t.total }}</th><td class="r" id="mun-total"></td></tr></tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-grid">
+          <figure class="panel"><figcaption><h3>{{ t.chart_year }}</h3></figcaption><div class="chart"><canvas id="chart-year" role="img" aria-label="{{ t.chart_year }}"></canvas></div></figure>
+          <figure class="panel"><figcaption><h3>{{ t.chart_program }}</h3></figcaption><div class="chart"><canvas id="chart-program" role="img" aria-label="{{ t.chart_program }}"></canvas></div></figure>
+          <figure class="panel"><figcaption><h3>{{ t.chart_sex }}</h3></figcaption><div class="chart"><canvas id="chart-sex" role="img" aria-label="{{ t.chart_sex }}"></canvas></div></figure>
+        </div>
+        <p class="stamp">{{ t.updated }}: <span id="stamp">—</span></p>
+      </div>
+    </section>
+
+    <!-- ── Informasaun importante ── -->
+    <section id="informasaun" class="section wrap">
+      <h2>{{ t.info_title }}</h2>
+      <div class="cards three">
+        {% for a in announcements %}
+        <article class="card info{% if a.level == 'important' %} important{% endif %}">
+          <p class="meta">{% if a.level == 'important' %}<span class="pill">{{ t.important }}</span>{% endif %}<time datetime="{{ a.date|date:'Y-m-d' }}">{{ a.date|date:"d/m/Y" }}</time></p>
+          <h3>{{ a.title }}</h3>
+          <p>{{ a.body|linebreaksbr }}</p>
+        </article>
+        {% endfor %}
+        <article class="card info important"><p class="meta"><span class="pill">{{ t.important }}</span></p><h3>{{ t.notice_pw_title }}</h3><p>{{ t.notice_pw }}</p></article>
+        <article class="card info"><h3>{{ t.notice_benef_title }}</h3><p>{{ t.notice_benef }}</p></article>
+        <article class="card info"><h3>{{ t.notice_data_title }}</h3><p>{{ t.notice_data }}</p></article>
+      </div>
+    </section>
+
+    <!-- ── Funsionalidade ── -->
+    <section id="funsionalidade" class="section alt">
+      <div class="wrap">
+        <h2>{{ t.features_title }}</h2>
+        <div class="cards three">
+          <article class="card feat"><h3>{{ t.feat_offline_t }}</h3><p>{{ t.feat_offline }}</p></article>
+          <article class="card feat"><h3>{{ t.feat_secure_t }}</h3><p>{{ t.feat_secure }}</p></article>
+          <article class="card feat"><h3>{{ t.feat_audit_t }}</h3><p>{{ t.feat_audit }}</p></article>
+          <article class="card feat"><h3>{{ t.feat_monitor_t }}</h3><p>{{ t.feat_monitor }}</p></article>
+          <article class="card feat"><h3>{{ t.feat_report_t }}</h3><p>{{ t.feat_report }}</p></article>
+          <article class="card feat"><h3>{{ t.feat_lang_t }}</h3><p>{{ t.feat_lang }}</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Pergunta ── -->
+    <section id="pergunta" class="section wrap narrow">
+      <h2>{{ t.faq_title }}</h2>
+      <details><summary>{{ t.q1 }}</summary><p>{{ t.a1 }}</p></details>
+      <details><summary>{{ t.q2 }}</summary><p>{{ t.a2 }}</p></details>
+      <details><summary>{{ t.q3 }}</summary><p>{{ t.a3 }}</p></details>
+      <details><summary>{{ t.q4 }}</summary><p>{{ t.a4 }}</p></details>
+    </section>
+  </main>
+
+  <!-- ── Kontaktu + rodapé ── -->
+  <footer id="kontaktu" class="footer">
+    <div class="wrap footer-in">
+      <div>
+        <h2>{{ t.contact_title }}</h2>
+        <p class="org">{{ t.ministry }}<br>República Democrática de Timor-Leste</p>
+      </div>
+      <dl>
+        <dt>{{ t.address }}</dt><dd>{{ contact.address }}</dd>
+        <dt>{{ t.phone }}</dt><dd><a href="tel:{{ contact.phone|cut:' ' }}">{{ contact.phone }}</a></dd>
+        <dt>{{ t.email }}</dt><dd><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></dd>
+      </dl>
+      <div class="foot-links">
+        <a href="{% url 'login' %}">{{ t.login }}</a>
+        <a href="#estatistika">{{ t.nav_stats }}</a>
+        <a href="#top">{{ t.back_top }}</a>
+      </div>
+    </div>
+    <p class="copy">© {% now "Y" %} {{ t.ministry }}. {{ t.rights }}</p>
+  </footer>
+
+  {{ js_strings|json_script:"i18n" }}
+  <script src="{% static 'js/chart/chart.umd.min.js' %}"></script>
+  <script src="{% static 'landing/landing.js' %}"></script>
+</body>
+</html>

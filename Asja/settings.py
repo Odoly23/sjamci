@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     'monitoring',
     'seguransa',
     'offline',
+    'landing',
 ]
 
 MIDDLEWARE = [
@@ -205,6 +206,11 @@ STORAGES = {
 
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Kontaktu ne'ebé hatudu iha pajina públiku (define valór loloos iha .env)
+LANDING_PHONE   = config('LANDING_PHONE', default='+670 0000 0000')
+LANDING_EMAIL   = config('LANDING_EMAIL', default='info@mci.gov.tl')
+LANDING_ADDRESS = config('LANDING_ADDRESS', default='Dili, Timor-Leste')
 
 # Versaun cache PWA offline — aumenta bainhira troka ficheiru offline/static
 OFFLINE_CACHE_VERSION = 'v2'
