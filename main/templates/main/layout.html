@@ -1,6 +1,6 @@
-{% load static %}
+{% load static ui_i18n %}
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ ui_lang|default:'tet' }}">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -47,14 +47,14 @@
 
   <!-- ── Side Navbar ─────────────────────────────────────────── -->
   <nav class="side-navbar">
-    {% include 'main/sidebar.html' %}
+    {% uitranslate %}{% include 'main/sidebar.html' %}{% enduitranslate %}
   </nav>
 
   <div class="page">
 
     <!-- ── Top Header ──────────────────────────────────────────── -->
     <header class="header">
-      {% include 'main/navbar.html' %}
+      {% uitranslate %}{% include 'main/navbar.html' %}{% enduitranslate %}
     </header>
 
     <section>
@@ -64,7 +64,7 @@
         <div class="container-fluid">
           <ul class="breadcrumb">
             <li class="breadcrumb-item">
-              <a href="{% url 'home' %}">Home</a>
+              <a href="{% url 'home' %}">{% uitranslate %}<span>Home</span>{% enduitranslate %}</a>
             </li>
 
             {% if link_antes %}
@@ -108,7 +108,7 @@
 
     <!-- ── Footer ───────────────────────────────────────────────── -->
     <footer class="main-footer">
-      {% include 'main/footer.html' %}
+      {% uitranslate %}{% include 'main/footer.html' %}{% enduitranslate %}
     </footer>
 
   </div><!-- /.page -->

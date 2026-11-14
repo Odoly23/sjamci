@@ -88,7 +88,7 @@ INSTALLED_APPS = [
     'monitoring',
     'seguransa',
     'offline',
-    'landing',
+    'website',
 ]
 
 MIDDLEWARE = [
@@ -114,13 +114,14 @@ ROOT_URLCONF = 'Asja.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'website.context_processors.ui_language',
             ],
         },
     },
@@ -189,6 +190,7 @@ LANGUAGES = [
     ('tet', _('Tetun (Dili)')),
     ('pt', _('Português')),
     ('en', _('English')),
+    ('id', _('Bahasa Indonesia')),
 ]
 
 # ══════════════════════════════════════════════════════════════

@@ -7,14 +7,8 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_GET
 
 from . import i18n, stats
+from .lang import current_lang
 from .models import Announcement, Slide
-
-LANG_COOKIE = 'landing_lang'
-
-
-def current_lang(request):
-    lang = request.COOKIES.get(LANG_COOKIE)
-    return lang if lang in i18n.CODES else i18n.DEFAULT
 
 
 def _year(request):
@@ -37,7 +31,7 @@ def landing(request):
     announcements = [{'title': a.text('title', lang), 'body': a.text('body', lang), 'level': a.level,
                       'date': a.publish_date} for a in Announcement.objects.filter(is_published=True)[:6]]
 
-    return render(request, 'landing/landing.html', {
+    return render(request, 'website/landing.html', {
         't': t,
         'lang': lang,
         'languages': i18n.LANGUAGES,
@@ -62,7 +56,7 @@ def set_language(request, code):
         target = '/'
     response = redirect(target)
     if code in i18n.CODES:
-        response.set_cookie(LANG_COOKIE, code, max_age=365 * 24 * 3600, samesite='Lax',
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, code, max_age=365 * 24 * 3600, samesite='Lax',
                             secure=request.is_secure())
     return response
 

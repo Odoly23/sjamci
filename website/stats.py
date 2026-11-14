@@ -97,7 +97,7 @@ def compute(year=None):
 
 
 def get(year=None):
-    key = f'landing-stats-{year or "all"}'
+    key = f'website-stats-{year or "all"}'
     data = cache.get(key)
     if data is None:
         data = compute(year)

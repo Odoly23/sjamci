@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#1f3864">
   <link rel="icon" href="{% static 'offline/icon-192.png' %}">
   <link rel="manifest" href="{% url 'pwa-manifest' %}">
-  <link rel="stylesheet" href="{% static 'landing/landing.css' %}">
+  <link rel="stylesheet" href="{% static 'website/landing.css' %}">
 </head>
 <body>
   <a class="skip" href="#main">{{ t.skip }}</a>
@@ -26,8 +26,8 @@
       </ul>
       <nav class="flags" aria-label="{{ t.lang_label }}">
         {% for code, name, flag in languages %}
-        <a href="{% url 'landing-lang' code %}?next=/" class="flag{% if code == lang %} on{% endif %}" lang="{{ code }}" hreflang="{{ code }}" title="{{ name }}"{% if code == lang %} aria-current="true"{% endif %}>
-          {% include "landing/_flag.html" with flag=flag %}<span class="sr">{{ name }}</span>
+        <a href="{% url 'set-lang' code %}?next=/" class="flag{% if code == lang %} on{% endif %}" lang="{{ code }}" hreflang="{{ code }}" title="{{ name }}"{% if code == lang %} aria-current="true"{% endif %}>
+          {% include "website/_flag.html" with flag=flag %}<span class="sr">{{ name }}</span>
         </a>
         {% endfor %}
       </nav>
@@ -125,7 +125,7 @@
         <div class="map-grid">
           <figure class="panel map-panel">
             <figcaption><h3>{{ t.map_title }}</h3><span class="hint">{{ t.map_hint }}</span></figcaption>
-            <div id="map" class="map" data-geo="{% static 'landing/tl-adm1.geojson' %}"></div>
+            <div id="map" class="map" data-geo="{% static 'website/tl-adm1.geojson' %}"></div>
             <div class="legend" aria-hidden="true"><span>{{ t.fewer }}</span><i class="ramp"></i><span>{{ t.more }}</span></div>
             <p class="attr">{{ t.map_attr }}: geoBoundaries · © OpenStreetMap contributors (ODbL)</p>
           </figure>
@@ -214,6 +214,6 @@
 
   {{ js_strings|json_script:"i18n" }}
   <script src="{% static 'js/chart/chart.umd.min.js' %}"></script>
-  <script src="{% static 'landing/landing.js' %}"></script>
+  <script src="{% static 'website/landing.js' %}"></script>
 </body>
 </html>

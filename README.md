@@ -24,7 +24,7 @@ benefisiariu/       # Gestão benefisiáriu
 config/             # Utility, decorators, auth utils
 custom/             # Custom configurations/models
 kni/                # Modulu KNI
-landing/            # Pajina públiku (lian 4, mapa, gráfiku)
+website/            # Pajina públiku (landing page: lian 4, mapa, gráfiku)
 main/               # Main application
 manufatureira/      # Gestão manufatureira
 monitoring/         # Monitorizasaun impaktu negósiu
@@ -98,11 +98,15 @@ Pajina inisiál `/` loke ba públiku (utilizador ne'ebé login ona ba direta `/p
 - **Mapa Timor-Leste** ho totál benefisiáriu tuir munisípiu, filtru **tinan**, tabela no **gráfiku** (tuir tinan, programa, seksu), no download CSV.
 - Estatístika públiku hatudu de'it númeru agregadu (la iha naran, telefone ka dadus pesoál) no rai iha cache minutu 10.
 
+**Troka lian iha sistema no painel admin**: bandeira 4 hanesan mós iha navbar sistema (hafoin login) no iha painel admin Django. Lian rai iha cookie ida de'it (`django_language`), entaun eskolla iha pajina públiku la'o ba fatin hotu.
+- Sistema: menu, navbar, rodapé no pajina inisiu tradús (`website/ui_strings.py`); konteúdu pajina (formuláriu, tabela) sei iha Tetun.
+- Painel admin Django: Português, English no Indonesia uza tradusaun Django nian; Tetun uza Português tanba Django la iha tradusaun Tetun.
+
 Konfigurasaun:
 - Kontaktu: `LANDING_PHONE`, `LANDING_EMAIL`, `LANDING_ADDRESS` iha `.env`.
 - Slide no informasaun importante: painel admin → *Pajina Públiku* (ho tradusaun opsionál; se la iha slide, sistema uza slide default).
-- Tradusaun testu fixu: `landing/i18n.py`.
-- Limite munisípiu: geoBoundaries / © OpenStreetMap contributors (ODbL 1.0), iha `landing/static/landing/tl-adm1.geojson`.
+- Tradusaun testu fixu: `website/i18n.py`.
+- Limite munisípiu: geoBoundaries / © OpenStreetMap contributors (ODbL 1.0), iha `website/static/website/tl-adm1.geojson`.
 
 ## 📱 Rejistu offline (PWA)
 

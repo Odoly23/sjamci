@@ -20,7 +20,7 @@ from users.passwords import temporary_password
 
 BASE_DIR = Path(settings.BASE_DIR)
 LOCAL_APPS = ['main', 'custom', 'benefisiariu', 'kni', 'suave', 'manufatureira',
-              'notif', 'report', 'users', 'mpms', 'monitoring', 'config', 'seguransa', 'offline', 'landing']
+              'notif', 'report', 'users', 'mpms', 'monitoring', 'config', 'seguransa', 'offline', 'website']
 
 
 def _source_files(*suffixes):

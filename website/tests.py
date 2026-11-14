@@ -7,8 +7,8 @@ from django.urls import reverse
 from benefisiariu.models import Benefisiariu
 from custom.models import Municipality, TIpu_Programa, Year
 from kni.models import LocBussiness, Program
-from landing import i18n, stats
-from landing.models import Announcement
+from website import i18n, stats
+from website.models import Announcement
 
 
 class LandingPageTests(TestCase):
@@ -51,15 +51,15 @@ class LandingPageTests(TestCase):
         expected = {'tet': 'Estatístika benefisiáriu', 'pt': 'Estatísticas de beneficiários',
                     'en': 'Beneficiary statistics', 'id': 'Statistik penerima manfaat'}
         for code, heading in expected.items():
-            response = self.client.get(reverse('landing-lang', args=[code]), {'next': '/'})
+            response = self.client.get(reverse('set-lang', args=[code]), {'next': '/'})
             self.assertRedirects(response, '/', fetch_redirect_response=False)
             page = self.client.get(reverse('landing'))
             self.assertContains(page, f'<html lang="{code}">')
             self.assertContains(page, heading)
 
     def test_language_switch_rejects_unknown_code_and_external_redirect(self):
-        self.client.get(reverse('landing-lang', args=['en']), {'next': '/'})
-        response = self.client.get(reverse('landing-lang', args=['xx']), {'next': 'https://evil.example/'})
+        self.client.get(reverse('set-lang', args=['en']), {'next': '/'})
+        response = self.client.get(reverse('set-lang', args=['xx']), {'next': 'https://evil.example/'})
         self.assertRedirects(response, '/', fetch_redirect_response=False)
         self.assertContains(self.client.get(reverse('landing')), '<html lang="en">')
 
@@ -100,9 +100,56 @@ class LandingPageTests(TestCase):
         Announcement.objects.create(title='Avizu Tetun', body='Konteúdu', title_en='English notice', level='important')
         Announcement.objects.create(title='La publika', body='x', is_published=False)
         self.assertContains(self.client.get(reverse('landing')), 'Avizu Tetun')
-        self.client.get(reverse('landing-lang', args=['en']))
+        self.client.get(reverse('set-lang', args=['en']))
         page = self.client.get(reverse('landing'))
         self.assertContains(page, 'English notice')
         self.assertNotContains(page, 'La publika')
-        self.client.get(reverse('landing-lang', args=['pt']))
+        self.client.get(reverse('set-lang', args=['pt']))
         self.assertContains(self.client.get(reverse('landing')), 'Avizu Tetun')
+
+
+class SystemLanguageSwitchTests(TestCase):
+    """Bandeira 4 iha pajina sistema no painel admin."""
+
+    @classmethod
+    def setUpTestData(cls):
+        from django.contrib.auth.models import Group
+        Group.objects.create(name='admin')
+        cls.admin = User.objects.create_superuser('xefe', password='x-Xefe-pass-2026!')
+        cls.admin.groups.add(Group.objects.get(name='admin'))
+
+    def test_system_pages_show_four_flags_and_translate_menu(self):
+        self.client.force_login(self.admin)
+        page = self.client.get(reverse('home'))
+        self.assertContains(page, 'class="lang-switch"')
+        for code in ('tet', 'pt', 'en', 'id'):
+            self.assertContains(page, reverse('set-lang', args=[code]))
+        self.assertContains(page, 'Relatoriu')
+
+        expected = {'pt': ('Relatórios', 'Sair'), 'en': ('Reports', 'Sign out'), 'id': ('Laporan', 'Keluar')}
+        for code, words in expected.items():
+            response = self.client.get(reverse('set-lang', args=[code]), {'next': reverse('home')})
+            self.assertRedirects(response, reverse('home'), fetch_redirect_response=False)
+            page = self.client.get(reverse('home'))
+            self.assertContains(page, f'<html lang="{code}">')
+            for word in words:
+                self.assertContains(page, word)
+
+    def test_switch_returns_to_the_same_page(self):
+        self.client.force_login(self.admin)
+        target = reverse('activity-log') + '?action=update'
+        response = self.client.get(reverse('set-lang', args=['en']), {'next': target})
+        self.assertRedirects(response, target, fetch_redirect_response=False)
+
+    def test_django_admin_has_switch_and_follows_language(self):
+        self.client.force_login(self.admin)
+        index = reverse('admin:index')
+        self.assertContains(self.client.get(index), 'class="lang-switch"')
+        self.client.get(reverse('set-lang', args=['id']))
+        self.assertContains(self.client.get(index), 'Selamat datang')
+        self.client.get(reverse('set-lang', args=['en']))
+        self.assertContains(self.client.get(index), 'Welcome')
+
+    def test_menu_dictionary_covers_three_target_languages(self):
+        from website.ui_strings import UI
+        self.assertEqual([k for k, v in UI.items() if set(v) != {'pt', 'en', 'id'}], [])

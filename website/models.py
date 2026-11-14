@@ -51,7 +51,7 @@ class Slide(TranslatedMixin, models.Model):
     subtitle_en = models.CharField(max_length=240, blank=True, verbose_name='Sub-títulu (English)')
     title_id = models.CharField(max_length=120, blank=True, verbose_name='Títulu (Indonesia)')
     subtitle_id = models.CharField(max_length=240, blank=True, verbose_name='Sub-títulu (Indonesia)')
-    image = models.ImageField(upload_to='landing/slides/', blank=True,
+    image = models.ImageField(upload_to='website/slides/', blank=True,
                               validators=[FileExtensionValidator(['jpg', 'jpeg', 'png', 'webp'])],
                               verbose_name='Imajen (rekomenda 1600×700)')
     order = models.PositiveSmallIntegerField(default=0, verbose_name='Orden')
