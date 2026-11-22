@@ -124,6 +124,27 @@ Regra:
 - PWA presiza **HTTPS** iha produsaun. Bainhira troka ficheiru iha `offline/static/`, aumenta `OFFLINE_CACHE_VERSION` iha `settings.py`.
 - DNDI seidauk iha formuláriu (módulu seidauk iha modelu dadus).
 
+## 📥 Importasaun dadus husi Excel
+
+Komandu tolu atu hatama dadus ne'ebé diresaun sira fó iha Excel. Hotu-hotu **teste de'it** se la uza `--commit`:
+hatudu rezumu no avizu, maibé la rai buat ida.
+
+```bash
+python manage.py import_dnim_excel Dadus_Geral_DNIM.xlsx            # grupu manufatureira (sheet kada munisípiu)
+python manage.py import_mpms_excel Dados_MPMS_13_husi_DNPE.xlsx     # rejistu empreza MPMS (sheet kada munisípiu)
+python manage.py import_ks_excel   Dados_Kreditu_suave.xlsx         # lista aprovadu Kreditu Suave
+python manage.py import_mpms_excel Dados_MPMS_13_husi_DNPE.xlsx --commit --user admin
+```
+
+- Bele halo fila fali: rejistu ne'ebé iha ona salta (la kria duplikadu).
+- Tolera ficheiru la konsistente: montante hanesan testu (`$. 1,500.00`), ortografia munisípiu oioin, koluna muda fatin.
+  Valór ne'ebé la bele lee rai mamuk no lista iha **AVIZU** atu diresaun hadia.
+- MPMS: koluna "Naran Diretor" no "Naran Kompania" troka fatin iha sheet balun; komandu deteta kada sheet no hatudu
+  ezemplu. Se sala, obriga ho `--company-first dili,baucau` ka `--director-first lautem`.
+- Postu/suku ne'ebé la iha iha tabela mestre sistema rai hanesan testu iha kampu aldeia.
+- KNI uza importasaun ne'ebé iha ona iha sistema (*Importa Excel KNI*).
+- **Labele** tau ficheiru Excel iha Git — iha naran no telefone ema nian.
+
 ## 🚀 Produsaun
 
 ```bash

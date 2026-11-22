@@ -1,4 +1,7 @@
 """Rejistu automátiku ba kria/altera/hamoos dadus iha aplikasaun lokál."""
+import threading
+from contextlib import contextmanager
+
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
@@ -12,7 +15,25 @@ HIDDEN_FIELDS = {'password', 'last_login', 'updated_at', 'updated_by', 'totp_sec
 MAX_VALUE = 120
 
 
+_pause = threading.local()
+
+
+@contextmanager
+def audit_paused():
+    """Para rejistu kada-liña durante operasaun boot (ezemplu importasaun Excel).
+
+    Operasaun ne'e rasik tenke rejista rezumu ida ho ``log_security_event``.
+    """
+    _pause.active = True
+    try:
+        yield
+    finally:
+        _pause.active = False
+
+
 def _audited(sender):
+    if getattr(_pause, 'active', False):
+        return False
     meta = sender._meta
     return meta.app_label in AUDITED_APPS and meta.label_lower not in EXCLUDED_MODELS
 

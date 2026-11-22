@@ -65,10 +65,14 @@ _T = {
     'slide_pause': {'tet': 'Para slide', 'pt': 'Pausar slides', 'en': 'Pause slides', 'id': 'Jeda slide'},
     'slide_play': {'tet': 'Kontinua slide', 'pt': 'Retomar slides', 'en': 'Resume slides', 'id': 'Lanjutkan slide'},
 
-    'kpi_benef': {'tet': 'Benefisiáriu rejistadu', 'pt': 'Beneficiários registados',
-                  'en': 'Registered beneficiaries', 'id': 'Penerima manfaat terdaftar'},
+    'kpi_benef': {'tet': 'Benefisiáriu simu apoiu', 'pt': 'Beneficiários apoiados',
+                  'en': 'Beneficiaries supported', 'id': 'Penerima manfaat didukung'},
     'kpi_business': {'tet': 'Negósiu apoiadu', 'pt': 'Negócios apoiados', 'en': 'Businesses supported', 'id': 'Usaha didukung'},
     'kpi_mun': {'tet': 'Munisípiu kobre', 'pt': 'Municípios abrangidos', 'en': 'Municipalities covered', 'id': 'Munisipiu terjangkau'},
+    'kpi_groups': {'tet': 'Grupu manufatureira (DNIM)', 'pt': 'Grupos da indústria transformadora (DNIM)',
+                   'en': 'Manufacturing groups (DNIM)', 'id': 'Kelompok manufaktur (DNIM)'},
+    'kpi_enterprises': {'tet': 'Empreza rejistadu (MPMS)', 'pt': 'Empresas registadas (MPMS)',
+                        'en': 'Registered enterprises (MPMS)', 'id': 'Perusahaan terdaftar (MPMS)'},
     'kpi_programs': {'tet': 'Apoiu atribui', 'pt': 'Apoios atribuídos', 'en': 'Support grants recorded', 'id': 'Bantuan tercatat'},
 
     'programs_title': {'tet': 'Programa sira', 'pt': 'Programas', 'en': 'Programmes', 'id': 'Program'},
